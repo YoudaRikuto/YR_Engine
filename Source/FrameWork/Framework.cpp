@@ -1,0 +1,180 @@
+#include "Framework.h"
+#include "Math/MathHelper.h"
+#include "Scene/SceneManager.h"
+#include "Graphics/Camera/Camera.h"
+
+// ----- コンストラクタ -----
+Framework::Framework(HWND hwnd)
+    : hwnd_(hwnd), graphics_(hwnd),
+    sceneConstants_()
+{
+}
+
+// ----- 初期化 -----
+const bool Framework::Initialize()
+{
+    SceneManager::Instance().Initialize();
+
+    sceneConstants_.GetData()->lightDirection_ = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+    return true;
+}
+
+// ----- 終了化 -----
+const bool Framework::Finalize()
+{
+    SceneManager::Instance().Finalize();
+
+    return false;
+}
+
+// ----- 更新 -----
+void Framework::Update(const float& elapsedTime)
+{
+    // ImGui更新
+    IMGUI_CTRL_CLEAR_FRAME();
+
+    // Scene更新
+    SceneManager::Instance().Update(elapsedTime);
+
+    // ImGui更新
+    DrawDebug();
+}
+
+// ----- 描画 -----
+void Framework::Render()
+{
+    // 描画初期化
+    Graphics::Instance().RenderInitialize();
+
+    Camera::Instance().SetPerspectiveFov();
+
+    const DirectX::XMFLOAT4X4 view = Camera::Instance().GetView();
+    const DirectX::XMFLOAT4X4 projection = Camera::Instance().GetProjection();
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->viewProjection_, DirectX::XMLoadFloat4x4(&view) * DirectX::XMLoadFloat4x4(&projection));
+
+    const DirectX::XMFLOAT3 cameraPosition = Camera::Instance().GetEye();
+    sceneConstants_.GetData()->cameraPosition_ = { cameraPosition.x, cameraPosition.y, cameraPosition.z, 0 };
+
+    sceneConstants_.Activate(0, true, true, true, true);
+
+    // Scene描画
+    SceneManager::Instance().Render();
+
+    // ImGui描画
+    IMGUI_CTRL_DISPLAY();
+
+    // 描画実行
+    Graphics::Instance().Draw();
+}
+
+// ----- ImGui用 -----
+void Framework::DrawDebug()
+{
+    SceneManager::Instance().DrawDebug();
+
+    ImGui::Begin("Game");
+    //ImGui::Image(reinterpret_cast<ImTextureID>(Graphics::Instance().GetRenderTargetShaderResourceView()), ImVec2(1280, 720));
+    ImGui::End();
+}
+
+// ----- 実行 -----
+const int Framework::Run()
+{
+    MSG msg = {};
+
+    if (Initialize() == false) return 0;
+
+    // ImGui初期化(DirectX11の初期化の下に置くこと)
+    IMGUI_CTRL_INITIALIZE(hwnd_, graphics_.GetDevice(), graphics_.GetDeviceContext());
+
+    while (WM_QUIT != msg.message)
+    {
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        else
+        {
+            tictoc_.Tick();
+            CalculateFrameStats();
+            Update(tictoc_.TimeInterval());
+            Render();
+        }
+    }
+
+    // ImGui終了化
+    IMGUI_CTRL_UNINITIALIZE();
+
+    BOOL fullscreen = 0;
+    graphics_.GetSwapChain()->GetFullscreenState(&fullscreen, 0);
+    if (fullscreen)
+    {
+        graphics_.GetSwapChain()->SetFullscreenState(FALSE, 0);
+    }
+
+    return Finalize() ? static_cast<int>(msg.wParam) : 0;
+}
+
+// ----- メッセージハンドラ -----
+LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    // ImGui
+    IMGUI_CTRL_WND_PRC_HANDLER(hwnd, msg, wparam, lparam);
+
+    switch (msg)
+    {
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps{};
+        BeginPaint(hwnd, &ps);
+
+        EndPaint(hwnd, &ps);
+    }
+    break;
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+    case WM_CREATE:
+        break;
+    case WM_KEYDOWN:
+        if (wparam == VK_ESCAPE)
+        {
+            PostQuitMessage(0);
+        }
+        break;
+    case WM_ENTERSIZEMOVE:
+        tictoc_.Stop();
+        break;
+    case WM_EXITSIZEMOVE:
+        tictoc_.Start();
+        break;
+    default:
+        return DefWindowProc(hwnd, msg, wparam, lparam);
+    }
+
+    return 0;
+}
+
+// ----- フレーム計算 -----
+void Framework::CalculateFrameStats()
+{
+    if (++frames_, (tictoc_.TimeStamp() - elapsedTime_) >= 1.0f)
+    {
+        float fps = static_cast<float>(frames_);
+        std::wostringstream outs;
+        outs.precision(6);
+
+        // ゲームタイトル
+        outs << APPLICATION_NAME;
+
+        // FPS
+        outs << L" FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
+
+        SetWindowTextW(hwnd_, outs.str().c_str());
+
+        frames_ = 0;
+        elapsedTime_ += 1.0f;
+    }
+}
