@@ -1,2 +1,229 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="YR_Engine">
+      <UniqueIdentifier>{917a1e43-1aa7-4c3d-b8a4-f955390dffe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Ai">
+      <UniqueIdentifier>{d4ea320e-0398-49a7-a906-c91634ae76c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Resource">
+      <UniqueIdentifier>{85af6768-364a-4d2a-b51a-24b9eebfd5b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Object">
+      <UniqueIdentifier>{c357dda3-bf4c-4285-b332-cc0fcaf56ebd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Input">
+      <UniqueIdentifier>{009c0a8b-cd99-46e8-8eaa-48bd50a9d157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Math">
+      <UniqueIdentifier>{ce32edfa-3bfd-4e09-b287-f51373e27469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Framework">
+      <UniqueIdentifier>{d2d280a5-8f9f-45de-a217-144821ff2311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{f34982ef-7008-4eec-81e1-a5d90520d09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\ImGui">
+      <UniqueIdentifier>{8b84bd67-2740-4539-bf15-4bd34bab06e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics">
+      <UniqueIdentifier>{9b77ae7a-24ae-492b-a273-85f667c10b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics\Shader">
+      <UniqueIdentifier>{69ee7834-9186-4edb-baa9-572fa8077584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics\Camera">
+      <UniqueIdentifier>{550710de-e594-41b4-a175-31db67488d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Scene">
+      <UniqueIdentifier>{55fe3176-c0ae-490f-aa86-4924236b652e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Resource\GltfModel">
+      <UniqueIdentifier>{f579a8ad-4295-46db-82d7-a4599661f9b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Resource\Sprite">
+      <UniqueIdentifier>{11ee2e16-bf65-43b9-88d2-cc91f892b174}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader">
+      <UniqueIdentifier>{66af9be2-4379-407e-9acf-2054a3a2a17d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="External\ImGui\imgui.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_demo.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_draw.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_dx11.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_ja_gryph_ranges.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_tables.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_widgets.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImGuiCtrl.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FrameWork\Framework.cpp">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FrameWork\Main.cpp">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\Shader.cpp">
+      <Filter>YR_Engine\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Graphics.cpp">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\DemoScene.cpp">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\GameScene.cpp">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneManager.cpp">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\TitleScene.cpp">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\GltfModel.cpp">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\Texture.cpp">
+      <Filter>YR_Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Transform.cpp">
+      <Filter>YR_Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Camera\Camera.cpp">
+      <Filter>YR_Engine\Graphics\Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="External\ImGui\imconfig.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_dx11.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_win32.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_internal.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImGuiCtrl.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_rectpack.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_textedit.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_truetype.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FrameWork\Framework.h">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FrameWork\Common.h">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FrameWork\HighResolutionTimer.h">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FrameWork\Misc.h">
+      <Filter>YR_Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\Shader.h">
+      <Filter>YR_Engine\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Graphics.h">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\ConstantBuffer.h">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\BaseScene.h">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\DemoScene.h">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\GameScene.h">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneManager.h">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\TitleScene.h">
+      <Filter>YR_Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\GltfModel.h">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\Texture.h">
+      <Filter>YR_Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathHelper.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathHelperFloat2.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathHelperFloat3.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathHelperFloat4.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Serialize.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Transform.h">
+      <Filter>YR_Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Camera\Camera.h">
+      <Filter>YR_Engine\Graphics\Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Shader\GltfModel.hlsli">
+      <Filter>YR_Engine\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\BidirectionalReflectanceDistributionFunction.hlsli">
+      <Filter>YR_Engine\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\ImageBasedLighting.hlsli">
+      <Filter>YR_Engine\Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\Shader\GltfModelVS.hlsl">
+      <Filter>YR_Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GltfModelPS.hlsl">
+      <Filter>YR_Engine\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
