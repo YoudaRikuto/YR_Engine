@@ -5,6 +5,7 @@
 #include "ImGui/ImGuiCtrl.h"
 #include "Graphics/Graphics.h"
 #include "Graphics/ConstantBuffer.h"
+#include "Input/Input.h"
 
 class Framework
 {
@@ -36,8 +37,9 @@ private:
     void CalculateFrameStats();
 
 private:
-    CONST HWND hwnd_;
-    Graphics graphics_;
+    CONST HWND  hwnd_;
+    Graphics    graphics_;
+    Input       input_;
 
     HighResolutionTimer tictoc_;
     uint32_t            frames_ = 0;

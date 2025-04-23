@@ -3,11 +3,12 @@
 #include "ImGui/ImGuiCtrl.h"
 
 #include "DemoScene.h"
+#include "GameScene.h"
 
 // ----- èâä˙âª -----
 void SceneManager::Initialize()
 {
-    SceneManager::Instance().ChangeScene(new DemoScene);
+    SceneManager::Instance().ChangeScene(new GameScene);
 }
 
 // ----- èIóπâª -----
@@ -57,15 +58,21 @@ void SceneManager::DrawDebug()
 {
 #ifdef USE_IMGUI
     ImGui::Begin("SceneManager");
+    if (ImGui::Button("TitleScene", ImVec2(100, 100)))
+    {
+        //SceneManager::Instance().ChangeScene(new TitleScene);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("GameScene", ImVec2(100, 100)))
+    {
+        SceneManager::Instance().ChangeScene(new GameScene);
+    }
+    ImGui::SameLine();
     if (ImGui::Button("DemoScene", ImVec2(100, 100)))
     {
         SceneManager::Instance().ChangeScene(new DemoScene);
     }
-    ImGui::SameLine();
-    if (ImGui::Button("TitleScene", ImVec2(100, 100)))
-    {
-        //SceneManager::Instance().ChangeScene(new DemoScene);
-    }
+    
 
     ImGui::End();
 

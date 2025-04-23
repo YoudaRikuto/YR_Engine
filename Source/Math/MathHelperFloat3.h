@@ -275,4 +275,21 @@ inline const DirectX::XMFLOAT3 XMFloat3Cross(
     return cross;
 }
 
+// ----- üŒ`•âŠÔ -----
+inline const DirectX::XMFLOAT3 XMFloat3Lerp(
+    const DirectX::XMFLOAT3& start,
+    const DirectX::XMFLOAT3& end,
+    const float& timer)
+{
+    DirectX::XMFLOAT3 result =
+    {
+        start.x + timer * (end.x - start.x),
+        start.y + timer * (end.y - start.y),
+        start.z + timer * (end.z - start.z)
+    };
+
+    return result;
+}
+
 #pragma endregion ---------- ZpŠÖ” ----------
+
