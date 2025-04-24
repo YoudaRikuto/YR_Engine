@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "Object/Stage/Stage.h"
 
 class GameScene : public BaseScene
 {
@@ -13,5 +14,8 @@ public:
     void Update(const float& elapsedTime)   override;
     void Render()                           override;
     void DrawDebug()                        override;
+
+private:
+    std::unique_ptr<Stage> stage_;
 };
 

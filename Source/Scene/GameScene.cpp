@@ -6,6 +6,8 @@ void GameScene::CreateResource()
 {
     // プレイヤー生成
     PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
+
+    stage_ = std::make_unique<Stage>();
 }
 
 // ----- 初期化 -----
@@ -32,10 +34,17 @@ void GameScene::Update(const float& elapsedTime)
 // ----- 描画 -----
 void GameScene::Render()
 {
+    Graphics::Instance().SetBlendState(Shader::BlendState::None);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::Solid);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+
+
     // プレイヤー描画
     PlayerManager::Instance().Render();
 
     //PlayerManager::Instance().DebugRender();
+
+    stage_->Render(nullptr);
 }
 
 // ----- ImGui -----
@@ -43,4 +52,6 @@ void GameScene::DrawDebug()
 {
     // プレイヤー ImGui
     PlayerManager::Instance().DrawDebug();
+
+    stage_->DrawDebug();
 }

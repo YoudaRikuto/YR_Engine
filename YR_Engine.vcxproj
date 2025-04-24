@@ -149,6 +149,8 @@
     <ClInclude Include="External\ImGui\imstb_rectpack.h" />
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
+    <ClInclude Include="External\nlohmann\json.hpp" />
+    <ClInclude Include="External\nlohmann\json_fwd.hpp" />
     <ClInclude Include="Source\Ai\State.h" />
     <ClInclude Include="Source\Ai\StateMachine.h" />
     <ClInclude Include="Source\FrameWork\Common.h" />
@@ -173,6 +175,7 @@
     <ClInclude Include="Source\Object\Character\Player\PlayerManager.h" />
     <ClInclude Include="Source\Object\Character\Player\PlayerState.h" />
     <ClInclude Include="Source\Object\Object.h" />
+    <ClInclude Include="Source\Object\Stage\Stage.h" />
     <ClInclude Include="Source\Resource\GltfModel.h" />
     <ClInclude Include="Source\Resource\Texture.h" />
     <ClInclude Include="Source\Scene\BaseScene.h" />
@@ -205,6 +208,7 @@
     <ClCompile Include="Source\Object\Character\Player\PlayerManager.cpp" />
     <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp" />
     <ClCompile Include="Source\Object\Object.cpp" />
+    <ClCompile Include="Source\Object\Stage\Stage.cpp" />
     <ClCompile Include="Source\Resource\GltfModel.cpp" />
     <ClCompile Include="Source\Resource\Texture.cpp" />
     <ClCompile Include="Source\Scene\DemoScene.cpp" />

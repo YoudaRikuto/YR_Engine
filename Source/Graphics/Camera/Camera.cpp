@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Graphics/Graphics.h"
 #include "Object/Character/Player/PlayerManager.h"
+#include "Input/Input.h"
 
 // ----- çXêV -----
 void Camera::Update(const float& elapsedTime)
@@ -9,6 +10,8 @@ void Camera::Update(const float& elapsedTime)
 
     target_ = XMFloat3Lerp(target_, cameraTargetPosition, 0.12f);
     //target_ = XMFloat3Lerp(target_, cameraTargetPosition, lerpWeight_);
+
+    Rotate(elapsedTime);
 }
 
 // ----- ImGui -----
@@ -63,4 +66,20 @@ const DirectX::XMFLOAT3 Camera::CalcRight()
     const DirectX::XMFLOAT3 up      = DirectX::XMFLOAT3(0, 1, 0);
 
     return XMFloat3Normalize(XMFloat3Cross(up, forward));
+}
+
+// ----- âÒì]èàóù -----
+void Camera::Rotate(const float& elapsedTime)
+{
+    const float aRx = Input::Instance().GetGamePad().GetAxisRx();
+    const float aRy = Input::Instance().GetGamePad().GetAxisRy();
+    
+    DirectX::XMFLOAT3 rotation = transform_.GetRotation();
+
+    rotation.y += aRx * horizontalRotationSpeed_ * elapsedTime;
+
+    rotation.x += aRy * verticalRotationSpeed_ * elapsedTime;
+    rotation.x = std::clamp(rotation.x, minRotationX_, maxRotationX_);
+
+    transform_.SetRotation(rotation);
 }

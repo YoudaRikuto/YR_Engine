@@ -35,6 +35,10 @@ public:
     [[nodiscard]] const DirectX::XMFLOAT3   GetEye()        const { return eye_; }
 
 private:
+    void Rotate(const float& elapsedTime);
+
+private:
+    // ---------- Camera Information ----------
     Transform3D         transform_  = {};
     DirectX::XMFLOAT4X4 view_       = {};
     DirectX::XMFLOAT4X4 projection_ = {};
@@ -47,5 +51,11 @@ private:
     float               farZ_       = 150.0f;
     float               fov_        = 45.0f;
     float               length_     = 10.0f;
+
+    // ---------- Rotation ----------
+    float verticalRotationSpeed_    = 1.7f; // êÇíºâÒì]ë¨ìx
+    float horizontalRotationSpeed_  = 4.0f; // êÖïΩâÒì]ë¨ìx
+    float minRotationX_             = DirectX::XMConvertToRadians(-15.0f);
+    float maxRotationX_             = DirectX::XMConvertToRadians(35.0f);
 };
 
