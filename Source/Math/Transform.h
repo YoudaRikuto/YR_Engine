@@ -170,6 +170,8 @@ public:
     void AddRotationY(const float& y) { rotation_.y += y; }
     void AddRotationZ(const float& z) { rotation_.z += z; }
 
+    [[nodiscard]] const DirectX::XMFLOAT4X4 GetCoordinateSystemTransforms(const CoordinateSystem& coordinateSystem) { return coordinateSystemTransforms_[static_cast<int>(coordinateSystem)]; }
+
 private:
     CoordinateSystem    coordinateSystem_   = CoordinateSystem::cRightYup;
     DirectX::XMFLOAT3   position_           = {};

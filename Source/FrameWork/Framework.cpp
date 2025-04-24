@@ -5,7 +5,7 @@
 
 // ----- コンストラクタ -----
 Framework::Framework(HWND hwnd)
-    : hwnd_(hwnd), graphics_(hwnd),
+    : hwnd_(hwnd), graphics_(hwnd), input_(hwnd),
     sceneConstants_()
 {
 }
@@ -13,6 +13,10 @@ Framework::Framework(HWND hwnd)
 // ----- 初期化 -----
 const bool Framework::Initialize()
 {
+    // Input 初期設定
+    input_.GetMouse().SetScreenWidth(SCREEN_WIDTH);
+    input_.GetMouse().SetScreenHeight(SCREEN_HEIGHT);
+
     SceneManager::Instance().Initialize();
 
     sceneConstants_.GetData()->lightDirection_ = { 0.0f, -1.0f, 0.0f, 0.0f };
@@ -34,8 +38,14 @@ void Framework::Update(const float& elapsedTime)
     // ImGui更新
     IMGUI_CTRL_CLEAR_FRAME();
 
+    // 入力更新
+    input_.Update();
+
     // Scene更新
     SceneManager::Instance().Update(elapsedTime);
+
+    // カメラ更新
+    Camera::Instance().Update(elapsedTime);
 
     // ImGui更新
     DrawDebug();

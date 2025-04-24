@@ -270,9 +270,33 @@ public:
 
     void Render(const float& scaleFactor, ID3D11PixelShader* psShader = nullptr);
     void DrawDebug(); // ImGui
+    
+public:
+    // ---------- Transform ----------
+    Transform3D* GetTransform() { return &transform_; }
 
     // ---------- Animation ----------
+    void PlayAnimation(const int& index, const bool& loop, const float& speed, const float& startFrame);
+    void PlayAnimationBlend(const int& index, const bool& loop, const float& speed, const float& blendStartFrame, const float& transitionTime);
+    void UpdateAnimation(const float& elapsedTime); // アニメーション更新
+    void SetAnimationSpeed(const float& speed) { animationSpeed_ = speed; }
+    void SetTransitionTime(const float& time) { transitionTime_ = time; }
+
+    // ---------- RootMotion ----------
+    void UpdateRootMotion(const float& scaleFacter);
+    void UseRootMotion(const bool& flag);
+
+    // ---------- JointPosition ----------
+    const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
+    const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
+
+
+private:
+    // ---------- Animation ----------
+    const bool UpdateAnimationBlend(const float& elapsedTime);  // アニメーションブレンド
+    void BlendAnimations(const std::vector<Node>* nodes[2], const float& factor, std::vector<Node>& node);
     void Animate(const int& animationIndex, const float& time, std::vector<Node>& animatedNodes);
+
 
 
 private:
@@ -308,7 +332,7 @@ public:
     // ---------- Model情報 ----------
     const std::string           filename_;
     const std::string           rootNodeName_;
-
+    int                         rootJointIndex_ = 0;
 
 
 
@@ -334,7 +358,19 @@ private:
     Transform3D transform_;
 
     // ---------- Animation ----------
-    int     animationIndex_ = -1;
-    float   animationSpeed_ = 0.0f;
+    std::vector<Node>   animatedNodes_[2];
+    int                 animationIndex_         = -1;
+    float               animationSeconds_       = 0.0f;
+    float               animationSpeed_         = 0.0f;
+    float               animationBlendSeconds_  = 0.0f;
+    float               transitionTime_         = 1.0f;
+    bool                isAnimationLoop_        = false;
+    bool                isAnimationEnd_         = false;
+    bool                isAnimationBlend_       = false;
+    // ---------- RootMotion ----------
+    std::vector<Node>   zeroAnimatedNodes_;
+    DirectX::XMFLOAT3   previousPosition_       = {};
+    DirectX::XMFLOAT3   rootMotionValue_        = { 1.0f, 1.0f, 1.0f };
+    bool                isRootMotionActive_     = false;
 
 };

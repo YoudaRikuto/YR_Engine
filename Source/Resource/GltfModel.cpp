@@ -44,6 +44,10 @@ GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeNam
 
     primitiveConstants_ = std::make_unique<ConstantBuffer<PrimitiveConstants>>();
     jointConstants_ = std::make_unique<ConstantBuffer<JointConstants>>();
+
+    animatedNodes_[0] = nodes_;
+    animatedNodes_[1] = nodes_;
+    zeroAnimatedNodes_ = nodes_;
 }
 
 // ----- 描画 -----
@@ -153,6 +157,216 @@ void GltfModel::DrawDebug()
     transform_.DrawDebug();
 }
 
+// ----- アニメーション再生 -----
+void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& startFrame)
+{
+    animationIndex_     = index;
+    animationSeconds_   = startFrame;
+    animationSpeed_     = speed;
+    isAnimationLoop_    = loop;
+    isAnimationEnd_     = false;
+    isAnimationBlend_   = false;
+}
+
+// ----- アニメーションブレンド再生 -----
+void GltfModel::PlayAnimationBlend(const int& index, const bool& loop, const float& speed, const float& blendStartFrame, const float& transitionTime)
+{
+    if (isAnimationBlend_)
+    {
+        animatedNodes_[0] = nodes_;
+    }
+    else
+    {
+        Animate(animationIndex_, animationSeconds_, animatedNodes_[0]);
+    }
+    Animate(index, blendStartFrame, animatedNodes_[1]);
+
+    animationIndex_     = index;
+    animationSeconds_   = blendStartFrame;
+    animationSpeed_     = speed;
+    transitionTime_     = transitionTime_;
+    isAnimationLoop_    = loop;
+    isAnimationEnd_     = false;
+    isAnimationBlend_   = true;
+}
+
+
+// ----- アニメーション更新 -----
+void GltfModel::UpdateAnimation(const float& elapsedTime)
+{
+    // アニメーションブレンド
+    if (UpdateAnimationBlend(elapsedTime)) return;
+
+    animationSeconds_ += animationSpeed_ * elapsedTime;
+
+    const float animationEndFrame = animations_.at(animationIndex_).duration_;
+
+    if (animationSeconds_ > animationEndFrame)
+    {
+        if (isAnimationLoop_)
+        {
+            animationSeconds_ = 0.0f;
+            
+            return;
+        }
+        else
+        {
+            isAnimationEnd_ = true;
+
+            return;
+        }
+    }
+
+    Animate(animationIndex_, animationSeconds_, nodes_);
+}
+
+// ----- ルートモーション更新 -----
+void GltfModel::UpdateRootMotion(const float& scaleFacter)
+{
+    if (isRootMotionActive_ == false) return;
+
+    Node& node = nodes_.at(rootJointIndex_);
+    
+    DirectX::XMFLOAT3 position      = { node.globalTransform_._41, node.globalTransform_._42, node.globalTransform_._43 };
+    DirectX::XMFLOAT3 displacement  = { position.x - previousPosition_.x, position.y - previousPosition_.y, position.z - previousPosition_.z };
+
+    DirectX::XMFLOAT4X4 coordinateSystem = transform_.GetCoordinateSystemTransforms(Transform3D::CoordinateSystem::cRightYup);
+    DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&coordinateSystem) * DirectX::XMMatrixScaling(scaleFacter, scaleFacter, scaleFacter);
+    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(transform_.GetScale().x, transform_.GetScale().y, transform_.GetScale().z);
+    DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(transform_.GetRotationX(), transform_.GetRotationY(), transform_.GetRotationZ());
+    DirectX::XMStoreFloat3(&displacement, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&displacement), C * S * R));
+
+    DirectX::XMFLOAT3 translation = transform_.GetPosition();
+    translation = translation + displacement * rootMotionValue_;
+    transform_.SetPosition(translation);
+
+    node.globalTransform_._41 = zeroAnimatedNodes_.at(rootJointIndex_).globalTransform_._41;
+    node.globalTransform_._42 = zeroAnimatedNodes_.at(rootJointIndex_).globalTransform_._42;
+    node.globalTransform_._43 = zeroAnimatedNodes_.at(rootJointIndex_).globalTransform_._43;
+
+    std::function<void(int, int)> traverse = [&](int parentIndex, int nodeIndex)
+    {
+        Node& node = nodes_.at(nodeIndex);
+        if (parentIndex > -1)
+        {
+            DirectX::XMMATRIX S = DirectX::XMMatrixScaling(node.scale_.x, node.scale_.y, node.scale_.z);
+            DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(node.rotation_.x, node.rotation_.y, node.rotation_.z, node.rotation_.w));
+            DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(node.translation_.x, node.translation_.y, node.translation_.z);
+            DirectX::XMStoreFloat4x4(&node.globalTransform_, S * R * T * DirectX::XMLoadFloat4x4(&nodes_.at(parentIndex).globalTransform_));
+        }
+        for (int childIndex : node.children_)
+        {
+            traverse(nodeIndex, childIndex);
+        }
+    };
+    traverse(-1, rootJointIndex_);
+
+    previousPosition_ = position;
+}
+
+// ----- ルートモーション使用設定 -----
+void GltfModel::UseRootMotion(const bool& flag)
+{
+    isRootMotionActive_ = flag;
+
+    if (flag)
+    {
+        Animate(animationIndex_, animationSeconds_, nodes_);
+               
+        Node& node = nodes_.at(rootJointIndex_);
+
+        previousPosition_ = { node.globalTransform_._41, node.globalTransform_._42, node.globalTransform_._43 };
+    }
+}
+
+// ----- 指定したジョイントの位置を取得 -----
+const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition)
+{
+    DirectX::XMFLOAT3 position = offsetPosition;
+
+    const Node& node = nodes_.at(nodeIndex);
+    DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&node.globalTransform_) * GetTransform()->CalcWorldMatrix(scaleFactor);
+    DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
+
+    return position;
+}
+
+// ----- 指定したジョイントの位置を取得 -----
+const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition)
+{
+    DirectX::XMFLOAT3 position = offsetPosition;
+
+    // ノードを名前検索する
+    for (Node& node : nodes_)
+    {
+        // 名前が一致しなかったら continue
+        if (node.name_ != nodeName) continue;
+
+        DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&node.globalTransform_) * GetTransform()->CalcWorldMatrix(scaleFactor);
+        DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
+
+        return position;
+    }
+
+    // 見つからなかった。
+    return DirectX::XMFLOAT3(0, 0, 0);
+}
+
+// ----- アニメーションブレンド -----
+const bool GltfModel::UpdateAnimationBlend(const float& elapsedTime)
+{
+    // アニメーションブレンドを行わない
+    if (isAnimationBlend_ == false) return false;
+
+    const float weight = animationBlendSeconds_ / transitionTime_;
+
+    const std::vector<Node>* nodes[2] = { &animatedNodes_[0], &animatedNodes_[1] };
+    BlendAnimations(nodes, weight, nodes_);
+    
+    animationBlendSeconds_ += animationSpeed_ * elapsedTime;
+
+    // 終了チェック
+    if (weight > 1.0f)
+    {
+        animationBlendSeconds_  = 0.0f;
+        isAnimationBlend_       = false;
+    }
+
+    return true;
+}
+
+// ----- ブレンド計算 -----
+void GltfModel::BlendAnimations(const std::vector<Node>* nodes[2], const float& factor, std::vector<Node>& node)
+{
+    const size_t nodeCount = nodes[0]->size();
+    node.resize(nodeCount);
+
+    for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+    {
+        DirectX::XMVECTOR S[2] =
+        {
+            DirectX::XMLoadFloat3(&nodes[0]->at(nodeIndex).scale_),
+            DirectX::XMLoadFloat3(&nodes[1]->at(nodeIndex).scale_)
+        };
+        DirectX::XMStoreFloat3(&node.at(nodeIndex).scale_, DirectX::XMVectorLerp(S[0], S[1], factor));
+
+        DirectX::XMVECTOR R[2] =
+        {
+            DirectX::XMLoadFloat4(&nodes[0]->at(nodeIndex).rotation_),
+            DirectX::XMLoadFloat4(&nodes[1]->at(nodeIndex).rotation_)
+        };
+        DirectX::XMStoreFloat4(&node.at(nodeIndex).rotation_, DirectX::XMQuaternionSlerp(R[0], R[1], factor));
+
+        DirectX::XMVECTOR T[2] =
+        {
+            DirectX::XMLoadFloat3(&nodes[0]->at(nodeIndex).translation_),
+            DirectX::XMLoadFloat3(&nodes[1]->at(nodeIndex).translation_),
+        };
+        DirectX::XMStoreFloat3(&node.at(nodeIndex).translation_, DirectX::XMVectorLerp(T[0], T[1], factor));
+    }
+
+    CumulateTransforms(node);
+}
 
 void GltfModel::Animate(const int& animationIndex, const float& time, std::vector<Node>& animatedNodes)
 {
@@ -267,7 +481,7 @@ void GltfModel::LoadGltfModelFromFilename()
     cerealFilename.replace_extension("cereal");
     std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
     cereal::BinaryOutputArchive serialization(ofs);
-    serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_);
+    serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_);
 }
 
 // ----- CerealデータからModel情報読み込み -----
@@ -278,7 +492,7 @@ void GltfModel::LoadGltfModelFromCereal()
 
     std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
     cereal::BinaryInputArchive deserialization(ifs);
-    deserialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_);
+    deserialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_);
 
     // Load Texture
     for (size_t imageIndex = 0; imageIndex < images_.size(); ++imageIndex)
@@ -353,6 +567,8 @@ void GltfModel::LoadGltfModelFromCereal()
 // ----- Node情報抽出 -----
 void GltfModel::FetchNodes(const tinygltf::Model& gltfModel)
 {
+    int counter = 0;
+
     for (std::vector<tinygltf::Node>::const_reference gltfNode : gltfModel.nodes)
     {
         Node& node = nodes_.emplace_back();
@@ -361,6 +577,13 @@ void GltfModel::FetchNodes(const tinygltf::Model& gltfModel)
         node.mesh_ = gltfNode.mesh;
         node.children_ = gltfNode.children;
         node.isRootNode_ = (gltfNode.name == rootNodeName_.c_str());
+
+        // RootNodeを見つけ出す
+        if (node.isRootNode_)
+        {
+            rootJointIndex_ = counter;
+        }
+        ++counter;
 
         if (gltfNode.matrix.empty() == false)
         {

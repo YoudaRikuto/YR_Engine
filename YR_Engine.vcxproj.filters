@@ -49,6 +49,27 @@
     <Filter Include="YR_Engine\Shader">
       <UniqueIdentifier>{66af9be2-4379-407e-9acf-2054a3a2a17d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Object\Character">
+      <UniqueIdentifier>{2064c89b-7744-496e-914b-9011cec6ba0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Object\Character\Enemy">
+      <UniqueIdentifier>{af7ff383-d02e-476b-a849-139be4534d7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Object\Character\Player">
+      <UniqueIdentifier>{8875270f-aef4-403e-8993-c4a900ff7e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Ai\StateMachine">
+      <UniqueIdentifier>{dac74c19-82e3-4753-a6dc-43e769327ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Ai\BehaviorTree">
+      <UniqueIdentifier>{4ffad43c-bbbf-4cf7-8b24-d27961308589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\Nlohmann">
+      <UniqueIdentifier>{190da622-f908-48ab-9564-f6a2c4bd2800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Object\Stage">
+      <UniqueIdentifier>{3544766e-c606-472b-a446-b422fd476ceb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -114,6 +135,31 @@
     <ClCompile Include="Source\Graphics\Camera\Camera.cpp">
       <Filter>YR_Engine\Graphics\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Object.cpp">
+      <Filter>YR_Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Character.cpp">
+      <Filter>YR_Engine\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Player\Player.cpp">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>YR_Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\GamePad.cpp">
+      <Filter>YR_Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\Mouse.cpp">
+      <Filter>YR_Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Player\PlayerManager.cpp">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -206,6 +252,43 @@
     <ClInclude Include="Source\Graphics\Camera\Camera.h">
       <Filter>YR_Engine\Graphics\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Object\Object.h">
+      <Filter>YR_Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Character.h">
+      <Filter>YR_Engine\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Player\Player.h">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ai\State.h">
+      <Filter>YR_Engine\Ai\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Ai\StateMachine.h">
+      <Filter>YR_Engine\Ai\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Player\PlayerState.h">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\Input.h">
+      <Filter>YR_Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\GamePad.h">
+      <Filter>YR_Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\Mouse.h">
+      <Filter>YR_Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Player\PlayerManager.h">
+      <Filter>YR_Engine\Object\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="External\nlohmann\json.hpp">
+      <Filter>External\Nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="External\nlohmann\json_fwd.hpp">
+      <Filter>External\Nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Stage\Stage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\GltfModel.hlsli">
