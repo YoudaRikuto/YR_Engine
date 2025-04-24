@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include "tinygltf/tiny_gltf.h"
-#include "Resource/Texture.h"
+#include "Resource/Texture.h"   
 
 // ----- コンストラクタ -----
 GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeName)
