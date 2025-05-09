@@ -3,10 +3,11 @@
 #include "Object/Character/Player/PlayerManager.h"
 #include "Input/Input.h"
 
-// ----- 更新 -----
+// 更新 
 void Camera::Update(const float& elapsedTime)
 {
-    DirectX::XMFLOAT3 cameraTargetPosition = { PlayerManager::Instance().GetTransform()->GetPositionX(), 0.0f, PlayerManager::Instance().GetTransform()->GetPositionZ() };
+    //DirectX::XMFLOAT3 cameraTargetPosition = { PlayerManager::Instance().GetTransform()->GetPositionX(), 0.0f, PlayerManager::Instance().GetTransform()->GetPositionZ() };
+    DirectX::XMFLOAT3 cameraTargetPosition = PlayerManager::Instance().GetTransform()->GetPosition();
 
     target_ = XMFloat3Lerp(target_, cameraTargetPosition, 0.12f);
     //target_ = XMFloat3Lerp(target_, cameraTargetPosition, lerpWeight_);
@@ -14,9 +15,15 @@ void Camera::Update(const float& elapsedTime)
     Rotate(elapsedTime);
 }
 
-// ----- ImGui -----
+// ImGui 
 void Camera::DrawDebug()
 {
+    ImGui::Begin("Camera");
+
+    ImGui::DragFloat3("Offset", &offset_.x, 0.1f);
+    ImGui::DragFloat("Length", &length_, 0.1f);
+
+    ImGui::End();
 }
 
 void Camera::SetPerspectiveFov()
@@ -39,7 +46,7 @@ void Camera::SetPerspectiveFov()
     DirectX::XMStoreFloat4x4(&view_, DirectX::XMMatrixLookAtLH(eye, focus, up));
 }
 
-// ----- カメラから見たベクトルに変換する -----
+// カメラから見たベクトルに変換する 
 const DirectX::XMFLOAT2 Camera::ConvertTo2DVectorFromCamera(const DirectX::XMFLOAT2& v)
 {
     DirectX::XMFLOAT2 result = {};
@@ -53,13 +60,13 @@ const DirectX::XMFLOAT2 Camera::ConvertTo2DVectorFromCamera(const DirectX::XMFLO
     return XMFloat2Normalize(result);
 }
 
-// ----- 前ベクトル算出 -----
+// 前ベクトル算出 
 const DirectX::XMFLOAT3 Camera::CalcForward()
 {
     return XMFloat3Normalize(focus_ - eye_);
 }
 
-// ----- 右ベクトル算出 -----
+// 右ベクトル算出 
 const DirectX::XMFLOAT3 Camera::CalcRight()
 {
     const DirectX::XMFLOAT3 forward = CalcForward();
@@ -68,7 +75,7 @@ const DirectX::XMFLOAT3 Camera::CalcRight()
     return XMFloat3Normalize(XMFloat3Cross(up, forward));
 }
 
-// ----- 回転処理 -----
+// 回転処理 
 void Camera::Rotate(const float& elapsedTime)
 {
     const float aRx = Input::Instance().GetGamePad().GetAxisRx();

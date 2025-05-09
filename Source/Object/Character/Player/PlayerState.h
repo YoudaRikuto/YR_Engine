@@ -46,16 +46,85 @@ namespace PlayerState
         void DrawDebug()                        override;
     };
 
-    class JumpState : public State<Player>
+    class JumpStartState : public State<Player>
     {
     public:
-        JumpState(Player* player) : State(player, "JumpState") {}
-        ~JumpState() {}
+        JumpStartState(Player* player) : State(player, "JumpStartState") {}
+        ~JumpStartState() {}
 
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        // ---------- Animation ----------
+        float   animationStartFrame_    = 0.13f;
+        float   transitionIdle_         = 0.5f;
+        float   transitionRun_          = 0.3f;
+
+        float   jumpPower_  = 10.0f;
+
+        float   jumpFrame_  = 0.2f;
+        bool    isJumped_   = false;
+    };
+
+    class JumpLoopState : public State<Player>
+    {
+    public:
+        JumpLoopState(Player* player) : State(player, "JumpLoopState") {}
+        ~JumpLoopState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float landingTriggerPositionY_ = 0.05f;
+    };
+
+    class JumpEndState : public State<Player>
+    {
+    public:
+        JumpEndState(Player* player) : State(player, "JumpEndState") {}
+        ~JumpEndState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float animationStartFrame_  = 0.18f;
+        float transitionTime_       = 0.1f;
+    };
+
+    class JumpEndToRunState : public State<Player>
+    {
+    public:
+        JumpEndToRunState(Player* player) : State(player, "JumpEndToRunState") {}
+        ~JumpEndToRunState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float animationEndFrame_ = 0.2f;
     };
 
     class DoubleJumpState : public State<Player>
@@ -68,5 +137,136 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float animationSpeed_ = 1.0f;
+
+        float animationStartFrame_  = 0.26f;
+        float animationEndFrame_    = 0.8f;
+
+    };
+
+    class Attack1_1State : public State<Player>
+    {
+    public:
+        Attack1_1State(Player* player) : State(player, "Attack1_1State") {}
+        ~Attack1_1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class Attack1_2State : public State<Player>
+    {
+    public:
+        Attack1_2State(Player* player) : State(player, "Attack1_2State") {}
+        ~Attack1_2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class Attack1_3State : public State<Player>
+    {
+    public:
+        Attack1_3State(Player* player) : State(player, "Attack1_3State") {}
+        ~Attack1_3State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class Attack1_4State : public State<Player>
+    {
+    public:
+        Attack1_4State(Player* player) : State(player, "Attack1_4State") {}
+        ~Attack1_4State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class AttackAir1_1State : public State<Player>
+    {
+    public:
+        AttackAir1_1State(Player* player) : State(player, "AttackAir1_1State") {}
+        ~AttackAir1_1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class AttackAir1_2State : public State<Player>
+    {
+    public:
+        AttackAir1_2State(Player* player) : State(player, "AttackAir1_2State") {}
+        ~AttackAir1_2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class AttackAir1_3State : public State<Player>
+    {
+    public:
+        AttackAir1_3State(Player* player) : State(player, "AttackAir1_3State") {}
+        ~AttackAir1_3State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class AttackAir1_4State : public State<Player>
+    {
+    public:
+        AttackAir1_4State(Player* player) : State(player, "AttackAir1_4State") {}
+        ~AttackAir1_4State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+    };
+
+    class AttackAirToFloorState : public State<Player>
+    {
+    public:
+        AttackAirToFloorState(Player* player) : State(player, "AttackAirToFloorState") {}
+        ~AttackAirToFloorState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+        void UpdateFallingSpeed(); // 落下速度更新
+
+    private:
+        // ---------- Animation ----------
+        float startAnimationSpeed_ = 0.9f;
+
+        float fallingSpeed_ = -40.0f;
+
+        float landingTriggerPositionY_ = 0.05f;
     };
 }

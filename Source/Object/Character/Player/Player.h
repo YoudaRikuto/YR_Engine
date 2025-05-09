@@ -10,8 +10,20 @@ public:
         Idle,
         Run,
         Roll,
-        Jump,
+        JumpStart,
+        JumpLoop,
+        JumpEnd,
+        JumpEndToRun,
         DoubleJump,
+        Attack1_1,
+        Attack1_2,
+        Attack1_3,
+        Attack1_4,
+        AttackAir1_1,
+        AttackAir1_2,
+        AttackAir1_3,
+        AttackAir1_4,
+        AttackAirToFloor,
     };
     enum class Animation
     {
@@ -19,10 +31,47 @@ public:
         Run,
         RollForward,
         RollBack,
+        AirDodgeForward,
+        AirDodgeBack,
         JumpStart,
+        JumpStartForward,
         JumpLoop,
         JumpEnd,
+        JumpEndRun,
         DoubleJump,
+        Attack1_1,
+        Attack1_2,
+        Attack1_3,
+        Attack1_4,
+        Attack2_1,
+        Attack2_2,
+        Attack2_3,
+        Attack2_4,
+        Attack3_1,
+        Attack3_2,
+        Attack3_3,
+        Attack3_4,
+        Attack4_1,
+        Attack4_2,
+        Attack4_3,
+        Attack4_4,
+        Attack5_1,
+        Attack5_2,
+        Attack5_3,
+        Attack5_4,
+        AttackAir1_1,
+        AttackAir1_2,
+        AttackAir1_3,
+        AttackAir1_4,
+        AttackAirToFloor_Start,
+        AttackAirToFloor_Loop,
+        AttackAirToFloor_End,
+    };
+    enum class WeaponDataType
+    {
+        Default,
+        AttackAirToFloor,
+        Max
     };
 
 public:
@@ -43,12 +92,18 @@ public:
 
     // ---------- StateMachine ----------
     void ChangeState(const STATE& state);
+    const STATE GetCurrentState()   const { return currentState_; }
+    const STATE GetOldState()       const { return oldState_; }
 
     // ---------- Move ----------
     void SetMoveDirection(const DirectX::XMFLOAT3& direction) { moveDirection_ = direction; }
 
     // ---------- Turn ----------
     void Turn(const float& elapsedTime); // ê˘âÒèàóù
+
+    // ---------- Weapon ----------
+    void ChangeWeaponDataType(const WeaponDataType& type);
+    const int GetCurrentWeaponDataType() const { return currentWeaponDataType_; }
 
 private:
     // ---------- StateMachine ----------
@@ -57,23 +112,40 @@ private:
     // ---------- Move ----------
     void Move(const float& elapsedTime); // à⁄ìÆèàóù
 
+    // ---------- Weapon ----------
+    void UpdateWeaponTransform(const float& elapsedTime);
+    
 private:
+    // ---------- StateMachine ----------
+    std::unique_ptr<StateMachine<State<Player>>> stateMachine_;
+    STATE currentState_ = STATE::Idle;
+    STATE oldState_ = STATE::Idle;
+
+    // ---------- Move ----------
+    DirectX::XMFLOAT3   moveDirection_  = {};
+    float               gravity_        = 25.0f;
+
     // ---------- Weapon ----------
     struct WeaponTransform
     {
-        DirectX::XMFLOAT3   location_   = {};
+        DirectX::XMFLOAT3   location_   = { -13.0f, -4.0f, 7.0f };
         DirectX::XMFLOAT3   rotation_   = {};
-        DirectX::XMFLOAT3   scale_      = {};
+        DirectX::XMFLOAT3   scale_      = { 1.0f, 1.0f, 1.0f };
         DirectX::XMFLOAT4X4 world_      = {};
     }swordTransform_;
     Object sword_;
 
-    // ---------- StateMachine ----------
-    std::unique_ptr<StateMachine<State<Player>>> stateMachine_;
-    STATE currentState_ = STATE::Idle;
-    STATE oldState_     = STATE::Idle;
+    struct WeaponData
+    {
+        WeaponTransform weaponTransform_;
+        Transform3D     transform_;
+    };
+    WeaponData weaponData_[static_cast<int>(WeaponDataType::Max)];
 
-    // ---------- Move ----------
-    DirectX::XMFLOAT3 moveDirection_ = {};
+    int     currentWeaponDataType_      = static_cast<int>(WeaponDataType::Default);
+    int     oldWeaponDataType_          = static_cast<int>(WeaponDataType::Default);
+    float   weaponDataWeight_           = 0.0f;
+    float   weaponDataTypeChangeSpeed_  = 5.0f;
+    bool    isChangeWeaponData_         = false;
 };
 

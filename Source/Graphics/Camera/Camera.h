@@ -46,11 +46,11 @@ private:
     DirectX::XMFLOAT3   focus_      = {};
     DirectX::XMFLOAT3   up_         = { 0.0f, 1.0f, 0.0f };
     DirectX::XMFLOAT3   target_     = {};
-    DirectX::XMFLOAT3   offset_     = {};
+    DirectX::XMFLOAT3   offset_     = { 0.0f, 1.7f, 0.0f };
     float               nearZ_      = 0.1f;
     float               farZ_       = 150.0f;
     float               fov_        = 45.0f;
-    float               length_     = 10.0f;
+    float               length_     = 6.0f;
 
     // ---------- Rotation ----------
     float verticalRotationSpeed_    = 1.7f; // êÇíºâÒì]ë¨ìx

@@ -9,7 +9,6 @@
 #include "tinygltf/tiny_gltf.h"
 #include "Resource/Texture.h"   
 
-// ----- コンストラクタ -----
 GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeName)
     : filename_(filename),
     rootNodeName_(rootNodeName)
@@ -50,7 +49,7 @@ GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeNam
     zeroAnimatedNodes_ = nodes_;
 }
 
-// ----- 描画 -----
+// 描画 
 void GltfModel::Render(const float& scaleFactor, ID3D11PixelShader* psShader)
 {
     ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
@@ -151,13 +150,111 @@ void GltfModel::Render(const float& scaleFactor, ID3D11PixelShader* psShader)
     }
 }
 
-// ----- ImGui -----
+// 描画
+void GltfModel::Render(const DirectX::XMFLOAT4X4 world, ID3D11PixelShader* psShader)
+{
+    ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
+
+    deviceContext->PSSetShaderResources(0, 1, materialResourceView_.GetAddressOf());
+    deviceContext->VSSetShader(vertexShader_.Get(), nullptr, 0);
+    psShader ? deviceContext->PSSetShader(psShader, nullptr, 0) : deviceContext->PSSetShader(pixelShader_.Get(), nullptr, 0);
+    deviceContext->IASetInputLayout(inputLayout_.Get());
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    std::function<void(int)> traverse{ [&](int nodeIndex)->void {
+        const Node& node{nodes_.at(nodeIndex)};
+        if (node.mesh_ > -1)
+        {
+            const Mesh& mesh = meshes_.at(node.mesh_);
+            for (std::vector<Mesh::Primitive>::const_reference primitive : mesh.primitives_)
+            {
+                ID3D11Buffer* vertexBuffers[] =
+                {
+                    primitive.vertexBufferViews_.at("POSITION").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("NORMAL").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("TANGENT").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("TEXCOORD_0").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("JOINTS_0").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("WEIGHTS_0").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("JOINTS_1").buffer_.Get(),
+                    primitive.vertexBufferViews_.at("WEIGHTS_1").buffer_.Get(),
+                };
+                UINT strides[] =
+                {
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("POSITION").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("NORMAL").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("TANGENT").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("TEXCOORD_0").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("JOINTS_0").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("WEIGHTS_0").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("JOINTS_1").strideInBytes_),
+                    static_cast<UINT>(primitive.vertexBufferViews_.at("WEIGHTS_1").strideInBytes_),
+                };
+                UINT offsets[_countof(vertexBuffers)]{ 0 };
+                deviceContext->IASetVertexBuffers(0, _countof(vertexBuffers), vertexBuffers, strides, offsets);
+                deviceContext->IASetIndexBuffer(primitive.indexBufferView_.buffer_.Get(), primitive.indexBufferView_.format_, 0);
+
+                primitiveConstants_->GetData()->material_ = primitive.material_;
+                primitiveConstants_->GetData()->hasTangent_ = primitive.vertexBufferViews_.at("TANGENT").buffer_ != NULL;
+                primitiveConstants_->GetData()->skin_ = node.skin_;
+                DirectX::XMStoreFloat4x4(&primitiveConstants_->GetData()->world_, DirectX::XMLoadFloat4x4(&node.globalTransform_) * DirectX::XMLoadFloat4x4(&world));
+                primitiveConstants_->Activate(1, true, true, false, true);
+
+                const Material& material = materials_.at(primitive.material_);
+                const int textureIndices[] =
+                {
+                    material.data_.pbrMetallicRoughness_.baseColorTexture_.index_,
+                    material.data_.pbrMetallicRoughness_.metallicRoughnessTexture_.index_,
+                    material.data_.normalTexture_.index_,
+                    material.data_.emissiveTexture_.index_,
+                    material.data_.occlusionTexture_.index_,
+                };
+                ID3D11ShaderResourceView* nullShaderResourceView{};
+                std::vector<ID3D11ShaderResourceView*> shaderResourceViews(_countof(textureIndices));
+                for (int textureIndex = 0; textureIndex < shaderResourceViews.size(); ++textureIndex)
+                {
+                    shaderResourceViews.at(textureIndex) = textureIndices[textureIndex] > -1 ?
+                        textureResourceViews_.at(textures_.at(textureIndices[textureIndex]).source_).Get() :
+                        nullShaderResourceView;
+                }
+                deviceContext->PSSetShaderResources(1, static_cast<UINT>(shaderResourceViews.size()), shaderResourceViews.data());
+                
+                if (node.skin_ > -1)
+                {
+                    const Skin& skin = skins_.at(node.skin_);
+                    for (size_t jointIndex = 0; jointIndex < skin.joints_.size(); ++jointIndex)
+                    {
+                        DirectX::XMStoreFloat4x4(&jointConstants_->GetData()->matrices_[jointIndex],
+                            DirectX::XMLoadFloat4x4(&skin.inverseBindMatrices_.at(jointIndex)) *
+                            DirectX::XMLoadFloat4x4(&nodes_.at(skin.joints_.at(jointIndex)).globalTransform_) *
+                            DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&node.globalTransform_))
+                        );
+                    }
+                    jointConstants_->Activate(2);
+                }
+
+
+                deviceContext->DrawIndexed(static_cast<UINT>(primitive.indexBufferView_.Count()), 0, 0);
+            }
+        }
+        for (std::vector<int>::value_type childIndex : node.children_)
+        {
+            traverse(childIndex);
+        }
+    } };
+    for (std::vector<int>::value_type nodeIndex : scenes_.at(0).nodes_)
+    {
+        traverse(nodeIndex);
+    }
+}
+
+// ImGui 
 void GltfModel::DrawDebug()
 {
     transform_.DrawDebug();
 }
 
-// ----- アニメーション再生 -----
+// アニメーション再生 
 void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& startFrame)
 {
     animationIndex_     = index;
@@ -168,7 +265,7 @@ void GltfModel::PlayAnimation(const int& index, const bool& loop, const float& s
     isAnimationBlend_   = false;
 }
 
-// ----- アニメーションブレンド再生 -----
+// アニメーションブレンド再生 
 void GltfModel::PlayAnimationBlend(const int& index, const bool& loop, const float& speed, const float& blendStartFrame, const float& transitionTime)
 {
     if (isAnimationBlend_)
@@ -191,7 +288,7 @@ void GltfModel::PlayAnimationBlend(const int& index, const bool& loop, const flo
 }
 
 
-// ----- アニメーション更新 -----
+// アニメーション更新 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
 {
     // アニメーションブレンド
@@ -220,7 +317,7 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
     Animate(animationIndex_, animationSeconds_, nodes_);
 }
 
-// ----- ルートモーション更新 -----
+// ルートモーション更新 
 void GltfModel::UpdateRootMotion(const float& scaleFacter)
 {
     if (isRootMotionActive_ == false) return;
@@ -264,7 +361,7 @@ void GltfModel::UpdateRootMotion(const float& scaleFacter)
     previousPosition_ = position;
 }
 
-// ----- ルートモーション使用設定 -----
+// ルートモーション使用設定 
 void GltfModel::UseRootMotion(const bool& flag)
 {
     isRootMotionActive_ = flag;
@@ -279,7 +376,7 @@ void GltfModel::UseRootMotion(const bool& flag)
     }
 }
 
-// ----- 指定したジョイントの位置を取得 -----
+// 指定したジョイントの位置を取得 
 const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition)
 {
     DirectX::XMFLOAT3 position = offsetPosition;
@@ -291,7 +388,7 @@ const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const size_t& nodeIndex, con
     return position;
 }
 
-// ----- 指定したジョイントの位置を取得 -----
+// 指定したジョイントの位置を取得 
 const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition)
 {
     DirectX::XMFLOAT3 position = offsetPosition;
@@ -312,7 +409,21 @@ const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName,
     return DirectX::XMFLOAT3(0, 0, 0);
 }
 
-// ----- アニメーションブレンド -----
+// 指定されたノードのインデックスを取得 
+const int GltfModel::GetNodeIndex(const std::string& nodeName)
+{
+    for (int nodeIndex = 0; nodeIndex < nodes_.size(); ++nodeIndex)
+    {
+        if (nodes_.at(nodeIndex).name_ == nodeName)
+        {
+            return nodeIndex;
+        }
+    }
+
+    return -1;
+}
+
+// アニメーションブレンド 
 const bool GltfModel::UpdateAnimationBlend(const float& elapsedTime)
 {
     // アニメーションブレンドを行わない
@@ -335,7 +446,7 @@ const bool GltfModel::UpdateAnimationBlend(const float& elapsedTime)
     return true;
 }
 
-// ----- ブレンド計算 -----
+// ブレンド計算 
 void GltfModel::BlendAnimations(const std::vector<Node>* nodes[2], const float& factor, std::vector<Node>& node)
 {
     const size_t nodeCount = nodes[0]->size();
@@ -443,7 +554,7 @@ void GltfModel::Animate(const int& animationIndex, const float& time, std::vecto
     }
 }
 
-// ----- FilenameからModel情報読み込み -----
+// FilenameからModel情報読み込み 
 void GltfModel::LoadGltfModelFromFilename()
 {
     tinygltf::Model     gltfModel;
@@ -484,7 +595,7 @@ void GltfModel::LoadGltfModelFromFilename()
     serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_);
 }
 
-// ----- CerealデータからModel情報読み込み -----
+// CerealデータからModel情報読み込み 
 void GltfModel::LoadGltfModelFromCereal()
 {
     std::filesystem::path cerealFilename(filename_);
@@ -564,7 +675,7 @@ void GltfModel::LoadGltfModelFromCereal()
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- Node情報抽出 -----
+// Node情報抽出 
 void GltfModel::FetchNodes(const tinygltf::Model& gltfModel)
 {
     int counter = 0;
@@ -630,7 +741,7 @@ void GltfModel::FetchNodes(const tinygltf::Model& gltfModel)
     CumulateTransforms(nodes_);
 }
 
-// ----- Mesh情報抽出 -----
+// Mesh情報抽出 
 void GltfModel::FetchMeshes(const tinygltf::Model& gltfModel)
 {
     HRESULT result = S_OK;
@@ -744,7 +855,7 @@ void GltfModel::FetchMeshes(const tinygltf::Model& gltfModel)
     }
 }
 
-// ----- Material情報抽出 -----
+// Material情報抽出 
 void GltfModel::FetchMaterials(const tinygltf::Model& gltfModel)
 {
     for (std::vector<tinygltf::Material>::const_reference gltfMaterial : gltfModel.materials)
@@ -814,7 +925,7 @@ void GltfModel::FetchMaterials(const tinygltf::Model& gltfModel)
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- Texture情報抽出 -----
+// Texture情報抽出 
 void GltfModel::FetchTexture(const tinygltf::Model& gltfModel)
 {
     for (const tinygltf::Texture& gltfTexture : gltfModel.textures)
@@ -859,7 +970,7 @@ void GltfModel::FetchTexture(const tinygltf::Model& gltfModel)
     }
 }
 
-// ----- Animation情報抽出 -----
+// Animation情報抽出 
 void GltfModel::FetchAnimation(const tinygltf::Model& gltfModel)
 {
     for (std::vector<tinygltf::Skin>::const_reference transmissionSkin : gltfModel.skins)
@@ -945,7 +1056,7 @@ void GltfModel::FetchAnimation(const tinygltf::Model& gltfModel)
     }
 }
 
-// ----- 累積変換 -----
+// 累積変換 
 void GltfModel::CumulateTransforms(std::vector<Node>& nodes)
 {
     std::stack<DirectX::XMFLOAT4X4> parentGlobalTransforms;
@@ -958,12 +1069,12 @@ void GltfModel::CumulateTransforms(std::vector<Node>& nodes)
         DirectX::XMStoreFloat4x4(&node.globalTransform_, S * R * T * DirectX::XMLoadFloat4x4(&parentGlobalTransforms.top()));
 
         // RootMotionが有効でないときにはRootの移動値を無くす
-        //if (node.isRootNode_ && useRootMotion_ == false)
-        //{
-        //    node.globalTransform_._41 = 0;
-        //    node.globalTransform_._42 = 0;
-        //    node.globalTransform_._43 = 0;
-        //}
+        if (node.isRootNode_ && isRootMotionActive_ == false)
+        {
+            node.globalTransform_._41 = 0;
+            node.globalTransform_._42 = 0;
+            node.globalTransform_._43 = 0;
+        }
 
         for (int childIndex : node.children_)
         {
@@ -980,7 +1091,7 @@ void GltfModel::CumulateTransforms(std::vector<Node>& nodes)
     }
 }
 
-// ----- BufferView作成 -----
+// BufferView作成 
 GltfModel::BufferView GltfModel::MakeBufferView(const tinygltf::Accessor& accessor)
 {
     BufferView bufferView = {};

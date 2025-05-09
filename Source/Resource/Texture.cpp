@@ -4,13 +4,12 @@
 #include "Graphics/Graphics.h"
 #include "Framework/Misc.h"
 
-// ----- デストラクタ -----
 Texture::~Texture()
 {
     textures_.clear();
 }
 
-// ----- テクスチャ読み込み -----
+// テクスチャ読み込み 
 const Texture::TextureData Texture::LoadTexture(const wchar_t* filename)
 {
     const TextureMap::iterator it = textures_.find(filename);
@@ -50,7 +49,7 @@ const Texture::TextureData Texture::LoadTexture(const wchar_t* filename)
     return textureData;
 }
 
-// ----- テクスチャ読み込み -----
+// テクスチャ読み込み 
 const Texture::TextureData Texture::LoadTexture(const void* data, const size_t& size)
 {
     HRESULT         result = S_OK;
@@ -70,7 +69,7 @@ const Texture::TextureData Texture::LoadTexture(const void* data, const size_t& 
     return textureData;
 }
 
-// ----- ダミーテクスチャ生成 -----
+// ダミーテクスチャ生成 
 const Texture::TextureData Texture::MakeDummyTexture(const DWORD& value, const UINT& dimension)
 {
     HRESULT     result = S_OK;

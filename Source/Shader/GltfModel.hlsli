@@ -1,20 +1,20 @@
 struct VSIn
 {
-    float4 position_ : POSITION;
-    float4 normal_ : NORMAL;
-    float4 tangent_ : TANGENT;
-    float2 texcoord_ : TEXCOORD;
-    uint4 joints_[2] : JOINTS;
-    float4 weights_[2] : WEIGHTS;
+    float4 position_    : POSITION;
+    float4 normal_      : NORMAL;
+    float4 tangent_     : TANGENT;
+    float2 texcoord_    : TEXCOORD;
+    uint4  joints_[2]   : JOINTS;
+    float4 weights_[2]  : WEIGHTS;
 };
 
 struct PSIn
 {
-    float4 position_ : SV_POSITION;
-    float4 worldPosition_ : POSITION;
-    float4 worldNormal_ : NORMAL;
-    float4 worldTangent_ : TANGENT;
-    float2 texcoord_ : TEXCOORD;
+    float4 position_        : SV_POSITION;
+    float4 worldPosition_   : POSITION;
+    float4 worldNormal_     : NORMAL;
+    float4 worldTangent_    : TANGENT;
+    float2 texcoord_        : TEXCOORD;
 };
 
 cbuffer SceneConstantBuffer : register(b0)

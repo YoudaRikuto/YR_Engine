@@ -163,6 +163,16 @@ public:
     void SetRotation(const DirectX::XMFLOAT4& rotation) { rotation_ = rotation; }
     void SetRotation(const DirectX::XMFLOAT3& rotation) { rotation_ = { rotation.x, rotation.y, rotation.z, rotation_.w }; }
     void SetRotation(const float& x, const float& y, const float& z) { rotation_ = { x, y, z, rotation_.w }; }
+    void SetRotationDegree(const float& x, const float& y, const float& z) 
+    {
+        rotation_ = 
+        {
+            DirectX::XMConvertToRadians(x),
+            DirectX::XMConvertToRadians(y),
+            DirectX::XMConvertToRadians(z),
+            rotation_.w 
+        }; 
+    }
     void SetRotationX(const float& x) { rotation_.x = x; }
     void SetRotationY(const float& y) { rotation_.y = y; }
     void SetRotationZ(const float& z) { rotation_.z = z; }

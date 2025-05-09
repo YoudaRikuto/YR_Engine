@@ -5,7 +5,7 @@
 
 #pragma comment (lib,"Xinput.lib")
 
-// ----- 更新 -----
+// 更新
 void GamePad::Update()
 {
     axisLx_ = axisLy_ = 0.0f;
