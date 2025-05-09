@@ -18,11 +18,11 @@ public:
     void RenderInitialize();    // •`‰æ‰Šú‰»
     void Draw();                // •`‰æŽÀs
 
-    ID3D11Device* GetDevice()                             const { return device_.Get(); }
-    IDXGISwapChain* GetSwapChain()                          const { return swapchain_.Get(); }
-    ID3D11DeviceContext* GetDeviceContext()                      const { return deviceContext_.Get(); }
-    ID3D11RenderTargetView* GetRenderTargetView()                   const { return renderTargetView_.Get(); }
-    ID3D11DepthStencilView* GetDepthStencilView()                   const { return depthStencilView_.Get(); }
+    ID3D11Device*           GetDevice()             const { return device_.Get(); }
+    IDXGISwapChain*         GetSwapChain()          const { return swapchain_.Get(); }
+    ID3D11DeviceContext*    GetDeviceContext()      const { return deviceContext_.Get(); }
+    ID3D11RenderTargetView* GetRenderTargetView()   const { return renderTargetView_.Get(); }
+    ID3D11DepthStencilView* GetDepthStencilView()   const { return depthStencilView_.Get(); }
 
     HRESULT CreateVsFromCso(const char* csoName, ID3D11VertexShader** vertexShader, ID3D11InputLayout** inputLayout, D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numElements) { return shader_->CreateVsFromCso(csoName, vertexShader, inputLayout, inputElementDesc, numElements); }
     HRESULT CreatePsFromCso(const char* csoName, ID3D11PixelShader** pixelShader) { return shader_->CreatePsFromCso(csoName, pixelShader); }

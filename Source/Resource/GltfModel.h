@@ -269,6 +269,7 @@ public:
     virtual ~GltfModel() = default;
 
     void Render(const float& scaleFactor, ID3D11PixelShader* psShader = nullptr);
+    void Render(const DirectX::XMFLOAT4X4 world, ID3D11PixelShader* psShader = nullptr);
     void DrawDebug(); // ImGui
     
 public:
@@ -281,6 +282,10 @@ public:
     void UpdateAnimation(const float& elapsedTime); // アニメーション更新
     void SetAnimationSpeed(const float& speed) { animationSpeed_ = speed; }
     void SetTransitionTime(const float& time) { transitionTime_ = time; }
+    
+    const int GetAnimationIndex() const { return animationIndex_; }
+    const float GetAnimationSeconds() const { return animationSeconds_; }
+    const bool IsAnimationEnd() const { return isAnimationEnd_; }
 
     // ---------- RootMotion ----------
     void UpdateRootMotion(const float& scaleFacter);
@@ -290,6 +295,8 @@ public:
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
     const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
 
+    const int GetNodeIndex(const std::string& nodeName);
+    std::vector<Node>* GetNodes() { return &nodes_; }
 
 private:
     // ---------- Animation ----------

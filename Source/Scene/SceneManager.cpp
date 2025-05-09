@@ -5,19 +5,19 @@
 #include "DemoScene.h"
 #include "GameScene.h"
 
-// ----- 初期化 -----
+// 初期化 
 void SceneManager::Initialize()
 {
     SceneManager::Instance().ChangeScene(new GameScene);
 }
 
-// ----- 終了化 -----
+// 終了化 
 void SceneManager::Finalize()
 {
     Clear();
 }
 
-// ----- 更新 -----
+// 更新 
 void SceneManager::Update(const float& elapsedTime)
 {
     // 次のSceneに切り替える
@@ -45,7 +45,7 @@ void SceneManager::Update(const float& elapsedTime)
     }
 }
 
-// ----- 描画 -----
+// 描画 
 void SceneManager::Render()
 {
     if (currentScene_ == nullptr) return;
@@ -53,7 +53,15 @@ void SceneManager::Render()
     currentScene_->Render();
 }
 
-// ----- ImGui -----
+// 影書き込み
+void SceneManager::ShadowRender()
+{
+    if (currentScene_ == nullptr) return;
+
+    currentScene_->ShadowRender();
+}
+
+// ImGui 
 void SceneManager::DrawDebug()
 {
 #ifdef USE_IMGUI
@@ -85,7 +93,7 @@ void SceneManager::DrawDebug()
 #endif// USE_IMGUI
 }
 
-// ----- Sceneクリア -----
+// Sceneクリア 
 void SceneManager::Clear()
 {
     if (currentScene_ == nullptr) return;
@@ -94,7 +102,7 @@ void SceneManager::Clear()
     SafeDeletePtr(currentScene_);
 }
 
-// ----- Scene切り替え -----
+// Scene切り替え 
 void SceneManager::ChangeScene(BaseScene* scene)
 {
     nextScene_ = scene;

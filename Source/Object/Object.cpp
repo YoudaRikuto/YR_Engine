@@ -27,6 +27,11 @@ void Object::Render(ID3D11PixelShader* psShader)
     gltfModel_.Render(scaleFactor_, psShader);
 }
 
+void Object::Render(const DirectX::XMFLOAT4X4& world, ID3D11PixelShader* psShader)
+{
+    gltfModel_.Render(world, psShader);
+}
+
 // ----- ImGui -----
 void Object::DrawDebug()
 {

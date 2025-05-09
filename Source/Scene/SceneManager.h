@@ -18,7 +18,10 @@ public:
     void Initialize();                      // 初期化
     void Finalize();                        // 終了化
     void Update(const float& elapsedTime);  // 更新
+
     void Render();                          // 描画
+    void ShadowRender();                    // 影書き込み
+
     void DrawDebug();                       // ImGui
 
     void Clear();                           // Sceneクリア

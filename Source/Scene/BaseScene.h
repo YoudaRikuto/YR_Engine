@@ -11,7 +11,10 @@ public:
     virtual void Initialize()                       = 0; // ‰Šú‰»
     virtual void Finalize()                         = 0; // I—¹‰»
     virtual void Update(const float& elapsedTime)   = 0; // XV
+    
     virtual void Render()                           = 0; // •`‰æ
+    virtual void ShadowRender()                     = 0; // ‰e‘‚«‚İ
+    
     virtual void DrawDebug()                        = 0; // ImGui
 
     [[nodiscard]] const bool IsReady() const { return ready_; }

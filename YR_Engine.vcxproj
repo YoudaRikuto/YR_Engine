@@ -104,15 +104,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;USE_IMGUI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\External\DirectXTK\Inc;.\External;.\External\Cereal\include;.\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\External\DirectXTK\Inc;.\External;.\External\Cereal\include;.\External\Effekseer170e\include;.\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\External\DirectXTK\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\External\DirectXTK\Bin\Desktop_2022\x64\Debug;.\External\Effekseer170e\lib\vs2022\MD\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -129,14 +129,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\External;.\External\DirectXTK\Inc;.\External\Cereal\include;.\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\External;.\External\DirectXTK\Inc;.\External\Cereal\include;.\External\Effekseer170e\include;.\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\External\DirectXTK\Bin\Desktop_2022\x64\Release;.\External\Effekseer170e\lib\vs2022\MD\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -158,8 +159,13 @@
     <ClInclude Include="Source\FrameWork\HighResolutionTimer.h" />
     <ClInclude Include="Source\FrameWork\Misc.h" />
     <ClInclude Include="Source\Graphics\Camera\Camera.h" />
+    <ClInclude Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.h" />
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\FrameBuffer.h" />
+    <ClInclude Include="Source\Graphics\FullscreenQuad.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
+    <ClInclude Include="Source\Graphics\PostProcess\Bloom\KawaseBloom.h" />
+    <ClInclude Include="Source\Graphics\PostProcess\PostProcess.h" />
     <ClInclude Include="Source\Graphics\Shader\Shader.h" />
     <ClInclude Include="Source\Input\GamePad.h" />
     <ClInclude Include="Source\Input\Input.h" />
@@ -176,6 +182,8 @@
     <ClInclude Include="Source\Object\Character\Player\PlayerState.h" />
     <ClInclude Include="Source\Object\Object.h" />
     <ClInclude Include="Source\Object\Stage\Stage.h" />
+    <ClInclude Include="Source\Resource\Effect.h" />
+    <ClInclude Include="Source\Resource\EffectManager.h" />
     <ClInclude Include="Source\Resource\GltfModel.h" />
     <ClInclude Include="Source\Resource\Texture.h" />
     <ClInclude Include="Source\Scene\BaseScene.h" />
@@ -197,7 +205,12 @@
     <ClCompile Include="Source\FrameWork\Framework.cpp" />
     <ClCompile Include="Source\FrameWork\Main.cpp" />
     <ClCompile Include="Source\Graphics\Camera\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.cpp" />
+    <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\FullscreenQuad.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
+    <ClCompile Include="Source\Graphics\PostProcess\Bloom\KawaseBloom.cpp" />
+    <ClCompile Include="Source\Graphics\PostProcess\PostProcess.cpp" />
     <ClCompile Include="Source\Graphics\Shader\Shader.cpp" />
     <ClCompile Include="Source\Input\GamePad.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
@@ -209,6 +222,8 @@
     <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp" />
     <ClCompile Include="Source\Object\Object.cpp" />
     <ClCompile Include="Source\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Source\Resource\Effect.cpp" />
+    <ClCompile Include="Source\Resource\EffectManager.cpp" />
     <ClCompile Include="Source\Resource\GltfModel.cpp" />
     <ClCompile Include="Source\Resource\Texture.cpp" />
     <ClCompile Include="Source\Scene\DemoScene.cpp" />
@@ -218,10 +233,37 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\BidirectionalReflectanceDistributionFunction.hlsli" />
+    <None Include="Source\Shader\FullScreenQuad.hlsli" />
     <None Include="Source\Shader\GltfModel.hlsli" />
     <None Include="Source\Shader\ImageBasedLighting.hlsli" />
+    <None Include="Source\Shader\KawaseBloom.hlsli" />
+    <None Include="Source\Shader\PostProcess.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shader\FullScreenQuadPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FullScreenQuadVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurHorizontalPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurVerticalPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\GltfModelPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -233,6 +275,24 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\KawaseBloomPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\LuminanceExtractionPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\PostProcessPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

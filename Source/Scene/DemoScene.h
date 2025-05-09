@@ -14,6 +14,7 @@ public:
     void Finalize()                         override; // I—¹‰»
     void Update(const float& elapsedTime)   override; // XV
     void Render()                           override; // •`‰æ
+    void ShadowRender()                     override; // ‰e‘‚«‚İ
     void DrawDebug()                        override; // ImGui
 
 private:

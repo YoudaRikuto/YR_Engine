@@ -2,15 +2,16 @@
 #include "Math/MathHelper.h"
 #include "Scene/SceneManager.h"
 #include "Graphics/Camera/Camera.h"
+#include "Resource/EffectManager.h"
+#include "Graphics/PostProcess/PostProcess.h"
 
-// ----- コンストラクタ -----
 Framework::Framework(HWND hwnd)
     : hwnd_(hwnd), graphics_(hwnd), input_(hwnd),
     sceneConstants_()
 {
 }
 
-// ----- 初期化 -----
+// 初期化 
 const bool Framework::Initialize()
 {
     // Input 初期設定
@@ -19,20 +20,24 @@ const bool Framework::Initialize()
 
     SceneManager::Instance().Initialize();
 
+    EffectManager::Instance().Initialize();
+
     sceneConstants_.GetData()->lightDirection_ = { 0.0f, -1.0f, 0.0f, 0.0f };
 
     return true;
 }
 
-// ----- 終了化 -----
+// 終了化 
 const bool Framework::Finalize()
 {
     SceneManager::Instance().Finalize();
 
+    EffectManager::Instance().Finalize();
+
     return false;
 }
 
-// ----- 更新 -----
+// 更新 
 void Framework::Update(const float& elapsedTime)
 {
     // ImGui更新
@@ -47,11 +52,13 @@ void Framework::Update(const float& elapsedTime)
     // カメラ更新
     Camera::Instance().Update(elapsedTime);
 
+    EffectManager::Instance().Update(elapsedTime);
+
     // ImGui更新
     DrawDebug();
 }
 
-// ----- 描画 -----
+// 描画 
 void Framework::Render()
 {
     // 描画初期化
@@ -68,8 +75,16 @@ void Framework::Render()
 
     sceneConstants_.Activate(0, true, true, true, true);
 
+    PostProcess::Instance().Activate();
+
     // Scene描画
     SceneManager::Instance().Render();
+
+    EffectManager::Instance().Render();
+
+    PostProcess::Instance().Deactivate();
+
+    PostProcess::Instance().Draw();
 
     // ImGui描画
     IMGUI_CTRL_DISPLAY();
@@ -78,17 +93,40 @@ void Framework::Render()
     Graphics::Instance().Draw();
 }
 
-// ----- ImGui用 -----
+// ImGui用 
 void Framework::DrawDebug()
 {
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGuiWindowFlags windowFlags =
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_MenuBar |
+        ImGuiWindowFlags_NoDocking;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::Begin("MainDockSpace", nullptr, windowFlags);
+    ImGui::PopStyleVar(2);
+
+    ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    ImGui::End();
+
     SceneManager::Instance().DrawDebug();
 
-    ImGui::Begin("Game");
-    //ImGui::Image(reinterpret_cast<ImTextureID>(Graphics::Instance().GetRenderTargetShaderResourceView()), ImVec2(1280, 720));
-    ImGui::End();
+    PostProcess::Instance().DrawDebug();
 }
 
-// ----- 実行 -----
+// 実行 
 const int Framework::Run()
 {
     MSG msg = {};
@@ -127,7 +165,7 @@ const int Framework::Run()
     return Finalize() ? static_cast<int>(msg.wParam) : 0;
 }
 
-// ----- メッセージハンドラ -----
+// メッセージハンドラ 
 LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     // ImGui
@@ -167,7 +205,7 @@ LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
     return 0;
 }
 
-// ----- フレーム計算 -----
+// フレーム計算 
 void Framework::CalculateFrameStats()
 {
     if (++frames_, (tictoc_.TimeStamp() - elapsedTime_) >= 1.0f)

@@ -53,14 +53,10 @@ inline void StateMachine<T>::DrawDebug()
 
         ImGui::Text(stateName.c_str());
         
-        ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(500, 400), ImGuiWindowFlags_NoTitleBar);
-
         for (T* state : statePool_)
         {
             state->DrawDebug();
         }
-
-        ImGui::EndChild();
 
         ImGui::TreePop();
     }

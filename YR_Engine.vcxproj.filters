@@ -70,6 +70,30 @@
     <Filter Include="YR_Engine\Object\Stage">
       <UniqueIdentifier>{3544766e-c606-472b-a446-b422fd476ceb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Resource\Effect">
+      <UniqueIdentifier>{26ac4cea-0ab0-42e1-9ee7-b004efb8d07f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics\PostProcess">
+      <UniqueIdentifier>{293c5472-2edc-479c-a0f4-1526a48e7c44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\FullScreenQuad">
+      <UniqueIdentifier>{939cab06-e0ff-4f18-8538-129a66f9a7df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\GltfModel">
+      <UniqueIdentifier>{cccf325e-bf7c-461d-91eb-cc533b5d9017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics\PostProcess\Bloom">
+      <UniqueIdentifier>{62a79bb5-ce54-4808-8eb9-12353634172e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Graphics\CascadedShadowMap">
+      <UniqueIdentifier>{b4011f77-72c0-4251-b04e-37fbd1080d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\PostProcess">
+      <UniqueIdentifier>{05fc9817-2075-4c5a-983b-b960e5d5dbec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\PostProcess\KawaseBloom">
+      <UniqueIdentifier>{45f53530-0e36-46ba-8b2d-03de1937edab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -159,7 +183,30 @@
     <ClCompile Include="Source\Object\Character\Player\PlayerManager.cpp">
       <Filter>YR_Engine\Object\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Source\Resource\Effect.cpp">
+      <Filter>YR_Engine\Resource\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Stage\Stage.cpp">
+      <Filter>YR_Engine\Object\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\EffectManager.cpp">
+      <Filter>YR_Engine\Resource\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\PostProcess\PostProcess.cpp">
+      <Filter>YR_Engine\Graphics\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\FrameBuffer.cpp">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\FullscreenQuad.cpp">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\PostProcess\Bloom\KawaseBloom.cpp">
+      <Filter>YR_Engine\Graphics\PostProcess\Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.cpp">
+      <Filter>YR_Engine\Graphics\CascadedShadowMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -288,25 +335,78 @@
     <ClInclude Include="External\nlohmann\json_fwd.hpp">
       <Filter>External\Nlohmann</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Stage\Stage.h" />
+    <ClInclude Include="Source\Resource\Effect.h">
+      <Filter>YR_Engine\Resource\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Stage\Stage.h">
+      <Filter>YR_Engine\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\EffectManager.h">
+      <Filter>YR_Engine\Resource\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\PostProcess\PostProcess.h">
+      <Filter>YR_Engine\Graphics\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\FrameBuffer.h">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\FullscreenQuad.h">
+      <Filter>YR_Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\PostProcess\Bloom\KawaseBloom.h">
+      <Filter>YR_Engine\Graphics\PostProcess\Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.h">
+      <Filter>YR_Engine\Graphics\CascadedShadowMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\Shader\GltfModel.hlsli">
-      <Filter>YR_Engine\Shader</Filter>
+    <None Include="Source\Shader\ImageBasedLighting.hlsli">
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
     </None>
     <None Include="Source\Shader\BidirectionalReflectanceDistributionFunction.hlsli">
-      <Filter>YR_Engine\Shader</Filter>
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
     </None>
-    <None Include="Source\Shader\ImageBasedLighting.hlsli">
-      <Filter>YR_Engine\Shader</Filter>
+    <None Include="Source\Shader\GltfModel.hlsli">
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
+    </None>
+    <None Include="Source\Shader\FullScreenQuad.hlsli">
+      <Filter>YR_Engine\Shader\FullScreenQuad</Filter>
+    </None>
+    <None Include="Source\Shader\KawaseBloom.hlsli">
+      <Filter>YR_Engine\Shader\PostProcess\KawaseBloom</Filter>
+    </None>
+    <None Include="Source\Shader\PostProcess.hlsli">
+      <Filter>YR_Engine\Shader\PostProcess</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Source\Shader\GltfModelVS.hlsl">
-      <Filter>YR_Engine\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\GltfModelPS.hlsl">
-      <Filter>YR_Engine\Shader</Filter>
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GltfModelVS.hlsl">
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FullScreenQuadPS.hlsl">
+      <Filter>YR_Engine\Shader\FullScreenQuad</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FullScreenQuadVS.hlsl">
+      <Filter>YR_Engine\Shader\FullScreenQuad</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\KawaseBloomPS.hlsl">
+      <Filter>YR_Engine\Shader\PostProcess\KawaseBloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\LuminanceExtractionPS.hlsl">
+      <Filter>YR_Engine\Shader\PostProcess\KawaseBloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurVerticalPS.hlsl">
+      <Filter>YR_Engine\Shader\PostProcess\KawaseBloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurHorizontalPS.hlsl">
+      <Filter>YR_Engine\Shader\PostProcess\KawaseBloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\PostProcessPS.hlsl">
+      <Filter>YR_Engine\Shader\PostProcess</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

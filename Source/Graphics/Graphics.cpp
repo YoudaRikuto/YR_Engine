@@ -3,7 +3,6 @@
 
 Graphics* Graphics::instance_ = nullptr;
 
-// ----- コンストラクタ -----
 Graphics::Graphics(HWND hwnd)
 {
     // インスタンス設定
@@ -55,7 +54,7 @@ Graphics::Graphics(HWND hwnd)
     shader_ = std::make_unique<Shader>();
 }
 
-// ----- 描画初期化 -----
+// 描画初期化 
 void Graphics::RenderInitialize()
 {
     FLOAT   color[] = { clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
@@ -67,13 +66,13 @@ void Graphics::RenderInitialize()
     shader_->SetSamplerState();
 }
 
-// ----- 描画実行 -----
+// 描画実行 
 void Graphics::Draw()
 {
     swapchain_->Present(syncInterval_, 0);
 }
 
-// ----- レンダーターゲットビュー作成 -----
+// レンダーターゲットビュー作成 
 void Graphics::CreateRenderTargetView()
 {
     HRESULT                                 result = S_OK;
@@ -86,7 +85,7 @@ void Graphics::CreateRenderTargetView()
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- デプスステンシルビュー作成 -----
+// デプスステンシルビュー作成 
 void Graphics::CreateDepthStencilView()
 {
     HRESULT                                 result = S_OK;
