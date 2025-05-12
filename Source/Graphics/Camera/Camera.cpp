@@ -23,6 +23,8 @@ void Camera::DrawDebug()
     ImGui::DragFloat3("Offset", &offset_.x, 0.1f);
     ImGui::DragFloat("Length", &length_, 0.1f);
 
+    ImGui::DragFloat("Fov", &fov_);
+
     ImGui::End();
 }
 

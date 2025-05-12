@@ -94,6 +94,12 @@
     <Filter Include="YR_Engine\Shader\PostProcess\KawaseBloom">
       <UniqueIdentifier>{45f53530-0e36-46ba-8b2d-03de1937edab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Collision">
+      <UniqueIdentifier>{639de404-82e9-49fd-9451-84eca13c83a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Resource\Audio">
+      <UniqueIdentifier>{9d097e14-a48d-42c1-9b4c-3f36475c369a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -146,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\TitleScene.cpp">
       <Filter>YR_Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Resource\GltfModel.cpp">
-      <Filter>YR_Engine\Resource\GltfModel</Filter>
     </ClCompile>
     <ClCompile Include="Source\Resource\Texture.cpp">
       <Filter>YR_Engine\Resource</Filter>
@@ -206,6 +209,27 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.cpp">
       <Filter>YR_Engine\Graphics\CascadedShadowMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Collision\CollisionData.cpp">
+      <Filter>YR_Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Collision\CollisionManager.cpp">
+      <Filter>YR_Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\Audio\Audio.cpp">
+      <Filter>YR_Engine\Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\Audio\AudioManager.cpp">
+      <Filter>YR_Engine\Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\GltfModel\AnimationEditer.cpp">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\GltfModel\GltfModel.cpp">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\ResourceManager.cpp">
+      <Filter>YR_Engine\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="Source\Scene\TitleScene.h">
       <Filter>YR_Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Resource\GltfModel.h">
-      <Filter>YR_Engine\Resource\GltfModel</Filter>
     </ClInclude>
     <ClInclude Include="Source\Resource\Texture.h">
       <Filter>YR_Engine\Resource</Filter>
@@ -358,6 +379,27 @@
     </ClInclude>
     <ClInclude Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.h">
       <Filter>YR_Engine\Graphics\CascadedShadowMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collision\CollisionData.h">
+      <Filter>YR_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collision\CollisionManager.h">
+      <Filter>YR_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\Audio\Audio.h">
+      <Filter>YR_Engine\Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\Audio\AudioManager.h">
+      <Filter>YR_Engine\Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\GltfModel\AnimationEditer.h">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\GltfModel\GltfModel.h">
+      <Filter>YR_Engine\Resource\GltfModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\ResourceManager.h">
+      <Filter>YR_Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

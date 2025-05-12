@@ -88,6 +88,8 @@ namespace PlayerState
 
     private:
         float landingTriggerPositionY_ = 0.05f;
+
+        bool isDoubleJumpEnabled_ = true; // ダブルジャンプが可能か
     };
 
     class JumpEndState : public State<Player>
@@ -142,11 +144,13 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
+        // ---------- Animation ----------
         float animationSpeed_ = 1.0f;
 
         float animationStartFrame_  = 0.26f;
         float animationEndFrame_    = 0.8f;
 
+        float jumpPower_ = 13.0f;
     };
 
     class Attack1_1State : public State<Player>

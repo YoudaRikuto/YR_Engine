@@ -216,6 +216,9 @@ namespace PlayerState
     // 初期化 
     void JumpLoopState::Initialize()
     {
+        // ダブルジャンプが可能か判定
+        isDoubleJumpEnabled_ = owner_->GetAnimationIndex() != static_cast<int>(Player::Animation::DoubleJump);
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -231,7 +234,8 @@ namespace PlayerState
         }
 
         // ダブルジャンプ
-        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
+        if (isDoubleJumpEnabled_ &&
+            Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
         {
             owner_->ChangeState(Player::STATE::DoubleJump);
             return;
@@ -380,7 +384,7 @@ namespace PlayerState
         PlayAnimation();
 
         DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
-        velocity.y = 10.0f;
+        velocity.y = jumpPower_;
         owner_->SetVelocity(velocity);
     }
 
@@ -423,6 +427,8 @@ namespace PlayerState
 
                 ImGui::TreePop();
             }
+
+            ImGui::DragFloat("JumpPower", &jumpPower_);
 
             ImGui::TreePop();
         }
