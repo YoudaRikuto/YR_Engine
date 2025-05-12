@@ -6,6 +6,7 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Input/Input.h"
+#include "Resource/GltfModel/AnimationEditer.h"
 
 class Framework
 {
@@ -46,5 +47,7 @@ private:
     float               elapsedTime_ = 0.0f; // Œo‰ßŽžŠÔ
 
     ConstantBuffer<SceneConstants> sceneConstants_;
+
+    AnimationEditer animationEditer_;
 };
 

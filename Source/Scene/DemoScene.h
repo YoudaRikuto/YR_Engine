@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 #include <memory>
-#include "Resource/GltfModel.h"
+#include "Resource/GltfModel/GltfModel.h"
 
 class DemoScene : public BaseScene
 {

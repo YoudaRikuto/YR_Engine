@@ -54,6 +54,8 @@ void Framework::Update(const float& elapsedTime)
 
     EffectManager::Instance().Update(elapsedTime);
 
+    animationEditer_.Update(elapsedTime);
+
     // ImGui更新
     DrawDebug();
 }
@@ -85,6 +87,10 @@ void Framework::Render()
     PostProcess::Instance().Deactivate();
 
     PostProcess::Instance().Draw();
+
+    // アニメーションエディタ
+    animationEditer_.Render();
+    animationEditer_.DrawDebug();
 
     // ImGui描画
     IMGUI_CTRL_DISPLAY();

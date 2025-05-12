@@ -154,6 +154,8 @@
     <ClInclude Include="External\nlohmann\json_fwd.hpp" />
     <ClInclude Include="Source\Ai\State.h" />
     <ClInclude Include="Source\Ai\StateMachine.h" />
+    <ClInclude Include="Source\Collision\CollisionData.h" />
+    <ClInclude Include="Source\Collision\CollisionManager.h" />
     <ClInclude Include="Source\FrameWork\Common.h" />
     <ClInclude Include="Source\FrameWork\Framework.h" />
     <ClInclude Include="Source\FrameWork\HighResolutionTimer.h" />
@@ -182,9 +184,13 @@
     <ClInclude Include="Source\Object\Character\Player\PlayerState.h" />
     <ClInclude Include="Source\Object\Object.h" />
     <ClInclude Include="Source\Object\Stage\Stage.h" />
+    <ClInclude Include="Source\Resource\Audio\Audio.h" />
+    <ClInclude Include="Source\Resource\Audio\AudioManager.h" />
     <ClInclude Include="Source\Resource\Effect.h" />
     <ClInclude Include="Source\Resource\EffectManager.h" />
-    <ClInclude Include="Source\Resource\GltfModel.h" />
+    <ClInclude Include="Source\Resource\GltfModel\AnimationEditer.h" />
+    <ClInclude Include="Source\Resource\GltfModel\GltfModel.h" />
+    <ClInclude Include="Source\Resource\ResourceManager.h" />
     <ClInclude Include="Source\Resource\Texture.h" />
     <ClInclude Include="Source\Scene\BaseScene.h" />
     <ClInclude Include="Source\Scene\DemoScene.h" />
@@ -202,6 +208,8 @@
     <ClCompile Include="External\ImGui\imgui_ja_gryph_ranges.cpp" />
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Collision\CollisionData.cpp" />
+    <ClCompile Include="Source\Collision\CollisionManager.cpp" />
     <ClCompile Include="Source\FrameWork\Framework.cpp" />
     <ClCompile Include="Source\FrameWork\Main.cpp" />
     <ClCompile Include="Source\Graphics\Camera\Camera.cpp" />
@@ -222,9 +230,13 @@
     <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp" />
     <ClCompile Include="Source\Object\Object.cpp" />
     <ClCompile Include="Source\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Source\Resource\Audio\Audio.cpp" />
+    <ClCompile Include="Source\Resource\Audio\AudioManager.cpp" />
     <ClCompile Include="Source\Resource\Effect.cpp" />
     <ClCompile Include="Source\Resource\EffectManager.cpp" />
-    <ClCompile Include="Source\Resource\GltfModel.cpp" />
+    <ClCompile Include="Source\Resource\GltfModel\AnimationEditer.cpp" />
+    <ClCompile Include="Source\Resource\GltfModel\GltfModel.cpp" />
+    <ClCompile Include="Source\Resource\ResourceManager.cpp" />
     <ClCompile Include="Source\Resource\Texture.cpp" />
     <ClCompile Include="Source\Scene\DemoScene.cpp" />
     <ClCompile Include="Source\Scene\GameScene.cpp" />

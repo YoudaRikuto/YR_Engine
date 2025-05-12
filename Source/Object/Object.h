@@ -1,5 +1,5 @@
 #pragma once
-#include "Resource/GltfModel.h"
+#include "Resource/GltfModel/GltfModel.h"
 
 class Object
 {
