@@ -88,7 +88,9 @@ public:
 public:
     // ---------- Animation ----------
     void PlayAnimation(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& startFrame = 0.0f) { Object::PlayAnimation(static_cast<int>(index), loop, speed, startFrame); }
-    void PlayAnimationBlend(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& blendStartFrame = 0.0f, const float& transitionTime = 1.0f) { Object::PlayAnimationBlend(static_cast<int>(index), loop, speed, blendStartFrame, transitionTime); }
+    void PlayAnimationBlend(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& blendStartFrame = 0.0f, const float& transitionTime = 0.1f) { Object::PlayAnimationBlend(static_cast<int>(index), loop, speed, blendStartFrame, transitionTime); }
+
+    const Player::Animation GetAnimationIndex() const { return static_cast<Player::Animation>(Object::GetAnimationIndex()); }
 
     // ---------- StateMachine ----------
     void ChangeState(const STATE& state);
@@ -119,7 +121,7 @@ private:
     // ---------- StateMachine ----------
     std::unique_ptr<StateMachine<State<Player>>> stateMachine_;
     STATE currentState_ = STATE::Idle;
-    STATE oldState_ = STATE::Idle;
+    STATE oldState_     = STATE::Idle;
 
     // ---------- Move ----------
     DirectX::XMFLOAT3   moveDirection_  = {};
