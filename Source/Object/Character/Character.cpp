@@ -28,6 +28,8 @@ void Character::DrawDebug()
         ImGui::DragFloat("Acceleration", &acceleration_);
         ImGui::DragFloat("Deceleration", &deceleration_);
 
+        ImGui::DragFloat("MaxSpeed", &maxSpeed_);
+
         ImGui::TreePop();
     }
 }

@@ -281,7 +281,7 @@ void GltfModel::PlayAnimationBlend(const int& index, const bool& loop, const flo
     animationIndex_     = index;
     animationSeconds_   = blendStartFrame;
     animationSpeed_     = speed;
-    transitionTime_     = transitionTime_;
+    transitionTime_     = transitionTime;
     isAnimationLoop_    = loop;
     isAnimationEnd_     = false;
     isAnimationBlend_   = true;

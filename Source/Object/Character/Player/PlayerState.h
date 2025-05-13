@@ -32,6 +32,11 @@ namespace PlayerState
 
     private:
         void PlayAnimation();
+
+    private:
+        // ------------ Animation ------------
+        float transitionJumpEnd_                = 0.1f;
+        float transitionAttackAirToFloorEnd_    = 0.3f;
     };
 
     class RollState : public State<Player>
@@ -63,8 +68,8 @@ namespace PlayerState
     private:
         // ---------- Animation ----------
         float   animationStartFrame_    = 0.13f;
-        float   transitionIdle_         = 0.5f;
-        float   transitionRun_          = 0.3f;
+        float   transitionIdle_         = 0.1f;
+        float   transitionRun_          = 0.1f;
 
         float   jumpPower_  = 10.0f;
 
@@ -109,6 +114,8 @@ namespace PlayerState
     private:
         float animationStartFrame_  = 0.18f;
         float transitionTime_       = 0.1f;
+
+        float runTransitionFrame_ = 0.25f;
     };
 
     class JumpEndToRunState : public State<Player>
@@ -126,7 +133,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
-        float animationEndFrame_ = 0.2f;
+        float animationStartFrame_  = 0.15f;
+        float animationEndFrame_    = 0.2f;
+        float transitionJumpLoop_   = 0.1f;
     };
 
     class DoubleJumpState : public State<Player>
@@ -268,6 +277,8 @@ namespace PlayerState
     private:
         // ---------- Animation ----------
         float startAnimationSpeed_ = 0.9f;
+
+        float runTransitionFrame_ = 0.6f;
 
         float fallingSpeed_ = -40.0f;
 
