@@ -179,6 +179,9 @@
     <ClInclude Include="Source\Math\Serialize.h" />
     <ClInclude Include="Source\Math\Transform.h" />
     <ClInclude Include="Source\Object\Character\Character.h" />
+    <ClInclude Include="Source\Object\Character\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Object\Character\Enemy\EnemyManager.h" />
+    <ClInclude Include="Source\Object\Character\Enemy\EnemyWoodMonster.h" />
     <ClInclude Include="Source\Object\Character\Player\Player.h" />
     <ClInclude Include="Source\Object\Character\Player\PlayerManager.h" />
     <ClInclude Include="Source\Object\Character\Player\PlayerState.h" />
@@ -225,6 +228,9 @@
     <ClCompile Include="Source\Input\Mouse.cpp" />
     <ClCompile Include="Source\Math\Transform.cpp" />
     <ClCompile Include="Source\Object\Character\Character.cpp" />
+    <ClCompile Include="Source\Object\Character\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\Object\Character\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="Source\Object\Character\Enemy\EnemyWoodMonster.cpp" />
     <ClCompile Include="Source\Object\Character\Player\Player.cpp" />
     <ClCompile Include="Source\Object\Character\Player\PlayerManager.cpp" />
     <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp" />
