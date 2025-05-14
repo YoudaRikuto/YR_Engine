@@ -18,7 +18,7 @@ void Player::Initialize()
 {
     SetAcceleration(50.0f);
     SetDeceleration(30.0f);
-    SetMaxSpeed(6.0f);
+    SetMaxSpeed(7.0f);
 
     SetRotationSpeed(10.0f);
 
