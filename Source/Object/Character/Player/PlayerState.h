@@ -172,6 +172,12 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float runTransitionFrame_ = 0.6f;
     };
 
     class Attack1_2State : public State<Player>
@@ -184,6 +190,12 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float runTransitionFrame_ = 1.0f;
     };
 
     class Attack1_3State : public State<Player>
@@ -196,6 +208,12 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float runTransitionFrame_ = 1.0f;
     };
 
     class Attack1_4State : public State<Player>
@@ -208,6 +226,12 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float runTransitionFrame_ = 1.0f;
     };
 
     class AttackAir1_1State : public State<Player>
