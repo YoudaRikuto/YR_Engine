@@ -306,9 +306,13 @@ void GltfModel::UpdateAnimation(const float& elapsedTime)
             
             return;
         }
+        // アニメーションを再生しきった
         else
         {
             isAnimationEnd_ = true;
+
+            // ルートモーションを非アクティブ化
+            isRootMotionActive_ = false;
 
             return;
         }

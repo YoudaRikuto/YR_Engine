@@ -505,6 +505,12 @@ namespace PlayerState
     // 更新
     void Attack1_1State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
         //通常攻撃
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
@@ -525,11 +531,19 @@ namespace PlayerState
             }
         }
 
+        // アニメーション再生しきったら、待機に遷移
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
     void Attack1_1State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
@@ -558,12 +572,19 @@ namespace PlayerState
     // 初期化
     void Attack1_2State::Initialize()
     {
+        // アニメーション再生
         PlayAnimation();
     }
 
     // 更新
     void Attack1_2State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
         //通常攻撃
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
@@ -584,11 +605,19 @@ namespace PlayerState
             }
         }
 
+        // アニメーション再生しきったら、待機に遷移
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
     void Attack1_2State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用

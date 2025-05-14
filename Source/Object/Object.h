@@ -26,11 +26,13 @@ public:
 
     const int GetAnimationIndex() const { return gltfModel_.GetAnimationIndex(); }
     const float GetAnimationSeconds() const { return gltfModel_.GetAnimationSeconds(); }
-    const bool IsAnimationEnd() const { return gltfModel_.IsAnimationEnd(); }
+    const bool IsAnimationEnd()     const { return gltfModel_.IsAnimationEnd(); }
+    const bool IsAnimationBlend()   const { return gltfModel_.IsAnimationBlend(); }
 
     // ---------- RootMotion ----------
     void UpdateRootMotion(const float& scaleFacter) { gltfModel_.UpdateRootMotion(scaleFacter); }
     void UseRootMotion(const bool& flag) { gltfModel_.UseRootMotion(flag); }
+    const bool IsRootMotionActive() const { return gltfModel_.IsRootMotionActive(); }
 
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT3& offsetPosition = {}) { return gltfModel_.GetJointPosition(nodeIndex, scaleFactor_, offsetPosition); }
