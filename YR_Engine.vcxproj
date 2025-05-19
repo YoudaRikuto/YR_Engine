@@ -163,6 +163,7 @@
     <ClInclude Include="Source\Graphics\Camera\Camera.h" />
     <ClInclude Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.h" />
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\DeferredRendering\DeferredRendering.h" />
     <ClInclude Include="Source\Graphics\FrameBuffer.h" />
     <ClInclude Include="Source\Graphics\FullscreenQuad.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Source\FrameWork\Main.cpp" />
     <ClCompile Include="Source\Graphics\Camera\Camera.cpp" />
     <ClCompile Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.cpp" />
+    <ClCompile Include="Source\Graphics\DeferredRendering\DeferredRendering.cpp" />
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
     <ClCompile Include="Source\Graphics\FullscreenQuad.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
@@ -253,13 +255,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\BidirectionalReflectanceDistributionFunction.hlsli" />
+    <None Include="Source\Shader\DeferredRendering.hlsli" />
     <None Include="Source\Shader\FullScreenQuad.hlsli" />
+    <None Include="Source\Shader\GBuffer.hlsli" />
     <None Include="Source\Shader\GltfModel.hlsli" />
     <None Include="Source\Shader\ImageBasedLighting.hlsli" />
     <None Include="Source\Shader\KawaseBloom.hlsli" />
     <None Include="Source\Shader\PostProcess.hlsli" />
+    <None Include="Source\Shader\ShadingFunctions.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shader\DeferredRenderingPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\FullScreenQuadPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -279,6 +290,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\GaussianBlurVerticalPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GltfModelGBufferPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

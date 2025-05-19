@@ -67,14 +67,17 @@ void GameScene::Render()
     Graphics::Instance().GetDeviceContext()->PSSetShaderResources(34, 1, iblTextures_[2].GetAddressOf());
     Graphics::Instance().GetDeviceContext()->PSSetShaderResources(35, 1, iblTextures_[3].GetAddressOf());
 
-    // プレイヤー描画
-    PlayerManager::Instance().Render();
+    ID3D11PixelShader* gBufferPS = nullptr;
+    //ID3D11PixelShader* gBufferPS = Graphics::Instance().GetGBufferPixelShader();
 
-    EnemyManager::Instance().Render();
+    // プレイヤー描画
+    PlayerManager::Instance().Render(gBufferPS);
+
+    EnemyManager::Instance().Render(gBufferPS);
 
     //PlayerManager::Instance().DebugRender();
 
-    stage_->Render(nullptr);
+    stage_->Render(gBufferPS);
 }
 
 // 影書き込み

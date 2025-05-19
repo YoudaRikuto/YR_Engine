@@ -34,6 +34,10 @@ public:
     void SetBlendState(const Shader::BlendState& blendState) { shader_->SetBlendState(blendState); }
     void SetRasterizerState(const Shader::RasterState& rasterizerState) { shader_->SetRasterizerState(rasterizerState); }
 
+    void SetGBuffer() { shader_->SetGBuffer(); }
+    void SetGBufferShaderResourceView() { shader_->SetGBufferShaderResourceView(); }
+    ID3D11ShaderResourceView** GetGBufferBaseColorShaderResourceView() { return shader_->GetGBufferBaseColorShaderResourceView(); }
+    ID3D11PixelShader* GetGBufferPixelShader() { return shader_->GetGBufferPixelShader(); }
 
 private:
     void CreateRenderTargetView(); // レンダーターゲットビュー作成

@@ -7,6 +7,7 @@
 #include "Graphics/ConstantBuffer.h"
 #include "Input/Input.h"
 #include "Resource/GltfModel/AnimationEditer.h"
+#include "Graphics/DeferredRendering/DeferredRendering.h"
 
 class Framework
 {
@@ -47,6 +48,8 @@ private:
     float               elapsedTime_ = 0.0f; // Œo‰ßŽžŠÔ
 
     ConstantBuffer<SceneConstants> sceneConstants_;
+
+    DeferredRendering deferredRendering_;
 
     AnimationEditer animationEditer_;
 };

@@ -60,6 +60,8 @@ void Framework::Update(const float& elapsedTime)
     DrawDebug();
 }
 
+#define USE_GBUFFER 0
+
 // 描画 
 void Framework::Render()
 {
@@ -77,15 +79,29 @@ void Framework::Render()
 
     sceneConstants_.Activate(0, true, true, true, true);
 
+#if USE_GBUFFER
+    // G-Buffer設定
+    Graphics::Instance().SetGBuffer();
+    Graphics::Instance().SetBlendState(Shader::BlendState::MRT);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::Solid);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+    
+    // Scene描画
+    SceneManager::Instance().Render();
+#endif
+
     PostProcess::Instance().Activate();
 
     // Scene描画
     SceneManager::Instance().Render();
 
+#if USE_GBUFFER
+    deferredRendering_.Draw();
+#endif
+
     EffectManager::Instance().Render();
 
     PostProcess::Instance().Deactivate();
-
     PostProcess::Instance().Draw();
 
     // アニメーションエディタ

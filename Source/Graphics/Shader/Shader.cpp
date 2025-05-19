@@ -344,6 +344,35 @@ void Shader::CreateGBuffer()
     }
 
     CreatePsFromCso("./Resources/Shader/GltfModelGBufferPS.cso", gBufferPixelShader_.GetAddressOf());
+
+    texture2dDesc = {};
+    texture2dDesc.Width = SCREEN_WIDTH;
+    texture2dDesc.Height = SCREEN_HEIGHT;
+    texture2dDesc.MipLevels = 1;
+    texture2dDesc.ArraySize = 1;
+    texture2dDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    texture2dDesc.SampleDesc.Count = 1;
+    texture2dDesc.SampleDesc.Quality = 0;
+    texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+    texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    texture2dDesc.CPUAccessFlags = 0;
+    texture2dDesc.MiscFlags = 0;
+    result = Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, NULL, gBufferDepthStencilBuffer_.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+    depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    depthStencilViewDesc.Flags = 0;
+    result = Graphics::Instance().GetDevice()->CreateDepthStencilView(gBufferDepthStencilBuffer_.Get(), &depthStencilViewDesc, gBufferDepthStencilView_.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC depthShaderResourceViewDesc = {};
+    depthShaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    depthShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    depthShaderResourceViewDesc.Texture2D.MipLevels = 1;
+    result = Graphics::Instance().GetDevice()->CreateShaderResourceView(gBufferDepthStencilBuffer_.Get(), &depthShaderResourceViewDesc, gBufferDepthShaderResourceView_.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 #pragma endregion 各種ステート作成
 

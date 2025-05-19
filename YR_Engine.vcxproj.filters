@@ -103,6 +103,12 @@
     <Filter Include="YR_Engine\Object\Character\Enemy\WoodMonster">
       <UniqueIdentifier>{772b7ff7-e402-4c16-8aac-0051fa4c52dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Graphics\DeferredRendering">
+      <UniqueIdentifier>{1ce7642b-80ec-4715-a529-eb97262af82e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\DeferredRendering">
+      <UniqueIdentifier>{809a8e03-4e28-437a-8ec1-4a9e46632dad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -245,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.cpp">
       <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\DeferredRendering\DeferredRendering.cpp">
+      <Filter>YR_Engine\Graphics\DeferredRendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +437,9 @@
     <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.h">
       <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Graphics\DeferredRendering\DeferredRendering.h">
+      <Filter>YR_Engine\Graphics\DeferredRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">
@@ -447,6 +459,15 @@
     </None>
     <None Include="Source\Shader\PostProcess.hlsli">
       <Filter>YR_Engine\Shader\PostProcess</Filter>
+    </None>
+    <None Include="Source\Shader\GBuffer.hlsli">
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
+    </None>
+    <None Include="Source\Shader\DeferredRendering.hlsli">
+      <Filter>YR_Engine\Shader\DeferredRendering</Filter>
+    </None>
+    <None Include="Source\Shader\ShadingFunctions.hlsli">
+      <Filter>YR_Engine\Shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -476,6 +497,12 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\PostProcessPS.hlsl">
       <Filter>YR_Engine\Shader\PostProcess</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GltfModelGBufferPS.hlsl">
+      <Filter>YR_Engine\Shader\GltfModel</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\DeferredRenderingPS.hlsl">
+      <Filter>YR_Engine\Shader\DeferredRendering</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
