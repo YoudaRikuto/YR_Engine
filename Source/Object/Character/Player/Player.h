@@ -25,6 +25,7 @@ public:
         AttackAir1_4,
         AttackAirToFloor,
     };
+
     enum class Animation
     {
         Idle,
@@ -74,6 +75,8 @@ public:
         Max
     };
 
+    
+
 public:
     Player();
     ~Player() override {}
@@ -96,6 +99,8 @@ public:
     void ChangeState(const STATE& state);
     const STATE GetCurrentState()   const { return currentState_; }
     const STATE GetOldState()       const { return oldState_; }
+    const STATE GetNextState()       const { return nextState_; }
+    void SetNextState(const STATE next) { this->nextState_ = next; }
 
     // ---------- Move ----------
     void SetMoveDirection(const DirectX::XMFLOAT3& direction) { moveDirection_ = direction; }
@@ -122,6 +127,7 @@ private:
     std::unique_ptr<StateMachine<State<Player>>> stateMachine_;
     STATE currentState_ = STATE::Idle;
     STATE oldState_     = STATE::Idle;
+    STATE nextState_ = STATE::Attack1_1;   //先行入力ステートを保持する変数
 
     // ---------- Move ----------
     DirectX::XMFLOAT3   moveDirection_  = {};

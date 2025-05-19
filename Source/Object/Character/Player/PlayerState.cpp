@@ -500,6 +500,8 @@ namespace PlayerState
     {
         //アニメーション再生
         PlayAnimation();
+        //先行入力を判定するためにセットしておく
+        owner_->SetNextState(Player::STATE::Attack1_1);
     }
 
     // 更新
@@ -511,11 +513,19 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //通常攻撃
+        //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
-            owner_->ChangeState(Player::STATE::Attack1_2);
-            return;
+            owner_->SetNextState(Player::STATE::Attack1_2);
+        }
+
+        //先行入力があった場合切り替える
+        if (owner_->GetNextState() != Player::STATE::Attack1_1) {
+            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
         // アニメーション後隙キャンセル
@@ -554,6 +564,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
+                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -574,6 +585,9 @@ namespace PlayerState
     {
         // アニメーション再生
         PlayAnimation();
+
+        //先行入力を判定するためにセットしておく
+        owner_->SetNextState(Player::STATE::Attack1_2);
     }
 
     // 更新
@@ -585,11 +599,19 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //通常攻撃
+        //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
-            owner_->ChangeState(Player::STATE::Attack1_3);
-            return;
+            owner_->SetNextState(Player::STATE::Attack1_3);
+        }
+
+        //先行入力があった場合切り替える
+        if (owner_->GetNextState() != Player::STATE::Attack1_2) {
+            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
         // アニメーション後隙キャンセル
@@ -628,6 +650,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
+                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -635,7 +658,7 @@ namespace PlayerState
     }
     void Attack1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false,0.05f);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false);
     }
 }
 
@@ -646,17 +669,28 @@ namespace PlayerState
     void Attack1_3State::Initialize()
     {
         PlayAnimation();
+
+        //先行入力を判定するためにセットしておく
+        owner_->SetNextState(Player::STATE::Attack1_3);
     }
 
     // 更新
     void Attack1_3State::Update(const float& elapsedTime)
     {
 
-        //通常攻撃
+        //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
-            owner_->ChangeState(Player::STATE::Attack1_4);
-            return;
+            owner_->SetNextState(Player::STATE::Attack1_4);
+        }
+
+        //先行入力があった場合切り替える
+        if (owner_->GetNextState() != Player::STATE::Attack1_3) {
+            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
         // アニメーション後隙キャンセル
@@ -686,6 +720,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
+                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -705,17 +740,28 @@ namespace PlayerState
     void Attack1_4State::Initialize()
     {
         PlayAnimation();
+
+        //先行入力を判定するためにセットしておく
+        owner_->SetNextState(Player::STATE::Attack1_4);
     }
 
     // 更新
     void Attack1_4State::Update(const float& elapsedTime)
     {
 
-        //通常攻撃
+        //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
-            owner_->ChangeState(Player::STATE::Attack1_1);
-            return;
+            owner_->SetNextState(Player::STATE::Attack1_1);
+        }
+
+        //先行入力があった場合切り替える
+        if (owner_->GetNextState() != Player::STATE::Attack1_4) {
+            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
         // アニメーション後隙キャンセル
@@ -745,6 +791,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
+                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();

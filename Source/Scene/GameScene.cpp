@@ -13,7 +13,7 @@ void GameScene::CreateResource()
     // ƒvƒŒƒCƒ„[¶¬
     PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
 
-    EnemyManager::Instance().Register(new WoodMonster);
+    //EnemyManager::Instance().Register(new WoodMonster);
 
     stage_ = std::make_unique<Stage>();
 
