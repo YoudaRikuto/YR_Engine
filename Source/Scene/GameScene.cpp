@@ -4,12 +4,16 @@
 #include "Resource/Texture.h"
 #include "Resource/Effect.h"
 #include "Resource/EffectManager.h"
+#include "Object/Character/Enemy/EnemyManager.h"
+#include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 
 // リソース生成 
 void GameScene::CreateResource()
 {
     // プレイヤー生成
     PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
+
+    EnemyManager::Instance().Register(new WoodMonster);
 
     stage_ = std::make_unique<Stage>();
 
@@ -38,6 +42,8 @@ void GameScene::Finalize()
 {
     // プレイヤー終了化
     PlayerManager::Instance().Finalize();
+
+    EnemyManager::Instance().Finalize();
 }
 
 // 更新 
@@ -45,6 +51,8 @@ void GameScene::Update(const float& elapsedTime)
 {
     // プレイヤー更新
     PlayerManager::Instance().Update(elapsedTime);
+
+    EnemyManager::Instance().Update(elapsedTime);
 }
 
 // 描画 
@@ -61,6 +69,8 @@ void GameScene::Render()
 
     // プレイヤー描画
     PlayerManager::Instance().Render();
+
+    EnemyManager::Instance().Render();
 
     //PlayerManager::Instance().DebugRender();
 
@@ -79,6 +89,8 @@ void GameScene::DrawDebug()
 
     // プレイヤー ImGui
     PlayerManager::Instance().DrawDebug();
+
+    EnemyManager::Instance().DrawDebug();
 
     stage_->DrawDebug();
 

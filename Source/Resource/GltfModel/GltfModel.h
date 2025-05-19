@@ -285,11 +285,13 @@ public:
     
     const int GetAnimationIndex() const { return animationIndex_; }
     const float GetAnimationSeconds() const { return animationSeconds_; }
-    const bool IsAnimationEnd() const { return isAnimationEnd_; }
+    const bool IsAnimationEnd()     const { return isAnimationEnd_; }
+    const bool IsAnimationBlend()   const { return isAnimationBlend_; }
 
     // ---------- RootMotion ----------
     void UpdateRootMotion(const float& scaleFacter);
     void UseRootMotion(const bool& flag);
+    const bool IsRootMotionActive() const { return isRootMotionActive_; }
 
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});

@@ -15,5 +15,7 @@ float4 main(PSIn psIn) : SV_TARGET
     color = BrightnessContrast(color, brightness_, contrast_);    
     color += bloomMap.Sample(samplerStates[LINEAR], psIn.texcoord_).rgb;
     
+    //color += sampledColor * 0.7;
+    
     return float4(color, alpha);
 }

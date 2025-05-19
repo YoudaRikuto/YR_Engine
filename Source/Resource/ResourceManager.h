@@ -3,9 +3,9 @@
 #include <map>
 #include <memory>
 
+#include "Resource/Audio/Audio.h"
 #include "Resource/GltfModel/GltfModel.h"
 
-#if 0
 class ResourceManager
 {
 private:
@@ -19,6 +19,11 @@ public:
         return instance;
     }
 
+private:
+
+
+
+
     const std::shared_ptr<GltfModel> LoadModelResource(const char* const filename);
 
 private:
@@ -26,5 +31,3 @@ private:
 
     ModelMap models_ = {};
 };
-#endif
-

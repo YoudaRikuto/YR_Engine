@@ -135,3 +135,24 @@ Audio::~Audio()
     sourceVoice_->DestroyVoice();
     delete[] buffer_.pAudioData;
 }
+
+void Audio::Play(const int& loopCount)
+{
+}
+
+void Audio::Play(const bool& loop, const bool& isIgnoreQueue)
+{
+}
+
+void Audio::Stop(const bool& playTails, const size_t& afterSamplesPlayed)
+{
+}
+
+void Audio::Volume(const float& volume)
+{
+}
+
+const bool Audio::Queuing()
+{
+    return false;
+}

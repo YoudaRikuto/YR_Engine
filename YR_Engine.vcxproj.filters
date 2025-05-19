@@ -100,6 +100,9 @@
     <Filter Include="YR_Engine\Resource\Audio">
       <UniqueIdentifier>{9d097e14-a48d-42c1-9b4c-3f36475c369a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Object\Character\Enemy\WoodMonster">
+      <UniqueIdentifier>{772b7ff7-e402-4c16-8aac-0051fa4c52dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -230,6 +233,18 @@
     </ClCompile>
     <ClCompile Include="Source\Resource\ResourceManager.cpp">
       <Filter>YR_Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Enemy\Enemy.cpp">
+      <Filter>YR_Engine\Object\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Enemy\EnemyManager.cpp">
+      <Filter>YR_Engine\Object\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.cpp">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.cpp">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +415,18 @@
     </ClInclude>
     <ClInclude Include="Source\Resource\ResourceManager.h">
       <Filter>YR_Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Enemy\Enemy.h">
+      <Filter>YR_Engine\Object\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Enemy\EnemyManager.h">
+      <Filter>YR_Engine\Object\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.h">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.h">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
