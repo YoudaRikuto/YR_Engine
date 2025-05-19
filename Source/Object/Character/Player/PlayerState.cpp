@@ -509,6 +509,7 @@ namespace PlayerState
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
             owner_->ChangeState(Player::STATE::Attack1_2);
+            
             return;
         }
 
@@ -606,7 +607,7 @@ namespace PlayerState
     }
     void Attack1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false,0.05f);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false);
     }
 }
 
