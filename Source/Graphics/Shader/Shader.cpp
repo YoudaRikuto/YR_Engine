@@ -3,7 +3,6 @@
 #include "Graphics/Graphics.h"
 #include "Framework/Misc.h"
 
-// ----- コンストラクタ -----
 Shader::Shader()
 {
     // 各種ステート作成
@@ -11,27 +10,28 @@ Shader::Shader()
     CreateRasterizerStates();   // ラスタライザーステート
     CreateDepthStencilStates(); // デプスステンシルステート
     CreateSamplerStates();      // サンプラーステート
+    CreateGBuffer();            // G-Buffer作成
 }
 
-// ----- ブレンドステート設定 -----
+// ブレンドステート設定 
 void Shader::SetBlendState(const BlendState& blendState)
 {
     Graphics::Instance().GetDeviceContext()->OMSetBlendState(blendStates_[static_cast<UINT>(blendState)].Get(), nullptr, 0xFFFFFFFF);
 }
 
-// ----- ラスタライザーステート設定 -----
+// ラスタライザーステート設定 
 void Shader::SetRasterizerState(const RasterState& rasterizerState)
 {
     Graphics::Instance().GetDeviceContext()->RSSetState(rasterizerStates_[static_cast<UINT>(rasterizerState)].Get());
 }
 
-// ----- デプスステンシルステート設定 -----
+// デプスステンシルステート設定 
 void Shader::SetDepthStencileState(const DepthState& depthStencileState)
 {
     Graphics::Instance().GetDeviceContext()->OMSetDepthStencilState(depthStencilStates_[static_cast<int>(depthStencileState)].Get(), 1);
 }
 
-// ----- サンプラーステート設定 -----
+// サンプラーステート設定 
 void Shader::SetSamplerState()
 {
     ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
@@ -44,8 +44,39 @@ void Shader::SetSamplerState()
     deviceContext->PSSetSamplers(5, 1, samplerStates_[static_cast<size_t>(SamplerState::Comparison)].GetAddressOf());
 }
 
-#pragma region ========== 各種ステート作成 ==========
-// ----- ブレンドステート作成 -----
+void Shader::SetGBuffer()
+{
+    ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
+
+    ID3D11RenderTargetView* renderTargets[static_cast<int>(GBufferId::Max)] =
+    {
+        gBufferRenderTargetView_[static_cast<int>(GBufferId::BaseColor)].Get(),
+        gBufferRenderTargetView_[static_cast<int>(GBufferId::Emissive)].Get(),
+        gBufferRenderTargetView_[static_cast<int>(GBufferId::Normal)].Get(),
+        gBufferRenderTargetView_[static_cast<int>(GBufferId::Parameters)].Get(),
+        gBufferRenderTargetView_[static_cast<int>(GBufferId::Depth)].Get(),
+    };
+    FLOAT clearColor[] = { 0, 0, 0, 0 };
+    for (int i = 0; i < static_cast<int>(GBufferId::Max); ++i)
+    {
+        deviceContext->ClearRenderTargetView(renderTargets[i], clearColor);
+    }
+    deviceContext->ClearDepthStencilView(gBufferDepthStencilView_.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    deviceContext->OMSetRenderTargets(static_cast<int>(GBufferId::Max), renderTargets, gBufferDepthStencilView_.Get());
+}
+
+void Shader::SetGBufferShaderResourceView()
+{
+    ID3D11DeviceContext* deviceContext = Graphics::Instance().GetDeviceContext();
+
+    deviceContext->PSSetShaderResources(1, 1, gBufferShaderResourceView_[1].GetAddressOf());
+    deviceContext->PSSetShaderResources(2, 1, gBufferShaderResourceView_[2].GetAddressOf());
+    deviceContext->PSSetShaderResources(3, 1, gBufferShaderResourceView_[3].GetAddressOf());
+    deviceContext->PSSetShaderResources(4, 1, gBufferShaderResourceView_[4].GetAddressOf());
+}
+
+#pragma region 各種ステート作成
+// ブレンドステート作成 
 void Shader::CreateBlendStates()
 {
     HRESULT             result = S_OK;
@@ -103,9 +134,25 @@ void Shader::CreateBlendStates()
     blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
     result = device->CreateBlendState(&blendDesc, blendStates_[static_cast<int>(BlendState::Multiply)].GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    blendDesc.AlphaToCoverageEnable = FALSE;
+    blendDesc.IndependentBlendEnable = FALSE;
+    for (int i = 0; i < static_cast<int>(GBufferId::Max); ++i)
+    {
+        blendDesc.RenderTarget[i].BlendEnable = FALSE;
+        blendDesc.RenderTarget[i].SrcBlend = D3D11_BLEND_ONE;
+        blendDesc.RenderTarget[i].DestBlend = D3D11_BLEND_ZERO;
+        blendDesc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+        blendDesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ONE;
+        blendDesc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ZERO;
+        blendDesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    }
+    result = device->CreateBlendState(&blendDesc, blendStates_[static_cast<int>(BlendState::MRT)].GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- ラスタライザーステート作成 -----
+// ラスタライザーステート作成 
 void Shader::CreateRasterizerStates()
 {
     HRESULT                 result = S_OK;
@@ -144,7 +191,7 @@ void Shader::CreateRasterizerStates()
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- デプスステンシルステート作成 -----
+// デプスステンシルステート作成 
 void Shader::CreateDepthStencilStates()
 {
     HRESULT                     result = S_OK;
@@ -177,7 +224,7 @@ void Shader::CreateDepthStencilStates()
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-// ----- サンプラーステート作成 -----
+// サンプラーステート作成 
 void Shader::CreateSamplerStates()
 {
     HRESULT             result = S_OK;
@@ -252,10 +299,56 @@ void Shader::CreateSamplerStates()
     result = device->CreateSamplerState(&samplerDesc, samplerStates_[static_cast<size_t>(SamplerState::Comparison)].GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
-#pragma endregion ========== 各種ステート作成 ==========
 
-#pragma region ========== シェーダー作成関数 ==========
-// ----- 頂点シェーダー -----
+// G-Buffer作成
+void Shader::CreateGBuffer()
+{
+    HRESULT result = S_OK;
+
+    D3D11_TEXTURE2D_DESC texture2dDesc = {};
+    texture2dDesc.Width = SCREEN_WIDTH;
+    texture2dDesc.Height = SCREEN_HEIGHT;
+    texture2dDesc.MipLevels = 1;
+    texture2dDesc.ArraySize = 1;
+    texture2dDesc.SampleDesc.Count = 1;
+    texture2dDesc.SampleDesc.Quality = 0;
+    texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+    texture2dDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    texture2dDesc.CPUAccessFlags = 0;
+    texture2dDesc.MiscFlags = 0;
+
+    DXGI_FORMAT formats[] =
+    {
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R32_FLOAT
+    };
+
+    for (int i = 0; i < static_cast<int>(GBufferId::Max); ++i)
+    {
+        texture2dDesc.Format = formats[i];
+
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> colorBuffer = {};
+        result = Graphics::Instance().GetDevice()->CreateTexture2D(&texture2dDesc, NULL, colorBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+        // RenderTargetView生成
+        result = Graphics::Instance().GetDevice()->CreateRenderTargetView(colorBuffer.Get(), NULL, gBufferRenderTargetView_[i].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+        // ShaderResourceView生成
+        result = Graphics::Instance().GetDevice()->CreateShaderResourceView(colorBuffer.Get(), NULL, gBufferShaderResourceView_[i].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+    }
+
+    CreatePsFromCso("./Resources/Shader/GltfModelGBufferPS.cso", gBufferPixelShader_.GetAddressOf());
+}
+#pragma endregion 各種ステート作成
+
+#pragma region シェーダー作成関数 
+// 頂点シェーダー 
 HRESULT Shader::CreateVsFromCso(const char* csoName, ID3D11VertexShader** vertexShader, ID3D11InputLayout** inputLayout, D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numElements)
 {
     HRESULT         result = S_OK;
@@ -285,7 +378,7 @@ HRESULT Shader::CreateVsFromCso(const char* csoName, ID3D11VertexShader** vertex
     return result;
 }
 
-// ----- ピクセルシェーダー -----
+// ピクセルシェーダー 
 HRESULT Shader::CreatePsFromCso(const char* csoName, ID3D11PixelShader** pixelShader)
 {
     HRESULT         result = S_OK;
@@ -309,7 +402,7 @@ HRESULT Shader::CreatePsFromCso(const char* csoName, ID3D11PixelShader** pixelSh
     return result;
 }
 
-// ----- ジオメトリシェーダー -----
+// ジオメトリシェーダー 
 HRESULT Shader::CreateGsFromCso(const char* csoName, ID3D11GeometryShader** geometryShader)
 {
     HRESULT         result = S_OK;
@@ -333,7 +426,7 @@ HRESULT Shader::CreateGsFromCso(const char* csoName, ID3D11GeometryShader** geom
     return result;
 }
 
-// ----- コンピュートシェーダー -----
+// コンピュートシェーダー 
 HRESULT Shader::CreateCsFromCso(const char* csoName, ID3D11ComputeShader** computeShader)
 {
     HRESULT         result = S_OK;
@@ -357,7 +450,7 @@ HRESULT Shader::CreateCsFromCso(const char* csoName, ID3D11ComputeShader** compu
     return result;
 }
 
-// ----- ドメインシェーダー -----
+// ドメインシェーダー 
 HRESULT Shader::CreateDsFromCso(const char* csoName, ID3D11DomainShader** domainShader)
 {
     HRESULT         result = S_OK;
@@ -381,7 +474,7 @@ HRESULT Shader::CreateDsFromCso(const char* csoName, ID3D11DomainShader** domain
     return result;
 }
 
-// ----- ハルシェーダー -----
+// ハルシェーダー 
 HRESULT Shader::CreateHsFromCso(const char* csoName, ID3D11HullShader** hullShader)
 {
     HRESULT         result = S_OK;
@@ -405,4 +498,4 @@ HRESULT Shader::CreateHsFromCso(const char* csoName, ID3D11HullShader** hullShad
     return result;
 }
 
-#pragma endregion ========== シェーダー作成関数 ==========
+#pragma endregion シェーダー作成関数

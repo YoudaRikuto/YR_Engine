@@ -240,7 +240,10 @@
     <ClCompile Include="Source\Object\Character\Enemy\EnemyManager.cpp">
       <Filter>YR_Engine\Object\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Character\Enemy\EnemyWoodMonster.cpp">
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.cpp">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.cpp">
       <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
     </ClCompile>
   </ItemGroup>
@@ -419,7 +422,10 @@
     <ClInclude Include="Source\Object\Character\Enemy\EnemyManager.h">
       <Filter>YR_Engine\Object\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Character\Enemy\EnemyWoodMonster.h">
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.h">
+      <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.h">
       <Filter>YR_Engine\Object\Character\Enemy\WoodMonster</Filter>
     </ClInclude>
   </ItemGroup>

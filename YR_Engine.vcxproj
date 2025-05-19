@@ -181,7 +181,8 @@
     <ClInclude Include="Source\Object\Character\Character.h" />
     <ClInclude Include="Source\Object\Character\Enemy\Enemy.h" />
     <ClInclude Include="Source\Object\Character\Enemy\EnemyManager.h" />
-    <ClInclude Include="Source\Object\Character\Enemy\EnemyWoodMonster.h" />
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.h" />
+    <ClInclude Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.h" />
     <ClInclude Include="Source\Object\Character\Player\Player.h" />
     <ClInclude Include="Source\Object\Character\Player\PlayerManager.h" />
     <ClInclude Include="Source\Object\Character\Player\PlayerState.h" />
@@ -230,7 +231,8 @@
     <ClCompile Include="Source\Object\Character\Character.cpp" />
     <ClCompile Include="Source\Object\Character\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Object\Character\Enemy\EnemyManager.cpp" />
-    <ClCompile Include="Source\Object\Character\Enemy\EnemyWoodMonster.cpp" />
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonster.cpp" />
+    <ClCompile Include="Source\Object\Character\Enemy\WoodMonster\WoodMonsterState.cpp" />
     <ClCompile Include="Source\Object\Character\Player\Player.cpp" />
     <ClCompile Include="Source\Object\Character\Player\PlayerManager.cpp" />
     <ClCompile Include="Source\Object\Character\Player\PlayerState.cpp" />

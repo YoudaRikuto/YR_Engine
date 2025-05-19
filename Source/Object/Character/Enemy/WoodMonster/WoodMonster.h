@@ -1,11 +1,11 @@
 #pragma once
-#include "Enemy.h"
+#include "Object/Character/Enemy/Enemy.h"
 
-class EnemyWoodMonster : public Enemy
+class WoodMonster : public Enemy
 {
 public:
-    EnemyWoodMonster();
-    ~EnemyWoodMonster() override {}
+    WoodMonster();
+    ~WoodMonster() override {}
 
     void Initialize()                                   override;
     void Finalize()                                     override;

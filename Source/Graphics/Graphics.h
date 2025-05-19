@@ -34,6 +34,7 @@ public:
     void SetBlendState(const Shader::BlendState& blendState) { shader_->SetBlendState(blendState); }
     void SetRasterizerState(const Shader::RasterState& rasterizerState) { shader_->SetRasterizerState(rasterizerState); }
 
+
 private:
     void CreateRenderTargetView(); // レンダーターゲットビュー作成
     void CreateDepthStencilView(); // デプスステンシルビュー作成
