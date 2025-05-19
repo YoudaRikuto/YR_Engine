@@ -179,7 +179,8 @@ namespace PlayerState
 
     private:
         float runTransitionFrame_ = 0.6f;
-        float 
+        float changeTiming_ = 0.5f;
+        
     };
 
     class Attack1_2State : public State<Player>
@@ -198,6 +199,7 @@ namespace PlayerState
 
     private:
         float runTransitionFrame_ = 1.0f;
+        float changeTiming_ = 0.5f;
     };
 
     class Attack1_3State : public State<Player>
@@ -216,6 +218,7 @@ namespace PlayerState
 
     private:
         float runTransitionFrame_ = 1.0f;
+        float changeTiming_ = 0.5f;
     };
 
     class Attack1_4State : public State<Player>
@@ -234,6 +237,7 @@ namespace PlayerState
 
     private:
         float runTransitionFrame_ = 1.0f;
+        float changeTiming_ = 0.5f;
     };
 
     class AttackAir1_1State : public State<Player>

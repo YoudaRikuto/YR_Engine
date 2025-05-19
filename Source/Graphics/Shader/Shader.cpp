@@ -343,7 +343,7 @@ void Shader::CreateGBuffer()
         _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
     }
 
-    CreatePsFromCso("./Resources/Shader/GltfModelGBufferPS.cso", gBufferPixelShader_.GetAddressOf());
+    //CreatePsFromCso("./Resources/Shader/GltfModelGBufferPS.cso", gBufferPixelShader_.GetAddressOf());
 }
 #pragma endregion 各種ステート作成
 
