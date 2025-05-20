@@ -13,7 +13,7 @@ void GameScene::CreateResource()
     // プレイヤー生成
     PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
 
-    //EnemyManager::Instance().Register(new WoodMonster);
+    EnemyManager::Instance().Register(new WoodMonster);
 
     stage_ = std::make_unique<Stage>();
 
@@ -67,8 +67,7 @@ void GameScene::Render()
     Graphics::Instance().GetDeviceContext()->PSSetShaderResources(34, 1, iblTextures_[2].GetAddressOf());
     Graphics::Instance().GetDeviceContext()->PSSetShaderResources(35, 1, iblTextures_[3].GetAddressOf());
 
-    ID3D11PixelShader* gBufferPS = nullptr;
-    //ID3D11PixelShader* gBufferPS = Graphics::Instance().GetGBufferPixelShader();
+    ID3D11PixelShader* gBufferPS = Graphics::Instance().GetGBufferPixelShader();
 
     // プレイヤー描画
     PlayerManager::Instance().Render(gBufferPS);

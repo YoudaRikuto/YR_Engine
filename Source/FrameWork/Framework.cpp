@@ -60,7 +60,7 @@ void Framework::Update(const float& elapsedTime)
     DrawDebug();
 }
 
-#define USE_GBUFFER 0
+#define USE_GBUFFER 1
 
 // 描画 
 void Framework::Render()
@@ -76,6 +76,10 @@ void Framework::Render()
 
     const DirectX::XMFLOAT3 cameraPosition = Camera::Instance().GetEye();
     sceneConstants_.GetData()->cameraPosition_ = { cameraPosition.x, cameraPosition.y, cameraPosition.z, 0 };
+
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseProjection_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&projection)));
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseViewProjection_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&view) * DirectX::XMLoadFloat4x4(&projection)));
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseView_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&view)));
 
     sceneConstants_.Activate(0, true, true, true, true);
 
@@ -93,7 +97,7 @@ void Framework::Render()
     PostProcess::Instance().Activate();
 
     // Scene描画
-    SceneManager::Instance().Render();
+    //SceneManager::Instance().Render();
 
 #if USE_GBUFFER
     deferredRendering_.Draw();
@@ -102,7 +106,18 @@ void Framework::Render()
     EffectManager::Instance().Render();
 
     PostProcess::Instance().Deactivate();
+
+    ID3D11RenderTargetView* renderTargetView = graphics_.GetRenderTargetView();
+    ID3D11DepthStencilView* depthStencilView = graphics_.GetDepthStencilView();
+    FLOAT color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    Graphics::Instance().GetDeviceContext()->ClearRenderTargetView(renderTargetView, color);
+    Graphics::Instance().GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
     PostProcess::Instance().Draw();
+
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_OFF_ZW_OFF);
 
     // アニメーションエディタ
     animationEditer_.Render();

@@ -28,6 +28,9 @@ private:
         DirectX::XMFLOAT4X4 viewProjection_;
         DirectX::XMFLOAT4   lightDirection_;
         DirectX::XMFLOAT4   cameraPosition_;
+        DirectX::XMFLOAT4X4 inverseProjection_;
+        DirectX::XMFLOAT4X4 inverseViewProjection_;
+        DirectX::XMFLOAT4X4 inverseView_;
     };
 
 private:

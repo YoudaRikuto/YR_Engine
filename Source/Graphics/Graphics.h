@@ -38,6 +38,8 @@ public:
     void SetGBufferShaderResourceView() { shader_->SetGBufferShaderResourceView(); }
     ID3D11ShaderResourceView** GetGBufferBaseColorShaderResourceView() { return shader_->GetGBufferBaseColorShaderResourceView(); }
     ID3D11PixelShader* GetGBufferPixelShader() { return shader_->GetGBufferPixelShader(); }
+    
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetDepthMap() { return shader_->GetDepthMap(); }
 
 private:
     void CreateRenderTargetView(); // レンダーターゲットビュー作成

@@ -13,6 +13,15 @@ struct PSIn
     float2 texcoord_ : TEXCOORD;
 };
 
+cbuffer SceneConstants : register(b0)
+{
+    row_major float4x4  viewProjection_;
+    float4              lightDirection_;
+    float4              cameraPosition_;
+    row_major float4x4  inverseProjection_;
+    row_major float4x4  inverseViewProjection_;
+}
+
 cbuffer PostEffectConstants : register(b8)
 {
     //float3 colorize_;
