@@ -1,5 +1,7 @@
 #include "PlayerState.h"
 #include "Input/Input.h"
+#include "Object/Character/Enemy/EnemyManager.h"
+#include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 
 // ---------- IdleState ----------
 namespace PlayerState
@@ -14,6 +16,12 @@ namespace PlayerState
     // 更新 
     void IdleState::Update(const float& elapsedTime)
     {
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            owner_->ChangeState(Player::STATE::FinisherAttack0);
+            return;
+        }
+
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
         {
             owner_->ChangeState(Player::STATE::JumpStart);
@@ -514,14 +522,15 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //先行入力ステート記録
+        // 先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
             owner_->SetNextState(Player::STATE::Attack1_2);
         }
 
-        //先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_1) {
+        // 先行入力があった場合切り替える
+        if (owner_->GetNextState() != Player::STATE::Attack1_1) 
+        {
             if (owner_->GetAnimationSeconds() >= changeTiming_)
             {
                 owner_->ChangeState(owner_->GetNextState());
@@ -1040,5 +1049,52 @@ namespace PlayerState
         }
 
         owner_->SetVelocity(velocity);
+    }
+}
+
+// ---------- FinisherAttack0State ----------
+namespace PlayerState
+{
+    // 初期化
+    void FinisherAttack0State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        // 対応する敵のステート変更
+        for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
+        {
+            if (enemy->GetEnemyType() == EnemyType::WoodMonster)
+            {
+                WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(enemy);
+                woodMonster->ChangeState(WoodMonster::STATE::FinisherTarget0);
+            }
+        }
+    }
+
+    // 更新
+    void FinisherAttack0State::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void FinisherAttack0State::Finalize()
+    {
+    }
+
+    // ImGui
+    void FinisherAttack0State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void FinisherAttack0State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(Player::Animation::Execution_3, false, 1.0f, 0.0, 0.1f);
     }
 }

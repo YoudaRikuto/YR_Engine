@@ -314,4 +314,19 @@ namespace PlayerState
 
         float landingTriggerPositionY_ = 0.05f;
     };
+
+    class FinisherAttack0State : public State<Player>
+    {
+    public:
+        FinisherAttack0State(Player* player) : State(player, "FinisherAttack0State") {}
+        ~FinisherAttack0State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
 }

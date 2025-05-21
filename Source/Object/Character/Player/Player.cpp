@@ -125,6 +125,7 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::AttackAir1_3State(this));
     stateMachine_->RegisterState(new PlayerState::AttackAir1_4State(this));
     stateMachine_->RegisterState(new PlayerState::AttackAirToFloorState(this));
+    stateMachine_->RegisterState(new PlayerState::FinisherAttack0State(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));

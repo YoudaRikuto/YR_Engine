@@ -8,7 +8,8 @@ public:
     enum class STATE
     {
         Idle,
-        Walk,
+        
+        FinisherTarget0,
     };
 
     enum class Animation
@@ -52,6 +53,7 @@ public:
 public:
     WoodMonster();
     ~WoodMonster() override {}
+    const EnemyType GetEnemyType() const override { return EnemyType::WoodMonster; }
 
     void Initialize()                                   override;
     void Finalize()                                     override;

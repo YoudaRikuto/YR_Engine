@@ -59,6 +59,7 @@ void WoodMonster::RegisterStateMachine()
 
     // ステート登録
     stateMachine_->RegisterState(new WoodMonsterState::IdleState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget0State(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));
