@@ -500,6 +500,7 @@ namespace PlayerState
     {
         //アニメーション再生
         PlayAnimation();
+
         //先行入力を判定するためにセットしておく
         owner_->SetNextState(Player::STATE::Attack1_1);
     }
@@ -571,6 +572,7 @@ namespace PlayerState
         }
     }
 
+    // アニメーション再生
     void Attack1_1State::PlayAnimation()
     {
         owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false);
@@ -677,6 +679,11 @@ namespace PlayerState
     // 更新
     void Attack1_3State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
 
         //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
@@ -710,6 +717,8 @@ namespace PlayerState
     // 終了化
     void Attack1_3State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
@@ -748,6 +757,11 @@ namespace PlayerState
     // 更新
     void Attack1_4State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
 
         //先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
@@ -781,6 +795,8 @@ namespace PlayerState
     // 終了化
     void Attack1_4State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
