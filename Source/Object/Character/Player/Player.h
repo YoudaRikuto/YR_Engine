@@ -24,6 +24,9 @@ public:
         AttackAir1_3,
         AttackAir1_4,
         AttackAirToFloor,
+        FinisherAttack0,
+        FinisherAttack1,
+        FinisherAttack2,
     };
 
     enum class Animation
@@ -67,6 +70,12 @@ public:
         AttackAirToFloor_Start,
         AttackAirToFloor_Loop,
         AttackAirToFloor_End,
+        Execution_1,
+        Execution_2,
+        Execution_3,
+        Target_1,
+        Target_2,
+        Target_3,
     };
     enum class WeaponDataType
     {

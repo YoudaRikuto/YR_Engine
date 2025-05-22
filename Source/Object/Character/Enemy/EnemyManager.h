@@ -29,6 +29,8 @@ public:
     const int GetEnemyCount() const { return enemies_.size(); }
     Enemy* GetEnemy(const int& index) { return enemies_.at(index); }
 
+    std::vector<Enemy*> GetEnemies() { return enemies_; }
+
 private:
     std::vector<Enemy*> enemies_;
     std::set<Enemy*>    removes_;

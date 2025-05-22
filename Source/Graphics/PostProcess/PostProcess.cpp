@@ -42,7 +42,7 @@ void PostProcess::Draw()
     ID3D11ShaderResourceView* shaderResourceViews[] =
     {
         sceneBuffer_->GetColorMap().Get(),
-        //Graphics::Instance().GetShader()->GetDepthMap().Get(),
+        Graphics::Instance().GetDepthMap().Get(),
         kawaseBloom_.GetColorMap().Get(),
         cascadedShadowMap_.GetDepthMap().Get(),
     };

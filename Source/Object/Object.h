@@ -33,6 +33,7 @@ public:
     void UpdateRootMotion(const float& scaleFacter) { gltfModel_.UpdateRootMotion(scaleFacter); }
     void UseRootMotion(const bool& flag) { gltfModel_.UseRootMotion(flag); }
     const bool IsRootMotionActive() const { return gltfModel_.IsRootMotionActive(); }
+    void SetRootMotionValue(const DirectX::XMFLOAT3& value) { gltfModel_.SetRootMotionValue(value); }
 
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT3& offsetPosition = {}) { return gltfModel_.GetJointPosition(nodeIndex, scaleFactor_, offsetPosition); }

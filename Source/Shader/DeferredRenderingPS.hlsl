@@ -1,11 +1,11 @@
 #include "DeferredRendering.hlsli"
 #include "ShadingFunctions.hlsli"
 
-Texture2D<float4> gBufferBaseColor : register(t0);
-Texture2D<float4> gBufferEmissiveColor : register(t1);
-Texture2D<float4> gBufferNormal : register(t2);
-Texture2D<float4> gBufferParameter : register(t3);
-Texture2D<float> gBufferDepth : register(t4);
+Texture2D<float4> gBufferBaseColor      : register(t0);
+Texture2D<float4> gBufferEmissiveColor  : register(t1);
+Texture2D<float4> gBufferNormal         : register(t2);
+Texture2D<float4> gBufferParameter      : register(t3);
+Texture2D<float>  gBufferDepth          : register(t4);
 
 //  IBL用テクスチャ
 Texture2D skybox : register(t32);

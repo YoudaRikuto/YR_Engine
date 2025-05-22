@@ -36,6 +36,8 @@ public:
 
     ID3D11DepthStencilView* GetGBufferDepthStencilView() { return gBufferDepthStencilView_.Get(); }
 
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetDepthMap() { return gBufferDepthShaderResourceView_; }
+
 private:
     void CreateBlendStates();           // ブレンドステート作成
     void CreateRasterizerStates();      // ラスタライザステート作成

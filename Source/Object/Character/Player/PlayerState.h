@@ -35,6 +35,8 @@ namespace PlayerState
 
     private:
         // ------------ Animation ------------
+        float animationSpeed_ = 0.9f;
+
         float transitionJumpEnd_                = 0.1f;
         float transitionAttackAirToFloorEnd_    = 0.3f;
     };
@@ -49,6 +51,14 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float animationSpeed_ = 1.5f;
+        
+        DirectX::XMFLOAT3 rootMotionValue_ = { 1.2f, 1.0f, 1.2f };
     };
 
     class JumpStartState : public State<Player>
@@ -92,6 +102,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
+        // ---------- Animation ----------
+        float transitionAttackAir1_ = 0.2f;
+
         float landingTriggerPositionY_ = 0.05f;
 
         bool isDoubleJumpEnabled_ = true; // ダブルジャンプが可能か
@@ -250,6 +263,17 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        // ---------- Animation ---------- 
+        float animationSpeed_ = 1.3f;
+
+        DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
+
+        float jumpLoopTransitionFrame_ = 0.6f;
     };
 
     class AttackAir1_2State : public State<Player>
@@ -262,6 +286,9 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
     };
 
     class AttackAir1_3State : public State<Player>
@@ -274,6 +301,9 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
     };
 
     class AttackAir1_4State : public State<Player>
@@ -286,6 +316,9 @@ namespace PlayerState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
         void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
     };
 
     class AttackAirToFloorState : public State<Player>
@@ -313,5 +346,50 @@ namespace PlayerState
         float fallingSpeed_ = -40.0f;
 
         float landingTriggerPositionY_ = 0.05f;
+    };
+
+    class FinisherAttack0State : public State<Player>
+    {
+    public:
+        FinisherAttack0State(Player* player) : State(player, "FinisherAttack0State") {}
+        ~FinisherAttack0State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
+    class FinisherAttack1State : public State<Player>
+    {
+    public:
+        FinisherAttack1State(Player* player) : State(player, "FinisherAttack1State") {}
+        ~FinisherAttack1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
+    class FinisherAttack2State : public State<Player>
+    {
+    public:
+        FinisherAttack2State(Player* player) : State(player, "FinisherAttack2State") {}
+        ~FinisherAttack2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
     };
 }

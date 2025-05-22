@@ -36,7 +36,8 @@ PSGBufferOut main(PSIn psIn, bool isFrontFace : SV_IsFrontFace)
     if (m.emissiveTexture_.index_ > -1)
     {
         float3 emissive = materialTextures[EMISSIVE_TEXTURE].Sample(samplerStates[ANISOTROPIC], psIn.texcoord_).rgb;
-        emissive.rgb = pow(emissive.rgb, GammaFactor);
+        
+        emissiveColor.rgb = emissive.rgb * 0;
         //emissiveColor.rgb = emissive.rgb * emissiveColor_.rgb * emissiveColor_.a;
         
         //emissiveColor.rgb *= emissive.rgb;
