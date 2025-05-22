@@ -25,6 +25,8 @@ public:
         AttackAir1_4,
         AttackAirToFloor,
         FinisherAttack0,
+        FinisherAttack1,
+        FinisherAttack2,
     };
 
     enum class Animation

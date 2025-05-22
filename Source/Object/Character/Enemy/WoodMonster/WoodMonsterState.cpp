@@ -68,6 +68,6 @@ namespace WoodMonsterState
     // アニメーション再生
     void FinisherTarget0State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(WoodMonster::Animation::Target_3, false, 1.0f, 0.0f, 0.1f);
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Target_1, false, 1.0f, 0.0f, 0.1f);
     }
 }

@@ -292,6 +292,7 @@ public:
     void UpdateRootMotion(const float& scaleFacter);
     void UseRootMotion(const bool& flag);
     const bool IsRootMotionActive() const { return isRootMotionActive_; }
+    void SetRootMotionValue(const DirectX::XMFLOAT3& value) { rootMotionValue_ = value; }
 
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});

@@ -126,6 +126,8 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::AttackAir1_4State(this));
     stateMachine_->RegisterState(new PlayerState::AttackAirToFloorState(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack0State(this));
+    stateMachine_->RegisterState(new PlayerState::FinisherAttack1State(this));
+    stateMachine_->RegisterState(new PlayerState::FinisherAttack2State(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));
@@ -143,6 +145,16 @@ void Player::ChangeState(const STATE& state)
 // 移動処理 
 void Player::Move(const float& elapsedTime)
 {
+    const Player::Animation animationIndex = static_cast<Player::Animation>(GetAnimationIndex());
+
+    if (animationIndex == Player::Animation::AttackAir1_1 ||
+        animationIndex == Player::Animation::AttackAir1_2 ||
+        animationIndex == Player::Animation::AttackAir1_3 ||
+        animationIndex == Player::Animation::AttackAir1_4)
+    {
+        return;
+    }
+
     DirectX::XMFLOAT3   velocity    = GetVelocity();
     DirectX::XMFLOAT2   velocityXZ  = { velocity.x, velocity.z };   // XZ平面用
     float               velocityY   = velocity.y;                   // Y軸用
