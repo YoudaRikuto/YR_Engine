@@ -927,6 +927,10 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/rikuto
         // æs“ü—Íó•t
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
