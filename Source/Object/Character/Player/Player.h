@@ -98,6 +98,8 @@ public:
     void DebugRender();
 
 public:
+    void ResetFlags(); // FlagƒŠƒZƒbƒg‚·‚é
+
     // ---------- Animation ----------
     void PlayAnimation(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& startFrame = 0.0f) { Object::PlayAnimation(static_cast<int>(index), loop, speed, startFrame); }
     void PlayAnimationBlend(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& blendStartFrame = 0.0f, const float& transitionTime = 0.1f) { Object::PlayAnimationBlend(static_cast<int>(index), loop, speed, blendStartFrame, transitionTime); }

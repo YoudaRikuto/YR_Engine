@@ -102,6 +102,13 @@ void Player::DebugRender()
 {
 }
 
+// フラグをリセットする
+void Player::ResetFlags()
+{
+    // 先行入力フラグをリセットする
+    nextState_ = STATE::Idle;
+}
+
 // ステートマシン登録 
 void Player::RegisterStateMachine()
 {
@@ -147,7 +154,9 @@ void Player::Move(const float& elapsedTime)
 {
     const Player::Animation animationIndex = static_cast<Player::Animation>(GetAnimationIndex());
 
-    if (animationIndex == Player::Animation::AttackAir1_1 ||
+    if (animationIndex == Player::Animation::RollForward ||
+        animationIndex == Player::Animation::RollBack ||        
+        animationIndex == Player::Animation::AttackAir1_1 ||
         animationIndex == Player::Animation::AttackAir1_2 ||
         animationIndex == Player::Animation::AttackAir1_3 ||
         animationIndex == Player::Animation::AttackAir1_4)

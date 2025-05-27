@@ -170,6 +170,9 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
+        // 旋回処理
+        owner_->Turn(elapsedTime);
+
         if (owner_->IsAnimationEnd())
         {
             owner_->ChangeState(Player::STATE::Idle);
@@ -905,6 +908,9 @@ namespace PlayerState
     // 初期化
     void AttackAir1_1State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
 
@@ -921,7 +927,21 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
+
+        // 先行入力受付
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::AttackAir1_2);
+        }
+
+        // 先行入力判定
+        if (owner_->GetAnimationSeconds() >= attackAir2TransitionFrame_)
+        {
+            if (owner_->GetNextState() == Player::STATE::AttackAir1_2) owner_->ChangeState(owner_->GetNextState());
+        }
+
+
+        if(owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
         {
             owner_->ChangeState(Player::STATE::JumpLoop);
             return;
@@ -942,7 +962,8 @@ namespace PlayerState
         {
             if (ImGui::TreeNode("Animation"))
             {
-                ImGui::DragFloat("Animation Speed", &animationSpeed_);
+                ImGui::DragFloat("Animation Speed", &animationSpeed_, 0.01f);
+                ImGui::DragFloat("Animation Start Frame", &animationStartFrame_, 0.01f);
 
                 ImGui::TreePop();
             }
@@ -956,7 +977,7 @@ namespace PlayerState
     // アニメーション再生
     void AttackAir1_1State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_1, false);
+        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_1, false, animationSpeed_, animationStartFrame_);
     }
 }
 
@@ -966,6 +987,9 @@ namespace PlayerState
     // 初期化
     void AttackAir1_2State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -973,22 +997,42 @@ namespace PlayerState
     // 更新
     void AttackAir1_2State::Update(const float& elapsedTime)
     {
+        // ルートモーション使用
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
+        {
+            owner_->ChangeState(Player::STATE::JumpLoop);
+            return;
+        }
     }
 
     // 終了化
     void AttackAir1_2State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
     void AttackAir1_2State::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("Animation Speed", &animationSpeed_);
+            ImGui::DragFloat("Transition AttackAir1_1", &transitionAttackAir1_1_, 0.01f);
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
     void AttackAir1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_2, false);
+        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_2, false, animationSpeed_, 0.0f, transitionAttackAir1_1_);
     }
 }
 
@@ -998,6 +1042,9 @@ namespace PlayerState
     // 初期化
     void AttackAir1_3State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -1030,6 +1077,9 @@ namespace PlayerState
     // 初期化
     void AttackAir1_4State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
     }
