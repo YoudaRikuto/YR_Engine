@@ -601,9 +601,9 @@ namespace PlayerState
         }
 
         // 先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_1) 
+        if (owner_->GetNextState() != Player::STATE::Attack1_1)
         {
-            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            if (owner_->GetAnimationSeconds() >= attack2TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
                 return;
@@ -646,7 +646,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
-                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
+                ImGui::DragFloat("Attack2TransitionFrame_", &attack2TransitionFrame_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -690,7 +690,7 @@ namespace PlayerState
 
         //先行入力があった場合切り替える
         if (owner_->GetNextState() != Player::STATE::Attack1_2) {
-            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            if (owner_->GetAnimationSeconds() >= attack3TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
                 return;
@@ -733,7 +733,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
-                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
+                ImGui::DragFloat("Attack3TransitionFrame_", &attack3TransitionFrame_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -774,7 +774,7 @@ namespace PlayerState
 
         //先行入力があった場合切り替える
         if (owner_->GetNextState() != Player::STATE::Attack1_3) {
-            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            if (owner_->GetAnimationSeconds() >= attack4TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
                 return;
@@ -810,7 +810,7 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
-                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
+                ImGui::DragFloat("Attack4TransitionFrame_", &attack4TransitionFrame_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -852,7 +852,7 @@ namespace PlayerState
 
         //先行入力があった場合切り替える
         if (owner_->GetNextState() != Player::STATE::Attack1_4) {
-            if (owner_->GetAnimationSeconds() >= changeTiming_)
+            if (owner_->GetAnimationSeconds() >= attack1TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
                 return;
@@ -888,7 +888,8 @@ namespace PlayerState
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
-                ImGui::DragFloat("changeTiming_", &changeTiming_, 0.01f);
+                ImGui::DragFloat("Attack1TransitionFrame_", &attack1TransitionFrame_, 0.01f);
+                ImGui::DragFloat("TransitionTime", &transitionTime_, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -897,7 +898,7 @@ namespace PlayerState
 
     void Attack1_4State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_4, false);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_4, false, 1.0f, 0.0f, transitionTime_);
     }
 }
 
