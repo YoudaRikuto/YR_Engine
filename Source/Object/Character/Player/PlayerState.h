@@ -192,7 +192,7 @@ namespace PlayerState
 
     private:
         float runTransitionFrame_ = 0.6f;
-        float changeTiming_ = 0.5f;
+        float attack2TransitionFrame_ = 0.5f;
         
     };
 
@@ -211,8 +211,8 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
-        float runTransitionFrame_ = 1.0f;
-        float changeTiming_ = 0.5f;
+        float runTransitionFrame_ = 0.4f;
+        float attack3TransitionFrame_ = 0.3f;
     };
 
     class Attack1_3State : public State<Player>
@@ -230,8 +230,8 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
-        float runTransitionFrame_ = 1.0f;
-        float changeTiming_ = 0.5f;
+        float runTransitionFrame_ = 0.4f;
+        float attack4TransitionFrame_ = 0.3f;
     };
 
     class Attack1_4State : public State<Player>
@@ -249,8 +249,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
-        float runTransitionFrame_ = 1.0f;
-        float changeTiming_ = 0.5f;
+        float runTransitionFrame_ = 0.6f;
+        float transitionTime_ = 0.1f;
+        float attack1TransitionFrame_ = 0.5f;
     };
 
     class AttackAir1_1State : public State<Player>
