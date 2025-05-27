@@ -269,11 +269,14 @@ namespace PlayerState
 
     private:
         // ---------- Animation ---------- 
-        float animationSpeed_ = 1.3f;
+        float animationSpeed_ = 1.2f;
+        float animationStartFrame_ = 0.14f;
 
         DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
 
         float jumpLoopTransitionFrame_ = 0.6f;
+
+        float attackAir2TransitionFrame_ = 0.6f;
     };
 
     class AttackAir1_2State : public State<Player>
@@ -289,6 +292,13 @@ namespace PlayerState
 
     private:
         void PlayAnimation();
+
+    private:
+        // ---------- Animation ----------
+        float animationSpeed_ = 1.3f;
+        float transitionAttackAir1_1_ = 0.1f;
+
+        float jumpLoopTransitionFrame_ = 0.6f;
     };
 
     class AttackAir1_3State : public State<Player>
