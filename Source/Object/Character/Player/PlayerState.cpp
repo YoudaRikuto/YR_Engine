@@ -398,6 +398,9 @@ namespace PlayerState
     // 初期化 
     void JumpEndState::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
 
@@ -423,6 +426,19 @@ namespace PlayerState
             }
         }
 
+        // 先行入力ステート記録
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::Attack1_1);
+        }
+
+        // 先行入力があった場合切り替える
+        if (owner_->GetNextState() == Player::STATE::Attack1_1)
+        {
+            owner_->ChangeState(owner_->GetNextState());
+            return;
+        }
+
 
         if (owner_->IsAnimationEnd())
         {
@@ -442,8 +458,6 @@ namespace PlayerState
         if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
         {
             ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
-
-
             ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
             ImGui::DragFloat("TransitionTime", &transitionTime_, 0.01f);
 
@@ -464,6 +478,9 @@ namespace PlayerState
     // 初期化 
     void JumpEndToRunState::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -475,6 +492,19 @@ namespace PlayerState
         if (owner_->GetAnimationSeconds() >= animationEndFrame_)
         {
             owner_->ChangeState(Player::STATE::Run);
+            return;
+        }
+
+        // 先行入力ステート記録
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::Attack1_1);
+        }
+
+        // 先行入力があった場合切り替える
+        if (owner_->GetNextState() == Player::STATE::Attack1_1)
+        {
+            owner_->ChangeState(owner_->GetNextState());
             return;
         }
     }
@@ -578,11 +608,14 @@ namespace PlayerState
     // 初期化
     void Attack1_1State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         //アニメーション再生
         PlayAnimation();
 
-        //先行入力を判定するためにセットしておく
-        owner_->SetNextState(Player::STATE::Attack1_1);
+        owner_->SetVelocity({});
+        owner_->SetMoveDirection({});
     }
 
     // 更新
@@ -601,7 +634,7 @@ namespace PlayerState
         }
 
         // 先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_1)
+        if (owner_->GetNextState() == Player::STATE::Attack1_2)
         {
             if (owner_->GetAnimationSeconds() >= attack2TransitionFrame_)
             {
@@ -645,6 +678,7 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack2TransitionFrame_", &attack2TransitionFrame_, 0.01f);
                 ImGui::TreePop();
@@ -656,7 +690,7 @@ namespace PlayerState
     // アニメーション再生
     void Attack1_1State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false, animationSpeed_,animationStartFrame_);
     }
 }
 
@@ -666,11 +700,11 @@ namespace PlayerState
     // 初期化
     void Attack1_2State::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
-
-        //先行入力を判定するためにセットしておく
-        owner_->SetNextState(Player::STATE::Attack1_2);
     }
 
     // 更新
@@ -689,7 +723,7 @@ namespace PlayerState
         }
 
         //先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_2) {
+        if (owner_->GetNextState() == Player::STATE::Attack1_3) {
             if (owner_->GetAnimationSeconds() >= attack3TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
@@ -732,6 +766,7 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack3TransitionFrame_", &attack3TransitionFrame_, 0.01f);
                 ImGui::TreePop();
@@ -741,7 +776,7 @@ namespace PlayerState
     }
     void Attack1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false, animationSpeed_,animationStartFrame_);
     }
 }
 
@@ -751,10 +786,11 @@ namespace PlayerState
     // 初期化
     void Attack1_3State::Initialize()
     {
-        PlayAnimation();
 
-        //先行入力を判定するためにセットしておく
-        owner_->SetNextState(Player::STATE::Attack1_3);
+        // フラグリセット
+        owner_->ResetFlags();
+
+        PlayAnimation();
     }
 
     // 更新
@@ -773,7 +809,7 @@ namespace PlayerState
         }
 
         //先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_3) {
+        if (owner_->GetNextState() == Player::STATE::Attack1_4) {
             if (owner_->GetAnimationSeconds() >= attack4TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
@@ -793,6 +829,13 @@ namespace PlayerState
                 return;
             }
         }
+
+        // アニメーション再生しきったら、待機に遷移
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
@@ -809,6 +852,7 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack4TransitionFrame_", &attack4TransitionFrame_, 0.01f);
                 ImGui::TreePop();
@@ -819,7 +863,7 @@ namespace PlayerState
 
     void Attack1_3State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_3, false);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_3, false, animationSpeed_, animationStartFrame_);
     }
 }
 
@@ -829,10 +873,10 @@ namespace PlayerState
     // 初期化
     void Attack1_4State::Initialize()
     {
-        PlayAnimation();
+        // フラグリセット
+        owner_->ResetFlags();
 
-        //先行入力を判定するためにセットしておく
-        owner_->SetNextState(Player::STATE::Attack1_4);
+        PlayAnimation();
     }
 
     // 更新
@@ -851,7 +895,7 @@ namespace PlayerState
         }
 
         //先行入力があった場合切り替える
-        if (owner_->GetNextState() != Player::STATE::Attack1_4) {
+        if (owner_->GetNextState() == Player::STATE::Attack1_1) {
             if (owner_->GetAnimationSeconds() >= attack1TransitionFrame_)
             {
                 owner_->ChangeState(owner_->GetNextState());
@@ -871,6 +915,13 @@ namespace PlayerState
                 return;
             }
         }
+
+        // アニメーション再生しきったら、待機に遷移
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
@@ -887,6 +938,7 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack1TransitionFrame_", &attack1TransitionFrame_, 0.01f);
                 ImGui::DragFloat("TransitionTime", &transitionTime_, 0.01f);
@@ -898,7 +950,7 @@ namespace PlayerState
 
     void Attack1_4State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_4, false, 1.0f, 0.0f, transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_4, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -927,10 +979,6 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/rikuto
         // 先行入力受付
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
@@ -944,7 +992,7 @@ namespace PlayerState
         }
 
 
-        if(owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
+        if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
         {
             owner_->ChangeState(Player::STATE::JumpLoop);
             return;
