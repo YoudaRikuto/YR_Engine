@@ -70,18 +70,18 @@ void GamePad::Update()
 	if (GetAsyncKeyState('J') & 0x8000) rx = -1.0f;
 	if (GetAsyncKeyState('I') & 0x8000) ry = 1.0f;
 	if (GetAsyncKeyState('K') & 0x8000) ry = -1.0f;
-	if (GetAsyncKeyState(' ') & 0x8000) newButtonState |= BTN_A;
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000) newButtonState |= BTN_B;
-	if (GetAsyncKeyState('E') & 0x8000) newButtonState |= BTN_X;
-	if (GetAsyncKeyState('Q') & 0x8000) newButtonState |= BTN_RIGHT_THUMB;
-	if (GetAsyncKeyState('F') & 0x8000) newButtonState |= BTN_LEFT_SHOULDER;
-	if (GetAsyncKeyState('Q') & 0x8000) newButtonState |= BTN_Y;
-	if (GetAsyncKeyState(VK_UP) & 0x8000)	newButtonState |= BTN_UP;
+	if (GetAsyncKeyState(' ') & 0x8000)			newButtonState |= BTN_A;
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000)	newButtonState |= BTN_B;
+	if (GetAsyncKeyState('E') & 0x8000)			newButtonState |= BTN_X;
+	if (GetAsyncKeyState('Q') & 0x8000)			newButtonState |= BTN_RIGHT_THUMB;
+	if (GetAsyncKeyState('F') & 0x8000)			newButtonState |= BTN_LEFT_SHOULDER;
+	if (GetAsyncKeyState('Q') & 0x8000)			newButtonState |= BTN_Y;
+	if (GetAsyncKeyState(VK_UP) & 0x8000)		newButtonState |= BTN_UP;
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)	newButtonState |= BTN_RIGHT;
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)	newButtonState |= BTN_DOWN;
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)	newButtonState |= BTN_LEFT;
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)newButtonState |= BTN_START;
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)newButtonState |= BTN_RIGHT_SHOULDER;
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000)		newButtonState |= BTN_DOWN;
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)		newButtonState |= BTN_LEFT;
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)	newButtonState |= BTN_START;
+	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)	newButtonState |= BTN_RIGHT_TRIGGER;
 	
 	if (lx >= 1.0f || lx <= -1.0f || ly >= 1.0f || ly <= -1.0)
 	{

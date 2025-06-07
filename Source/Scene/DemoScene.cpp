@@ -32,6 +32,10 @@ void DemoScene::Update(const float& elapsedTime)
 {
 }
 
+void DemoScene::DeferredRender()
+{
+}
+
 // •`‰æ 
 void DemoScene::Render()
 {

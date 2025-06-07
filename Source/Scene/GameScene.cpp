@@ -6,6 +6,7 @@
 #include "Resource/EffectManager.h"
 #include "Object/Character/Enemy/EnemyManager.h"
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
+#include "Resource/ComputeParticle/ComputeParticleSystem.h"
 
 // リソース生成 
 void GameScene::CreateResource()
@@ -53,10 +54,12 @@ void GameScene::Update(const float& elapsedTime)
     PlayerManager::Instance().Update(elapsedTime);
 
     EnemyManager::Instance().Update(elapsedTime);
+
+    // エフェクト更新
+    ComputeParticleSystem::Instance().Update(elapsedTime);
 }
 
-// 描画 
-void GameScene::Render()
+void GameScene::DeferredRender()
 {
     Graphics::Instance().SetBlendState(Shader::BlendState::None);
     Graphics::Instance().SetRasterizerState(Shader::RasterState::Solid);
@@ -77,6 +80,15 @@ void GameScene::Render()
     //PlayerManager::Instance().DebugRender();
 
     stage_->Render(gBufferPS);
+}
+
+// 描画 
+void GameScene::Render()
+{
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_OFF);
+    ComputeParticleSystem::Instance().Render();
 }
 
 // 影書き込み
@@ -102,6 +114,8 @@ void GameScene::DrawDebug()
     {
         EffectManager::Instance().GetEffect("kemuri")->Play({}, 1.0f);
     }
+
+    ComputeParticleSystem::Instance().DrawDebug();
 
     ImGui::End();
 }

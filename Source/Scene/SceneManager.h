@@ -19,6 +19,7 @@ public:
     void Finalize();                        // I—¹‰»
     void Update(const float& elapsedTime);  // XV
 
+    void DeferredRender();
     void Render();                          // •`‰æ
     void ShadowRender();                    // ‰e‘‚«‚İ
 

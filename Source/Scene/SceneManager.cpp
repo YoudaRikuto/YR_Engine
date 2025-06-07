@@ -45,6 +45,13 @@ void SceneManager::Update(const float& elapsedTime)
     }
 }
 
+void SceneManager::DeferredRender()
+{
+    if (currentScene_ == nullptr) return;
+
+    currentScene_->DeferredRender();
+}
+
 // •`‰æ 
 void SceneManager::Render()
 {

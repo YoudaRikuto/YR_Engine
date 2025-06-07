@@ -91,7 +91,7 @@ void Framework::Render()
     Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
     
     // Scene•`‰æ
-    SceneManager::Instance().Render();
+    SceneManager::Instance().DeferredRender();
 #endif
 
     PostProcess::Instance().Activate();
@@ -103,6 +103,7 @@ void Framework::Render()
     deferredRendering_.Draw();
 #endif
 
+    SceneManager::Instance().Render();
     EffectManager::Instance().Render();
 
     PostProcess::Instance().Deactivate();

@@ -13,6 +13,7 @@ public:
     void Initialize()                       override; // ‰Šú‰»
     void Finalize()                         override; // I—¹‰»
     void Update(const float& elapsedTime)   override; // XV
+    void DeferredRender()                   override;
     void Render()                           override; // •`‰æ
     void ShadowRender()                     override; // ‰e‘‚«‚İ
     void DrawDebug()                        override; // ImGui

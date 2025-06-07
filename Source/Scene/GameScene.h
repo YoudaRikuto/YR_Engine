@@ -12,6 +12,7 @@ public:
     void Initialize()                       override;
     void Finalize()                         override;
     void Update(const float& elapsedTime)   override;
+    void DeferredRender()                   override;
     void Render()                           override;
     void ShadowRender()                     override;
     void DrawDebug()                        override;
