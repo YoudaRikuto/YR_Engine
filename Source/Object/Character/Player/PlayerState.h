@@ -132,6 +132,8 @@ namespace PlayerState
         float transitionTime_       = 0.1f;
 
         float runTransitionFrame_ = 0.25f;
+        //float attackAir1TransitionFrame_ = 0.3f;
+        
     };
 
     class JumpEndToRunState : public State<Player>
@@ -194,6 +196,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
+        float animationSpeed_ = 1.0f;
+        float animationStartFrame_ = 0.16f;
+        float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.6f;
         float attack2TransitionFrame_ = 0.5f;
         
@@ -214,6 +219,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
+        float animationSpeed_ = 1.0f;
+        float animationStartFrame_ = 0.08f;
+        float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.4f;
         float attack3TransitionFrame_ = 0.3f;
     };
@@ -233,6 +241,9 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
+        float animationSpeed_ = 1.0f;
+        float animationStartFrame_ = 0.0f;
+        float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.4f;
         float attack4TransitionFrame_ = 0.3f;
     };
@@ -252,8 +263,10 @@ namespace PlayerState
         void PlayAnimation();
 
     private:
-        float runTransitionFrame_ = 0.6f;
+        float animationSpeed_ = 1.0f;
+        float animationStartFrame_ = 0.0f;
         float transitionTime_ = 0.1f;
+        float runTransitionFrame_ = 0.6f;
         float attack1TransitionFrame_ = 0.5f;
     };
 
@@ -323,7 +336,10 @@ namespace PlayerState
 
     private:
         // ---------- Animation ----------
+        float animationSpeed_ = 1.2f;
 
+        float attackAir4TransitionFrame_ = 0.6f;
+        
         float jumpLoopTransitionFrame_ = 0.6f;
     };
 
@@ -343,7 +359,7 @@ namespace PlayerState
        
     private:
         // ---------- Animation ----------
-        float jumpLoopTransitionFrame_ = 0.6f;
+        float jumpLoopTransitionFrame_ = 1.2f;
     };
 
     class AttackAirToFloorState : public State<Player>
