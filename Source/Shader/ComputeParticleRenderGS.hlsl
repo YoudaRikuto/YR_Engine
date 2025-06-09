@@ -110,8 +110,9 @@ void main(point GSIn gsIn[1], inout TriangleStream<PSIn> output)
     // äeéÌèÓïÒéÊìæ
     float4 texcoord = particleDataBuffer[vertexId].texcoord_;
     
-    float4 color = lerp(particleDataBuffer[vertexId].startColor_, particleDataBuffer[vertexId].endColor_, particleDataBuffer[vertexId].lifeTime_);
-    color.a = particleDataBuffer[vertexId].startColor_.a;
+    float weight = (float) particleDataBuffer[vertexId].lifeTime_ / (float) particleDataBuffer[vertexId].lifeTimeConst_;
+    float4 color = particleDataBuffer[vertexId].startColor_;    
+    color.rgb = lerp(particleDataBuffer[vertexId].endColor_.xyz, particleDataBuffer[vertexId].startColor_.xyz, weight);
     
     // í∏ì_ê∂ê¨
     static const float4 vertexPositions[4] =

@@ -10,87 +10,88 @@ class ComputeParticleSystem
 public:
     static constexpr UINT numParticleThread_ = 1024;
 
-#if 0
-    //struct EmitData
-    struct EmitParticleData
+    struct ComputeParticleEmitData
     {
-        DirectX::XMFLOAT4 position_ = {};
-        DirectX::XMFLOAT4 rotation_ = {};
-        DirectX::XMFLOAT4 scale_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-        DirectX::XMFLOAT4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-    };
-    
-    struct ParticleData
-    {
-        DirectX::XMFLOAT4 position_ = {};
-        DirectX::XMFLOAT4 rotation_ = {};
-        DirectX::XMFLOAT4 scale_ = {};
-        DirectX::XMFLOAT4 color_ = {};
-    };
-#endif
-
-    // エミット
-    //struct karideta
-    struct EmitParticleData
-    {
-        int     emitParticleNum_    = 100;    // 粒子生成数
+        int     emitParticleNum_    = 100;  // 粒子生成数
         int     textureType_        = 0;    // テクスチャタイプ
-        int     isAlive_            = 1;    // 生存フラグ
-        float   duration_           = 5.0f; // エフェクト再生時間
-        float   lifeTimeMin_        = 5.0f; // 生存時間 Min
-        float   lifeTimeMax_        = 5.0f; // 生存時間 Max
-        float   startDelayMin_      = 0.0f; // 開始遅延 Min
-        float   startDelayMax_      = 0.0f; // 開始遅延 Max
+        float   duration_           = 1.0f; // エフェクト再生時間
+
+        float   lifeTimeMin_    = 5.0f; // 生存時間 Min
+        float   lifeTimeMax_    = 5.0f; // 生存時間 Max
+        float   startDelayMin_  = 0.0f; // 開始遅延 Min
+        float   startDelayMax_  = 0.0f; // 開始遅延 Max
 
         float   gravityMin_ = 0.0f; // 重力 Min
         float   gravityMax_ = 0.0f; // 重力 Max
 
+        DirectX::XMFLOAT4 positionMin_ = {}; // 生成位置 Min
+        DirectX::XMFLOAT4 positionMax_ = {}; // 生成位置 Max
+        DirectX::XMFLOAT4 velocityMin_ = {}; // 初速度 Min
+        DirectX::XMFLOAT4 velocityMax_ = {}; // 初速度 Max
+        DirectX::XMFLOAT4 accelerationMin_ = {}; // 加速度 Min
+        DirectX::XMFLOAT4 accelerationMax_ = {}; // 加速度 Max
+
+        DirectX::XMFLOAT4 rotationMin_ = {}; // 回転値 Min
+        DirectX::XMFLOAT4 rotationMax_ = {}; // 回転値 Max
+        DirectX::XMFLOAT4 rotationVelocityMin_ = {}; // 回転初速度 Min
+        DirectX::XMFLOAT4 rotationVelocityMax_ = {}; // 回転初速度 Max
+        DirectX::XMFLOAT4 rotationAccelerationMin_ = {}; // 回転加速度 Min
+        DirectX::XMFLOAT4 rotationAccelerationMax_ = {}; // 回転加速度 Max
+
+        DirectX::XMFLOAT4 scaleMin_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Min
+        DirectX::XMFLOAT4 scaleMax_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Max
+        DirectX::XMFLOAT4 scaleVelocityMin_ = {}; // 大きさ初速度 Min
+        DirectX::XMFLOAT4 scaleVelocityMax_ = {}; // 大きさ初速度 Max
+        DirectX::XMFLOAT4 scaleAccelerationMin_ = {}; // 大きさ加速度 Min
+        DirectX::XMFLOAT4 scaleAccelerationMax_ = {}; // 大きさ加速度 Max
+
+        DirectX::XMFLOAT4 startColorMin_    = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色 Min
+        DirectX::XMFLOAT4 startColorMax_    = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色 Max
+        DirectX::XMFLOAT4 endColor_         = { 1.0f, 1.0f, 1.0f, 1.0f }; // 終了色
+
+
         // ---------- Min Max 使用フラグ ----------
-        int     randomBetweenTwoLifeTimes_              = 0; // 生存時間 
-        int     randomBetweenTwostartDelays_            = 0; // 開始遅延
-        int     randomBetweenTwoPositions_              = 0; // 位置 
-        int     randomBetweenTwovelocities_             = 0; // 初速度 
-        int     randomBetweenTwoAccelerations_          = 0; // 加速度 
-        int     randomBetweenTwoGravities_              = 0; // 重力 
-        int     randomBetweenTwoRotations_              = 0; // 回転値 
-        int     randomBetweenTwoRotationVelocities_     = 0; // 回転初速度 
-        int     randomBetweenTwoRotationAccelerations_  = 0; // 回転加速度 
-        int     randomBetweenTwoScales_                 = 0; // 大きさ
-        int     randomBetweenTwoScaleVelocities_        = 0; // 大きさ初速度
-        int     randomBetweenTwoScaleAccelerations_     = 0; // 大きさ加速度
-        int     randomBetweenTwoColors_                 = 0; // 開始色 
-        
-        int dummy_ = 0.0f;
+        bool    randomBetweenTwoLifeTimes_ = false;
+        bool    randomBetweenTwostartDelays_ = false;
+        bool    randomBetweenTwoPositions_ = false;
+        bool    randomBetweenTwoVelocities_ = false;
+        bool    randomBetweenTwoAccelerations_ = false;
+        bool    randomBetweenTwoGravities_ = false;
+        bool    randomBetweenTwoRotations_ = false;
+        bool    randomBetweenTwoRotationVelocities_ = false;
+        bool    randomBetweenTwoRotationAccelerations_ = false;
+        bool    randomBetweenTwoScales_ = false;
+        bool    randomBetweenTwoScaleVelocities_ = false;
+        bool    randomBetweenTwoScaleAccelerations_ = false;
+        bool    randomBetweenTwoColors_ = false;
+    };
 
+    struct EmitParticleData
+    {
+        int     textureType_    = 0;
+        int     isAlive_        = 0;
+        float   duration_       = 0;
+        float   lifeTime_       = 0;
+        float   startDelay_     = 0;
+        float   gravity_        = 0.0f;
 
-        DirectX::XMFLOAT4 positionMin_              = {}; // 生成位置 Min
-        DirectX::XMFLOAT4 positionMax_              = {}; // 生成位置 Max
-        DirectX::XMFLOAT4 velocityMin_              = {}; // 初速度 Min
-        DirectX::XMFLOAT4 velocityMax_              = {}; // 初速度 Max
-        DirectX::XMFLOAT4 accelerationMin_          = {}; // 加速度 Min
-        DirectX::XMFLOAT4 accelerationMax_          = {}; // 加速度 Max
+        float lifeTimeConst_ = 0.0f;
+        float dummy2_ = 0.0f;
 
-        DirectX::XMFLOAT4 rotationMin_              = {}; // 回転値 Min
-        DirectX::XMFLOAT4 rotationMax_              = {}; // 回転値 Max
-        DirectX::XMFLOAT4 rotationVelocityMin_      = {}; // 回転初速度 Min
-        DirectX::XMFLOAT4 rotationVelocityMax_      = {}; // 回転初速度 Max
-        DirectX::XMFLOAT4 rotationAccelerationMin_  = {}; // 回転加速度 Min
-        DirectX::XMFLOAT4 rotationAccelerationMax_  = {}; // 回転加速度 Max
-
-        DirectX::XMFLOAT4 scaleMin_                 = { 10.0f, 10.0f, 10.0f, 10.0f }; // 大きさ Min
-        DirectX::XMFLOAT4 scaleMax_                 = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Max
-        DirectX::XMFLOAT4 scaleVelocityMin_         = {}; // 大きさ初速度 Min
-        DirectX::XMFLOAT4 scaleVelocityMax_         = {}; // 大きさ初速度 Max
-        DirectX::XMFLOAT4 scaleAccelerationMin_     = {}; // 大きさ加速度 Min
-        DirectX::XMFLOAT4 scaleAccelerationMax_     = {}; // 大きさ加速度 Max
-
-        DirectX::XMFLOAT4 startColorMin_            = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色 Min
-        DirectX::XMFLOAT4 startColorMax_            = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色 Max
-        DirectX::XMFLOAT4 endColor_                 = { 1.0f, 1.0f, 1.0f, 1.0f }; // 終了色
+        DirectX::XMFLOAT4 position_             = {};
+        DirectX::XMFLOAT4 velocity_             = {};
+        DirectX::XMFLOAT4 acceleration_         = {};
+        DirectX::XMFLOAT4 rotation_             = {};
+        DirectX::XMFLOAT4 rotationVelocity_     = {};
+        DirectX::XMFLOAT4 rotationAcceleration_ = {};
+        DirectX::XMFLOAT4 scale_                = {};
+        DirectX::XMFLOAT4 scaleVelocity_        = {};
+        DirectX::XMFLOAT4 scaleAcceleration_    = {};
+        DirectX::XMFLOAT4 startColor_           = {};
+        DirectX::XMFLOAT4 endColor_             = {};
     };
 
     // 保持データ
-    //struct karidataA
     struct ParticleData
     {
         int     textureType_;   // テクスチャタイプ
@@ -100,7 +101,7 @@ public:
         float   startDelay_;    // 生成ディレイ        
         float   gravity_;
 
-        float dummy1_;
+        float lifeTimeConst_;
         float dummy2_;
 
         DirectX::XMFLOAT4 position_;
@@ -155,6 +156,9 @@ public:
     void Render();
     void DrawDebug();
 
+    void EmitParticle(const EmitParticleData& emitParticleData);
+
+private:
     void EmitParticle();
 
 private:
@@ -165,7 +169,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> perlinNoiseTexture_;
 
-    EmitParticleData emitParticleData_;
+    ComputeParticleEmitData computeParticleEmitData_ = {};
+    
+
 
     std::vector<EmitParticleData> emitParticles_;    
     std::unique_ptr<ConstantBuffer<Constants>> constants_;

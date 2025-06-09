@@ -3,6 +3,7 @@
 #include "FrameWork/Misc.h"
 #include "Resource/Texture.h"
 #include "ImGui/ImGuiCtrl.h"
+#include "Math/MathHelper.h"
 
 ComputeParticleSystem::ComputeParticleSystem(const UINT& particleCount, const DirectX::XMUINT2& splitCount)
 {
@@ -248,157 +249,380 @@ void ComputeParticleSystem::DrawDebug()
 
     if (ImGui::Button("Emit Particle"))
     {
-        for (int i = 0; i < emitParticleData_.emitParticleNum_; ++i)
+        EmitParticle();
+    }
+
+    ImGui::DragInt("Emit Particle Num", &computeParticleEmitData_.emitParticleNum_, 1, 0, 10000);
+    ImGui::SliderInt("Texture Type", &computeParticleEmitData_.textureType_, 0, 16);
+    ImGui::DragFloat("Duration", &computeParticleEmitData_.duration_, 0.1f, 0.0f, 10.0f);
+
+    if (ImGui::TreeNodeEx("LifeTime", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoLifeTimes_);
+
+        if (computeParticleEmitData_.randomBetweenTwoLifeTimes_)
         {
-            EmitParticle();
+            ImGui::PushItemWidth(150);
+            ImGui::DragFloat("## LifeTime Min", &computeParticleEmitData_.lifeTimeMin_, 0.1f, 0.0f, 10.0f);
+            ImGui::SameLine();
+            ImGui::DragFloat("## LifeTime Max", &computeParticleEmitData_.lifeTimeMax_, 0.1f, 0.0f, 10.0f);
+            ImGui::SameLine();
+            ImGui::Text("LifeTime");
+            ImGui::PopItemWidth();
         }
+        else
+        {
+            ImGui::DragFloat("LifeTime", &computeParticleEmitData_.lifeTimeMin_, 0.1f, 0.0f, 10.0f);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("StartDelay", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwostartDelays_);
+
+        if (computeParticleEmitData_.randomBetweenTwostartDelays_)
+        {
+            ImGui::PushItemWidth(150);
+            ImGui::DragFloat("## StartDelay Min", &computeParticleEmitData_.startDelayMin_, 0.1f, 0.0f, 10.0f);
+            ImGui::SameLine();
+            ImGui::DragFloat("## StartDelay Max", &computeParticleEmitData_.startDelayMax_, 0.1f, 0.0f, 10.0f);
+            ImGui::SameLine();
+            ImGui::Text("StartDelay");
+            ImGui::PopItemWidth();
+        }
+        else
+        {
+            ImGui::DragFloat("StartDelay", &computeParticleEmitData_.startDelayMin_, 0.1f, 0.0f, 10.0f);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Gravity", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoGravities_);
+
+        if (computeParticleEmitData_.randomBetweenTwoGravities_)
+        {
+            ImGui::PushItemWidth(150);
+            ImGui::DragFloat("## Gravity Min", &computeParticleEmitData_.gravityMin_, 0.1f, 0.0f, 50.0f);
+            ImGui::SameLine();
+            ImGui::DragFloat("## Gravity Max", &computeParticleEmitData_.gravityMax_, 0.1f, 0.0f, 50.0f);
+            ImGui::SameLine();
+            ImGui::Text("Gravity");
+            ImGui::PopItemWidth();
+        }
+        else
+        {
+            ImGui::DragFloat("Gravity", &computeParticleEmitData_.gravityMin_, 0.1f, 0.0f, 50.0f);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Position", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoPositions_);
+
+        if (computeParticleEmitData_.randomBetweenTwoPositions_)
+        {
+            ImGui::DragFloat4("Position Min", &computeParticleEmitData_.positionMin_.x);
+            ImGui::DragFloat4("Position Max", &computeParticleEmitData_.positionMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Position", &computeParticleEmitData_.positionMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Velocity", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoVelocities_);
+
+        if (computeParticleEmitData_.randomBetweenTwoVelocities_)
+        {
+            ImGui::DragFloat4("Velocity Min", &computeParticleEmitData_.velocityMin_.x);
+            ImGui::DragFloat4("Velocity Max", &computeParticleEmitData_.velocityMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Velocity", &computeParticleEmitData_.velocityMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Acceleration", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoAccelerations_);
+
+        if (computeParticleEmitData_.randomBetweenTwoAccelerations_)
+        {
+            ImGui::DragFloat4("Acceleration Min", &computeParticleEmitData_.accelerationMin_.x);
+            ImGui::DragFloat4("Acceleration Max", &computeParticleEmitData_.accelerationMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Acceleration", &computeParticleEmitData_.accelerationMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Rotation", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoRotations_);
+
+        if (computeParticleEmitData_.randomBetweenTwoRotations_)
+        {
+            ImGui::DragFloat4("Rotation Min", &computeParticleEmitData_.rotationMin_.x);
+            ImGui::DragFloat4("Rotation Max", &computeParticleEmitData_.rotationMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Rotation", &computeParticleEmitData_.rotationMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Rotation Velocity", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoRotationVelocities_);
+
+        if (computeParticleEmitData_.randomBetweenTwoRotationVelocities_)
+        {
+            ImGui::DragFloat4("Rotation Velocity Min", &computeParticleEmitData_.rotationVelocityMin_.x);
+            ImGui::DragFloat4("Rotation Velocity Max", &computeParticleEmitData_.rotationVelocityMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Rotation Velocity", &computeParticleEmitData_.rotationVelocityMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Rotation Acceleration", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoRotationAccelerations_);
+
+        if (computeParticleEmitData_.randomBetweenTwoRotationAccelerations_)
+        {
+            ImGui::DragFloat4("Rotation Acceleration Min", &computeParticleEmitData_.rotationAccelerationMin_.x);
+            ImGui::DragFloat4("Rotation Acceleration Max", &computeParticleEmitData_.rotationAccelerationMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Rotation Acceleration", &computeParticleEmitData_.rotationAccelerationMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Scale", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoScales_);
+
+        if (computeParticleEmitData_.randomBetweenTwoScales_)
+        {
+            ImGui::DragFloat4("Scale Min", &computeParticleEmitData_.scaleMin_.x);
+            ImGui::DragFloat4("Scale Max", &computeParticleEmitData_.scaleMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Scale", &computeParticleEmitData_.scaleMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Scale Velocity", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoScaleVelocities_);
+
+        if (computeParticleEmitData_.randomBetweenTwoScaleVelocities_)
+        {
+            ImGui::DragFloat4("Scale Velocity Min", &computeParticleEmitData_.scaleVelocityMin_.x);
+            ImGui::DragFloat4("Scale Velocity Max", &computeParticleEmitData_.scaleVelocityMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Scale Velocity", &computeParticleEmitData_.scaleVelocityMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Scale Acceleration", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoScaleAccelerations_);
+
+        if (computeParticleEmitData_.randomBetweenTwoScaleAccelerations_)
+        {
+            ImGui::DragFloat4("Scale Acceleration Min", &computeParticleEmitData_.scaleAccelerationMin_.x);
+            ImGui::DragFloat4("Scale Acceleration Max", &computeParticleEmitData_.scaleAccelerationMax_.x);
+        }
+        else
+        {
+            ImGui::DragFloat4("Scale Acceleration", &computeParticleEmitData_.scaleAccelerationMin_.x);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNodeEx("Color", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::Checkbox("Random Between Two Constants", &computeParticleEmitData_.randomBetweenTwoColors_);
+
+        if (computeParticleEmitData_.randomBetweenTwoColors_)
+        {
+            ImGui::ColorEdit4("Start Color Min", &computeParticleEmitData_.startColorMin_.x);
+            ImGui::ColorEdit4("Start Color Max", &computeParticleEmitData_.startColorMax_.x);
+        }
+        else
+        {
+            ImGui::ColorEdit4("Start Color", &computeParticleEmitData_.startColorMin_.x);
+        }
+
+        ImGui::ColorEdit4("End Color", &computeParticleEmitData_.endColor_.x);
+
+        ImGui::TreePop();
     }
 
-
-    ImGui::DragInt("ParticleNum", &emitParticleData_.emitParticleNum_, 1, 0, 10000);
-    ImGui::SliderInt("TextureType", &emitParticleData_.textureType_, 0, 16);
-    ImGui::DragFloat("Duration", &emitParticleData_.duration_, 0.1f, 0.0f, 50.0f);
-
-    // ---------- LifeTime ----------
-    ImGui::Separator();
-    ImGui::Text("LifeTime");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##LifeTime Random", &emitParticleData_.randomBetweenTwoLifeTimes_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwoLifeTimes_ == 0)
-    {
-        ImGui::DragFloat("LifeTime", &emitParticleData_.lifeTimeMin_, 0.1f, 0.0f, 50.0f);
-    }
-    else
-    {
-        ImGui::PushItemWidth(150);
-        ImGui::DragFloat("##LifeTimeMin", &emitParticleData_.lifeTimeMin_, 0.1f, 0.0f, 50.0f);
-        ImGui::SameLine();
-        ImGui::DragFloat("##LifeTimeMax", &emitParticleData_.lifeTimeMax_, 0.1f, 0.0f, 50.0f);
-        ImGui::SameLine();
-        ImGui::Text("LifeTime");
-        ImGui::PopItemWidth();
-    }
-
-    // ---------- StartDelay ----------
-    ImGui::Separator();
-    ImGui::Text("StartDelay");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##StartDelay Random", &emitParticleData_.randomBetweenTwostartDelays_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwostartDelays_ == 0)
-    {
-        ImGui::DragFloat("StartDelay", &emitParticleData_.startDelayMin_, 0.1f, 0.0f, 50.0f);
-    }
-    else
-    {
-        ImGui::PushItemWidth(150);
-        ImGui::DragFloat("##StartDelayMin", &emitParticleData_.startDelayMin_, 0.1f, 0.0f, 50.0f);
-        ImGui::SameLine();
-        ImGui::DragFloat("##StartDelayMax", &emitParticleData_.startDelayMax_, 0.1f, 0.0f, 50.0f);
-        ImGui::SameLine();
-        ImGui::Text("StartDelay");
-        ImGui::PopItemWidth();
-    }
-
-    // ---------- Gravity ----------
-    ImGui::Separator();
-    ImGui::Text("Gravity");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##Gravity Random", &emitParticleData_.randomBetweenTwoGravities_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwoGravities_ == 0)
-    {
-        ImGui::DragFloat("Gravity", &emitParticleData_.gravityMin_, 0.1f);
-    }
-    else
-    {
-        ImGui::PushItemWidth(150);
-        ImGui::DragFloat("##GravityMin", &emitParticleData_.gravityMin_, 0.1f);
-        ImGui::SameLine();
-        ImGui::DragFloat("##GravityMax", &emitParticleData_.gravityMax_, 0.1f);
-        ImGui::SameLine();
-        ImGui::Text("Gravity");
-        ImGui::PopItemWidth();
-    }
-
-    // ---------- Position ----------
-    ImGui::Separator();
-    ImGui::Text("Position");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##Position Random", &emitParticleData_.randomBetweenTwoPositions_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwoPositions_ == 0)
-    {
-        ImGui::DragFloat4("Position", &emitParticleData_.positionMin_.x);
-    }
-    else
-    {
-        ImGui::DragFloat4("Position Min", &emitParticleData_.positionMin_.x);
-        ImGui::DragFloat4("Position Max", &emitParticleData_.positionMax_.x);
-    }
-
-    // ---------- Velocity ----------
-    ImGui::Separator();
-    ImGui::Text("Velocity");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##Velocity Random", &emitParticleData_.randomBetweenTwovelocities_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwovelocities_ == 0)
-    {
-        ImGui::DragFloat4("Velocity", &emitParticleData_.velocityMin_.x);
-    }
-    else
-    {
-        ImGui::DragFloat4("Velocity Min", &emitParticleData_.velocityMin_.x);
-        ImGui::DragFloat4("Velocity Max", &emitParticleData_.velocityMax_.x);
-    }
-
-    // ---------- Acceleration ----------
-    ImGui::Separator();
-    ImGui::Text("Acceleration");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##Acceleration Random", &emitParticleData_.randomBetweenTwoAccelerations_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwoAccelerations_ == 0)
-    {
-        ImGui::DragFloat4("Acceleration", &emitParticleData_.accelerationMin_.x);
-    }
-    else
-    {
-        ImGui::DragFloat4("Acceleration Min", &emitParticleData_.accelerationMin_.x);
-        ImGui::DragFloat4("Acceleration Max", &emitParticleData_.accelerationMax_.x);
-    }
-
-    // ---------- Scale ----------
-    ImGui::Separator();
-    ImGui::Text("Scale");
-    ImGui::SetNextItemWidth(200);
-    ImGui::SliderInt("##Scale Random", &emitParticleData_.randomBetweenTwoScales_, 0, 1);
-    ImGui::SameLine();
-    ImGui::Text("Random Between Two Constants");
-    if (emitParticleData_.randomBetweenTwoScales_ == 0)
-    {
-        ImGui::DragFloat4("Scale", &emitParticleData_.scaleMin_.x);
-    }
-    else
-    {
-        ImGui::DragFloat4("Scale Min", &emitParticleData_.scaleMin_.x);
-        ImGui::DragFloat4("Scale Max", &emitParticleData_.scaleMax_.x);
-    }
 
     ImGui::End();
 }
 
-void ComputeParticleSystem::EmitParticle()
+void ComputeParticleSystem::EmitParticle(const EmitParticleData& emitParticleData)
 {
     if (emitParticles_.size() >= numEmitParticles_) return;
 
-    emitParticles_.emplace_back(emitParticleData_);
+    emitParticles_.emplace_back(emitParticleData);
+}
+
+void ComputeParticleSystem::EmitParticle()
+{
+    EmitParticleData emitParticleData = {};
+    float weight_ = 0.0f;
+
+    for (int i = 0; i < computeParticleEmitData_.emitParticleNum_; ++i)
+    {
+        emitParticleData.textureType_ = computeParticleEmitData_.textureType_;
+        emitParticleData.duration_ = computeParticleEmitData_.duration_;
+
+        if (computeParticleEmitData_.randomBetweenTwoLifeTimes_)
+        {
+            emitParticleData.lifeTime_ = XMFloatRandomRange(computeParticleEmitData_.lifeTimeMin_, computeParticleEmitData_.lifeTimeMax_);
+        }
+        else
+        {
+            emitParticleData.lifeTime_ = computeParticleEmitData_.lifeTimeMin_;
+        }
+        emitParticleData.lifeTimeConst_ = emitParticleData.lifeTime_;
+
+        if (computeParticleEmitData_.randomBetweenTwostartDelays_)
+        {
+            emitParticleData.startDelay_ = XMFloatRandomRange(computeParticleEmitData_.startDelayMin_, computeParticleEmitData_.startDelayMax_);
+        }
+        else
+        {
+            emitParticleData.startDelay_ = computeParticleEmitData_.startDelayMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoGravities_)
+        {
+            emitParticleData.gravity_ = XMFloatRandomRange(computeParticleEmitData_.gravityMin_, computeParticleEmitData_.gravityMax_);
+        }
+        else
+        {
+            emitParticleData.gravity_ = computeParticleEmitData_.gravityMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoPositions_)
+        {
+            emitParticleData.position_ = XMFloat4RandomRange(computeParticleEmitData_.positionMin_, computeParticleEmitData_.positionMax_);
+        }
+        else
+        {
+            emitParticleData.position_ = computeParticleEmitData_.positionMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoVelocities_)
+        {
+            emitParticleData.velocity_ = XMFloat4RandomRange(computeParticleEmitData_.velocityMin_, computeParticleEmitData_.velocityMax_);
+        }
+        else
+        {
+            emitParticleData.velocity_ = computeParticleEmitData_.velocityMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoAccelerations_)
+        {
+            emitParticleData.acceleration_ = XMFloat4RandomRange(computeParticleEmitData_.accelerationMin_, computeParticleEmitData_.accelerationMax_);
+        }
+        else
+        {
+            emitParticleData.acceleration_ = computeParticleEmitData_.accelerationMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoRotations_)
+        {
+            emitParticleData.rotation_ = XMFloat4RandomRange(computeParticleEmitData_.rotationMin_, computeParticleEmitData_.rotationMax_);
+        }
+        else
+        {
+            emitParticleData.rotation_ = computeParticleEmitData_.rotationMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoRotationVelocities_)
+        {
+            emitParticleData.rotationVelocity_ = XMFloat4RandomRange(computeParticleEmitData_.rotationVelocityMin_, computeParticleEmitData_.rotationVelocityMax_);
+        }
+        else
+        {
+            emitParticleData.rotationVelocity_ = computeParticleEmitData_.rotationVelocityMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoRotationAccelerations_)
+        {
+            emitParticleData.rotationAcceleration_ = XMFloat4RandomRange(computeParticleEmitData_.rotationAccelerationMin_, computeParticleEmitData_.rotationAccelerationMax_);
+        }
+        else
+        {
+            emitParticleData.rotationAcceleration_ = computeParticleEmitData_.rotationAccelerationMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoScales_)
+        {
+            emitParticleData.scale_ = XMFloat4RandomRange(computeParticleEmitData_.scaleMin_, computeParticleEmitData_.scaleMax_);
+        }
+        else
+        {
+            emitParticleData.scale_ = computeParticleEmitData_.scaleMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoScaleVelocities_)
+        {
+            emitParticleData.scaleVelocity_ = XMFloat4RandomRange(computeParticleEmitData_.scaleVelocityMin_, computeParticleEmitData_.scaleVelocityMax_);
+        }
+        else
+        {
+            emitParticleData.scaleVelocity_ = computeParticleEmitData_.scaleVelocityMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoScaleAccelerations_)
+        {
+            emitParticleData.scaleAcceleration_ = XMFloat4RandomRange(computeParticleEmitData_.scaleAccelerationMin_, computeParticleEmitData_.scaleAccelerationMax_);
+        }
+        else
+        {
+            emitParticleData.scaleAcceleration_ = computeParticleEmitData_.scaleAccelerationMin_;
+        }
+
+        if (computeParticleEmitData_.randomBetweenTwoColors_)
+        {
+            emitParticleData.startColor_ = XMFloat4RandomRange(computeParticleEmitData_.startColorMin_, computeParticleEmitData_.startColorMax_);
+        }
+        else
+        {
+            emitParticleData.startColor_ = computeParticleEmitData_.startColorMin_;
+        }
+
+        emitParticleData.endColor_ = computeParticleEmitData_.endColor_;
+
+        EmitParticle(emitParticleData);
+    }
 }
