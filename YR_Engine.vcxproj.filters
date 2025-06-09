@@ -109,6 +109,15 @@
     <Filter Include="YR_Engine\Shader\DeferredRendering">
       <UniqueIdentifier>{809a8e03-4e28-437a-8ec1-4a9e46632dad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Resource\ComputeParticle">
+      <UniqueIdentifier>{ee8e8735-2fa3-43e4-ba31-a75df9a3c265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\ComputeParticle">
+      <UniqueIdentifier>{ccdd2131-3cc9-4488-8066-70bff5b08f3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\Core">
+      <UniqueIdentifier>{0d49367f-8fb6-4393-8d4a-87b38d8f038d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -254,6 +263,9 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\DeferredRendering\DeferredRendering.cpp">
       <Filter>YR_Engine\Graphics\DeferredRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\ComputeParticle\ComputeParticleSystem.cpp">
+      <Filter>YR_Engine\Resource\ComputeParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -440,6 +452,9 @@
     <ClInclude Include="Source\Graphics\DeferredRendering\DeferredRendering.h">
       <Filter>YR_Engine\Graphics\DeferredRendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Resource\ComputeParticle\ComputeParticleSystem.h">
+      <Filter>YR_Engine\Resource\ComputeParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">
@@ -468,6 +483,15 @@
     </None>
     <None Include="Source\Shader\ShadingFunctions.hlsli">
       <Filter>YR_Engine\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\ComputeParticle.hlsli">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </None>
+    <None Include="Source\Shader\ComputeParticleEmit.hlsli">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </None>
+    <None Include="Source\Shader\SceneConstants.hlsli">
+      <Filter>YR_Engine\Shader\Core</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -503,6 +527,30 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\DeferredRenderingPS.hlsl">
       <Filter>YR_Engine\Shader\DeferredRendering</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleInitCS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleBeginFrameCS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleEndFrameCS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleRenderVS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleRenderGS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleRenderPS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleUpdateCS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ComputeParticleEmitCS.hlsl">
+      <Filter>YR_Engine\Shader\ComputeParticle</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

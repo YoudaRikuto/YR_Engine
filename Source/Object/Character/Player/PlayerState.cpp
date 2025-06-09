@@ -157,6 +157,9 @@ namespace PlayerState
     // 初期化 
     void RollState::Initialize()
     {
+        // フラグリセット
+        owner_->ResetFlags();
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -172,6 +175,20 @@ namespace PlayerState
 
         // 旋回処理
         owner_->Turn(elapsedTime);
+
+        // ---------- 先行入力 ----------
+        
+        // 移動入力があれば硬直キャンセル
+        if (owner_->GetAnimationSeconds() >= runTransitionFrame_)
+        {
+            const float aLx = Input::Instance().GetGamePad().GetAxisLx();
+            const float aLy = Input::Instance().GetGamePad().GetAxisLy();
+            if (fabsf(aLx) > 0.0f || fabsf(aLy) > 0.0f)
+            {
+                owner_->ChangeState(Player::STATE::Run);
+                return;
+            }
+        }
 
         if (owner_->IsAnimationEnd())
         {
@@ -192,6 +209,13 @@ namespace PlayerState
     {
         if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
         {
+            if (ImGui::TreeNode("Transition Frame"))
+            {
+                ImGui::DragFloat("Run", &runTransitionFrame_, 0.01f);
+
+                ImGui::TreePop();
+            }
+
             ImGui::DragFloat3("RootMotionValue", &rootMotionValue_.x, 0.1f);
 
             ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.1f);
@@ -203,6 +227,7 @@ namespace PlayerState
     // アニメーション再生
     void RollState::PlayAnimation()
     {
+        // TODO:回避
         // カメラからみたスティック入力が、キャラクターの向きと反対なら、
         // 後ろ向きアニメーション
 
@@ -992,7 +1017,11 @@ namespace PlayerState
         // 先行入力判定
         if (owner_->GetAnimationSeconds() >= attackAir2TransitionFrame_)
         {
-            if (owner_->GetNextState() == Player::STATE::AttackAir1_2) owner_->ChangeState(owner_->GetNextState());
+            if (owner_->GetNextState() == Player::STATE::AttackAir1_2)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
 
@@ -1058,6 +1087,22 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
+        // 先行入力受付
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::AttackAir1_3);
+        }
+
+        // 先行入力判定
+        if (owner_->GetAnimationSeconds() >= attackAir3TransitionFrame_)
+        {
+            if (owner_->GetNextState() == Player::STATE::AttackAir1_3)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
+        }
+
         if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
         {
             owner_->ChangeState(Player::STATE::JumpLoop);
@@ -1107,16 +1152,40 @@ namespace PlayerState
     // 更新
     void AttackAir1_3State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
+        {
+            owner_->ChangeState(Player::STATE::JumpLoop);
+            return;
+        }
     }
 
     // 終了化
     void AttackAir1_3State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
     void AttackAir1_3State::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            if (ImGui::TreeNode("Transition Frame"))
+            {
+                ImGui::DragFloat("Jump Loop", &jumpLoopTransitionFrame_);
+
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
@@ -1142,16 +1211,35 @@ namespace PlayerState
     // 更新
     void AttackAir1_4State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
+        {
+            owner_->ChangeState(Player::STATE::JumpLoop);
+            return;
+        }
     }
 
     // 終了化
     void AttackAir1_4State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
     }
 
     // ImGui用
     void AttackAir1_4State::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
