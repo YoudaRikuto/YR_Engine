@@ -705,9 +705,9 @@ namespace PlayerState
             {
                 ImGui::DragFloat("animationSpeed_", &animationSpeed_, 0.01f);
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
-                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack2TransitionFrame_", &attack2TransitionFrame_, 0.01f);
+                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -795,9 +795,9 @@ namespace PlayerState
             {
                 ImGui::DragFloat("animationSpeed_", &animationSpeed_, 0.01f);
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
-                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack3TransitionFrame_", &attack3TransitionFrame_, 0.01f);
+                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -884,6 +884,7 @@ namespace PlayerState
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack4TransitionFrame_", &attack4TransitionFrame_, 0.01f);
+                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -1156,6 +1157,22 @@ namespace PlayerState
         if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
         {
             owner_->UseRootMotion(true);
+        }
+
+        // æs“ü—ÍŽó•t
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::AttackAir1_4);
+        }
+
+        // æs“ü—Í”»’è
+        if (owner_->GetAnimationSeconds() >= attackAir4TransitionFrame_)
+        {
+            if (owner_->GetNextState() == Player::STATE::AttackAir1_4)
+            {
+                owner_->ChangeState(owner_->GetNextState());
+                return;
+            }
         }
 
         if (owner_->GetAnimationSeconds() >= jumpLoopTransitionFrame_)
