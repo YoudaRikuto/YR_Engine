@@ -678,7 +678,9 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("animationSpeed_", &animationSpeed_, 0.01f);
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
+                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack2TransitionFrame_", &attack2TransitionFrame_, 0.01f);
                 ImGui::TreePop();
@@ -690,7 +692,7 @@ namespace PlayerState
     // アニメーション再生
     void Attack1_1State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false, animationSpeed_,animationStartFrame_);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false, animationSpeed_,animationStartFrame_, transitionTime_);
     }
 }
 
@@ -766,7 +768,9 @@ namespace PlayerState
         {
             if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::DragFloat("animationSpeed_", &animationSpeed_, 0.01f);
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
+                ImGui::DragFloat("transitionTime_", &transitionTime_, 0.1f);
                 ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
                 ImGui::DragFloat("Attack3TransitionFrame_", &attack3TransitionFrame_, 0.01f);
                 ImGui::TreePop();
@@ -776,7 +780,7 @@ namespace PlayerState
     }
     void Attack1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false, animationSpeed_,animationStartFrame_);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false, animationSpeed_,animationStartFrame_, transitionTime_);
     }
 }
 

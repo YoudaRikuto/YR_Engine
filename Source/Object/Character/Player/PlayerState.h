@@ -194,7 +194,8 @@ namespace PlayerState
 
     private:
         float animationSpeed_ = 1.0f;
-        float animationStartFrame_ = 0.29f;
+        float animationStartFrame_ = 0.16f;
+        float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.6f;
         float attack2TransitionFrame_ = 0.5f;
         
@@ -217,6 +218,7 @@ namespace PlayerState
     private:
         float animationSpeed_ = 1.0f;
         float animationStartFrame_ = 0.08f;
+        float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.4f;
         float attack3TransitionFrame_ = 0.3f;
     };
