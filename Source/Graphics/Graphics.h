@@ -39,6 +39,8 @@ public:
     ID3D11ShaderResourceView** GetGBufferBaseColorShaderResourceView() { return shader_->GetGBufferBaseColorShaderResourceView(); }
     ID3D11PixelShader* GetGBufferPixelShader() { return shader_->GetGBufferPixelShader(); }
     
+    ID3D11DepthStencilView* GetGBufferDepthStencilView() { return shader_->GetGBufferDepthStencilView(); }
+
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetDepthMap() { return shader_->GetDepthMap(); }
 
 private:

@@ -29,6 +29,8 @@ void GameScene::CreateResource()
     iblTextures_[3] = textureData3.shaderResourceView_;
 
     Effect* effect = new Effect("./Resources/Effect/kemuri.efk", "kemuri");
+
+    ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("BBB");
 }
 
 // èâä˙âª 
@@ -45,6 +47,8 @@ void GameScene::Finalize()
     PlayerManager::Instance().Finalize();
 
     EnemyManager::Instance().Finalize();
+
+    ComputeParticleSystem::Instance().ClearResource();
 }
 
 // çXêV 

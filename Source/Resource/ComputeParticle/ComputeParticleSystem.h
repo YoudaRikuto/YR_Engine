@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <vector>
 #include "Graphics/ConstantBuffer.h"
+#include <string>
 
 class ComputeParticleSystem
 {
@@ -12,6 +13,8 @@ public:
 
     struct ComputeParticleEmitData
     {
+        std::string name_ = "";
+
         int     emitParticleNum_    = 100;  // 粒子生成数
         int     textureType_        = 0;    // テクスチャタイプ
         float   duration_           = 1.0f; // エフェクト再生時間
@@ -38,10 +41,10 @@ public:
         DirectX::XMFLOAT4 rotationAccelerationMin_ = {}; // 回転加速度 Min
         DirectX::XMFLOAT4 rotationAccelerationMax_ = {}; // 回転加速度 Max
 
-        DirectX::XMFLOAT4 scaleMin_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Min
-        DirectX::XMFLOAT4 scaleMax_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Max
-        DirectX::XMFLOAT4 scaleVelocityMin_ = {}; // 大きさ初速度 Min
-        DirectX::XMFLOAT4 scaleVelocityMax_ = {}; // 大きさ初速度 Max
+        DirectX::XMFLOAT4 scaleMin_             = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Min
+        DirectX::XMFLOAT4 scaleMax_             = { 1.0f, 1.0f, 1.0f, 1.0f }; // 大きさ Max
+        DirectX::XMFLOAT4 scaleVelocityMin_     = {}; // 大きさ初速度 Min
+        DirectX::XMFLOAT4 scaleVelocityMax_     = {}; // 大きさ初速度 Max
         DirectX::XMFLOAT4 scaleAccelerationMin_ = {}; // 大きさ加速度 Min
         DirectX::XMFLOAT4 scaleAccelerationMax_ = {}; // 大きさ加速度 Max
 
@@ -52,7 +55,7 @@ public:
 
         // ---------- Min Max 使用フラグ ----------
         bool    randomBetweenTwoLifeTimes_ = false;
-        bool    randomBetweenTwostartDelays_ = false;
+        bool    randomBetweenTwoStartDelays_ = false;
         bool    randomBetweenTwoPositions_ = false;
         bool    randomBetweenTwoVelocities_ = false;
         bool    randomBetweenTwoAccelerations_ = false;
@@ -152,14 +155,20 @@ public:
         return instance;
     }
 
+    void LoadEmitDataFromJsonFile(const std::string& filename);
+    void ClearResource() { computeParticleData_.clear(); }
+
     void Update(const float& elapsedTime);
     void Render();
     void DrawDebug();
 
-    void EmitParticle(const EmitParticleData& emitParticleData);
+    
+    void EmitParticle(const std::string& effectName);
 
 private:
+    void EmitParticle(const EmitParticleData& emitParticleData);
     void EmitParticle();
+    void AssetCreation(const ComputeParticleEmitData& data, const std::string& filename);
 
 private:
     UINT numParticles_;
@@ -170,8 +179,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> perlinNoiseTexture_;
 
     ComputeParticleEmitData computeParticleEmitData_ = {};
+    std::vector<ComputeParticleEmitData> computeParticleData_;
     
-
 
     std::vector<EmitParticleData> emitParticles_;    
     std::unique_ptr<ConstantBuffer<Constants>> constants_;

@@ -19,7 +19,7 @@ PostProcess::PostProcess()
 void PostProcess::Activate()
 {
     sceneBuffer_->Clear();
-    sceneBuffer_->Activate();
+    sceneBuffer_->Activate(Graphics::Instance().GetGBufferDepthStencilView());
 }
 
 // I—¹
