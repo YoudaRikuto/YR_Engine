@@ -242,7 +242,7 @@ namespace PlayerState
 
     private:
         float animationSpeed_ = 1.0f;
-        float animationStartFrame_ = 0.0f;
+        float animationStartFrame_ = 0.4f;
         float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.4f;
         float attack4TransitionFrame_ = 0.3f;
@@ -264,7 +264,7 @@ namespace PlayerState
 
     private:
         float animationSpeed_ = 1.0f;
-        float animationStartFrame_ = 0.0f;
+        float animationStartFrame_ = 0.1f;
         float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.6f;
         float attack1TransitionFrame_ = 0.5f;
@@ -288,12 +288,13 @@ namespace PlayerState
         // ---------- Animation ---------- 
         float animationSpeed_ = 1.2f;
         float animationStartFrame_ = 0.14f;
+        float transitionTime_ = 0.1f;
 
         DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
 
         float jumpLoopTransitionFrame_ = 0.6f;
 
-        float attackAir2TransitionFrame_ = 0.6f;
+        float attackAir2TransitionFrame_ = 0.37f;
     };
 
     class AttackAir1_2State : public State<Player>
@@ -312,12 +313,13 @@ namespace PlayerState
 
     private:
         // ---------- Animation ----------
-        float animationSpeed_ = 1.3f;
-        float transitionAttackAir1_1_ = 0.1f;
+        float animationSpeed_ = 1.2f;
+        float animationStartFrame_ = 0.0f;
+        float transitionTime_ = 0.1f;
 
         float attackAir3TransitionFrame_ = 0.6f;
 
-        float jumpLoopTransitionFrame_ = 0.6f;
+        float jumpLoopTransitionFrame_ = 0.9f;
     };
 
     class AttackAir1_3State : public State<Player>
@@ -337,10 +339,11 @@ namespace PlayerState
     private:
         // ---------- Animation ----------
         float animationSpeed_ = 1.2f;
+        float animationStartFrame_ = 0.0f;
+        float transitionTime_ = 0.1f;
 
-        float attackAir4TransitionFrame_ = 0.6f;
-        
-        float jumpLoopTransitionFrame_ = 0.6f;
+        float attackAir4TransitionFrame_ = 0.77f;
+        float jumpLoopTransitionFrame_ = 1.3f;
     };
 
     class AttackAir1_4State : public State<Player>
@@ -359,7 +362,10 @@ namespace PlayerState
        
     private:
         // ---------- Animation ----------
-        float jumpLoopTransitionFrame_ = 1.2f;
+        float animationSpeed_ = 1.1f;
+        float animationStartFrame_ = 0.0f;
+        float transitionTime_ = 0.1f;
+        float jumpLoopTransitionFrame_ = 1.3f;
     };
 
     class AttackAirToFloorState : public State<Player>
