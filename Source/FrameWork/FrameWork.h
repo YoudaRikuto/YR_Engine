@@ -8,6 +8,7 @@
 #include "Input/Input.h"
 #include "Resource/GltfModel/AnimationEditer.h"
 #include "Graphics/DeferredRendering/DeferredRendering.h"
+#include "Resource/SkyMap/SkyMap.h"
 
 class Framework
 {
@@ -45,6 +46,8 @@ private:
     CONST HWND  hwnd_;
     Graphics    graphics_;
     Input       input_;
+
+    SkyMap skyMap_;
 
     HighResolutionTimer tictoc_;
     uint32_t            frames_ = 0;

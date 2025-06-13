@@ -96,6 +96,8 @@ void Framework::Render()
 
     PostProcess::Instance().Activate();
 
+    skyMap_.Draw();
+
     // Scene•`‰æ
     //SceneManager::Instance().Render();
 

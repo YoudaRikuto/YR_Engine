@@ -118,6 +118,12 @@
     <Filter Include="YR_Engine\Shader\Core">
       <UniqueIdentifier>{0d49367f-8fb6-4393-8d4a-87b38d8f038d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Resource\SkyMap">
+      <UniqueIdentifier>{879b0a51-0e0b-4348-a442-f85992a81882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="YR_Engine\Shader\SkyMap">
+      <UniqueIdentifier>{7b4d4faf-0de9-4db9-ab86-c600ac13f926}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -266,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="Source\Resource\ComputeParticle\ComputeParticleSystem.cpp">
       <Filter>YR_Engine\Resource\ComputeParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\SkyMap\SkyMap.cpp">
+      <Filter>YR_Engine\Resource\SkyMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -455,6 +464,9 @@
     <ClInclude Include="Source\Resource\ComputeParticle\ComputeParticleSystem.h">
       <Filter>YR_Engine\Resource\ComputeParticle</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Resource\SkyMap\SkyMap.h">
+      <Filter>YR_Engine\Resource\SkyMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">
@@ -492,6 +504,9 @@
     </None>
     <None Include="Source\Shader\SceneConstants.hlsli">
       <Filter>YR_Engine\Shader\Core</Filter>
+    </None>
+    <None Include="Source\Shader\SkyMap.hlsli">
+      <Filter>YR_Engine\Shader\SkyMap</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -551,6 +566,12 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\ComputeParticleEmitCS.hlsl">
       <Filter>YR_Engine\Shader\ComputeParticle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBoxPS.hlsl">
+      <Filter>YR_Engine\Shader\SkyMap</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyMapVS.hlsl">
+      <Filter>YR_Engine\Shader\SkyMap</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
