@@ -24,11 +24,17 @@ void AnimationEditer::Render()
     DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->viewProjection_, DirectX::XMLoadFloat4x4(&view_) * DirectX::XMLoadFloat4x4(&projection_));
     sceneConstants_.GetData()->cameraPosition_ = { eye_.x, eye_.y, eye_.z, 0 };
 
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseProjection_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&projection_)));
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseViewProjection_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&view_) * DirectX::XMLoadFloat4x4(&projection_)));
+    DirectX::XMStoreFloat4x4(&sceneConstants_.GetData()->inverseView_, DirectX::XMMatrixInverse(NULL, DirectX::XMLoadFloat4x4(&view_)));
+
     sceneConstants_.Activate(0);
 
     // フレームバッファーに対して書き込みする
     frameBuffer_->Clear();
     frameBuffer_->Activate();
+
+    skyMap_.Draw(2);
 
     stage_->Render();
 
@@ -39,6 +45,8 @@ void AnimationEditer::Render()
 void AnimationEditer::DrawDebug()
 {
     ImGui::Begin("Animation Editer");
+
+    skyMap_.DrawDebug();
 
     if (ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_Framed))
     {
