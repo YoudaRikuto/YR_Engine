@@ -1,13 +1,16 @@
 #include "Audio.h"
+#include <x3daudio.h>
 #include <Windows.h>
 #include <winerror.h>
-#include "FrameWork/Misc.h"
 
-const HRESULT FindChunk(const HANDLE& hFile, const DWORD& fourcc, DWORD& chunkSize, DWORD& chunkDataPosition)
+IXAudio2* AudioDevice::xaudio2_ = NULL;
+IXAudio2MasteringVoice* AudioDevice::masterVoice_ = NULL;
+
+HRESULT FindChunk(const HANDLE& hfile, const DWORD& fourcc, DWORD& chunkSize, DWORD& chunkDataPosition)
 {
     HRESULT result = S_OK;
 
-    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hfile, 0, NULL, FILE_BEGIN))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -22,29 +25,29 @@ const HRESULT FindChunk(const HANDLE& hFile, const DWORD& fourcc, DWORD& chunkSi
     while (result == S_OK)
     {
         DWORD numberOfBytesRead;
-        if (0 == ReadFile(hFile, &chunkType, sizeof(DWORD), &numberOfBytesRead, NULL))
+        if (0 == ReadFile(hfile, &chunkType, sizeof(DWORD), &numberOfBytesRead, NULL))
         {
             result = HRESULT_FROM_WIN32(GetLastError());
         }
 
-        if (0 == ReadFile(hFile, &chunkDataSize, sizeof(DWORD), &numberOfBytesRead, NULL))
+        if (0 == ReadFile(hfile, &chunkDataSize, sizeof(DWORD), &numberOfBytesRead, NULL))
         {
             result = HRESULT_FROM_WIN32(GetLastError());
         }
 
         switch (chunkType)
         {
-        case 'FFIR'/*RIFF*/:
+        case 'FFIR':
             riffDataSize = chunkDataSize;
             chunkDataSize = 4;
-            if (0 == ReadFile(hFile, &fileType, sizeof(DWORD), &numberOfBytesRead, NULL))
+            if (0 == ReadFile(hfile, &fileType, sizeof(DWORD), &numberOfBytesRead, NULL))
             {
                 result = HRESULT_FROM_WIN32(GetLastError());
             }
             break;
 
         default:
-            if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, chunkDataSize, NULL, FILE_CURRENT))
+            if (INVALID_SET_FILE_POINTER == SetFilePointer(hfile, chunkDataSize, NULL, FILE_CURRENT))
             {
                 return HRESULT_FROM_WIN32(GetLastError());
             }
@@ -70,17 +73,16 @@ const HRESULT FindChunk(const HANDLE& hFile, const DWORD& fourcc, DWORD& chunkSi
     return S_OK;
 }
 
-const HRESULT ReadChunkData(const HANDLE& hFile, const LPVOID& buffer, const DWORD& bufferSize, const DWORD& bufferOffset)
+HRESULT ReadChunkData(const HANDLE& hFile, const LPVOID& buffer, const DWORD& bufferSize, const DWORD& bufferOffset)
 {
     HRESULT result = S_OK;
-
-    DWORD numberOfBytesRead;
 
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferOffset, NULL, FILE_BEGIN))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
-    
+
+    DWORD numberOfBytesRead;
     if (0 == ReadFile(hFile, buffer, bufferSize, &numberOfBytesRead, NULL))
     {
         result = HRESULT_FROM_WIN32(GetLastError());
@@ -89,11 +91,10 @@ const HRESULT ReadChunkData(const HANDLE& hFile, const LPVOID& buffer, const DWO
     return result;
 }
 
-Audio::Audio(IXAudio2* xaudio2, const wchar_t* filename)
+AudioBuffer::AudioBuffer(const wchar_t* filename)
 {
     HRESULT result;
 
-    // Open the file
     HANDLE hFile = CreateFileW(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (INVALID_HANDLE_VALUE == hFile)
     {
@@ -109,50 +110,46 @@ Audio::Audio(IXAudio2* xaudio2, const wchar_t* filename)
 
     DWORD chunkSize;
     DWORD chunkPosition;
-    // check the file type, should be 'WAVE' or 'XWMA'
-    FindChunk(hFile, 'FFIR'/*RIFF*/, chunkSize, chunkPosition);
+    FindChunk(hFile, 'FFIR', chunkSize, chunkPosition);
+
     DWORD fileType;
     ReadChunkData(hFile, &fileType, sizeof(DWORD), chunkPosition);
-    _ASSERT_EXPR(fileType == 'EVAW'/*WAVE*/, L"Onlt support 'WAVE'");
+    _ASSERT_EXPR(fileType == 'EVAW', L"Only support 'WAVE'");
 
-    FindChunk(hFile, ' tmf'/*FMT*/, chunkSize, chunkPosition);
-    ReadChunkData(hFile, &wfx_, chunkSize, chunkPosition);
-       
-    FindChunk(hFile, 'atad'/*DATA*/, chunkSize, chunkPosition);
-    BYTE* data = new BYTE[chunkSize];
-    ReadChunkData(hFile, data, chunkSize, chunkPosition);
+    //FindChunk()
 
-    buffer_.AudioBytes = chunkSize;  
-    buffer_.pAudioData = data;   
-    buffer_.Flags = XAUDIO2_END_OF_STREAM;   
 
-    result = xaudio2->CreateSourceVoice(&sourceVoice_, (WAVEFORMATEX*)&wfx_);
-    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-Audio::~Audio()
-{
-    sourceVoice_->DestroyVoice();
-    delete[] buffer_.pAudioData;
-}
-
-void Audio::Play(const int& loopCount)
+AudioBuffer::~AudioBuffer()
 {
 }
 
-void Audio::Play(const bool& loop, const bool& isIgnoreQueue)
+AudioSourceVoice::AudioSourceVoice(std::shared_ptr<AudioBuffer>& audioBuffer)
 {
 }
 
-void Audio::Stop(const bool& playTails, const size_t& afterSamplesPlayed)
+AudioSourceVoice::~AudioSourceVoice()
 {
 }
 
-void Audio::Volume(const float& volume)
+void AudioSourceVoice::Play(const int& loopCount)
 {
 }
 
-const bool Audio::Queuing()
+void AudioSourceVoice::Stop(const bool& playTails)
+{
+}
+
+void AudioSourceVoice::Volume(const float& volume)
+{
+}
+
+void AudioSourceVoice::Pan(const float panValue)
+{
+}
+
+bool AudioSourceVoice::Queuing()
 {
     return false;
 }

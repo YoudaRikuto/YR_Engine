@@ -95,7 +95,7 @@ void Framework::Render()
 #endif
 
     PostProcess::Instance().Activate();
-
+        
     skyMap_.Draw();
 
     // Sceneï`âÊ
@@ -164,6 +164,10 @@ void Framework::DrawDebug()
     SceneManager::Instance().DrawDebug();
 
     PostProcess::Instance().DrawDebug();
+
+    ImGui::Begin("SkyMap");
+    skyMap_.DrawDebug();
+    ImGui::End();
 }
 
 // é¿çs 
