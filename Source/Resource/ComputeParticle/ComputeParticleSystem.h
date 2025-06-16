@@ -166,6 +166,7 @@ public:
     void EmitParticle(const std::string& effectName);
 
 private:
+    void SetEmitData(const std::string& filename);
     void EmitParticle(const EmitParticleData& emitParticleData);
     void EmitParticle();
     void AssetCreation(const ComputeParticleEmitData& data, const std::string& filename);
