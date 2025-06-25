@@ -12,7 +12,9 @@ public:
     {}
     ~PushCollider() = default;
 
-
+    const DirectX::XMFLOAT3 GetJointPosition() const { return jointPosition_; }
+    const DirectX::XMFLOAT3 GetOffsetPosition() const { return offsetPosition_; }
+    const DirectX::XMFLOAT4 GetColor() const { return color_; }
 
 private:
     const std::string   name_;
@@ -31,7 +33,13 @@ public:
     ~HitBox() = default;
 
 private:
-
+    const std::string name_;
+    const std::string jointName_;
+    float radius_ = 0.0f;
+    DirectX::XMFLOAT3   jointPosition_ = {};
+    DirectX::XMFLOAT3   offsetPosition_ = {};
+    DirectX::XMFLOAT4   color_ = {};
+    bool isActive_ = false;
 };
 
 // ‚­‚ç‚¢”»’è
@@ -42,5 +50,14 @@ public:
     ~HurtBox() = default;
 
 private:
-
+    const std::string name_;
+    const std::string jointName_;
+    float radius_ = 0.0f;
+    DirectX::XMFLOAT3   jointPosition_ = {};
+    DirectX::XMFLOAT3   offsetPosition_ = {};
+    DirectX::XMFLOAT4   color_ = {};
+    
+    float damage_ = 0.0f;
+    bool isHit_ = false;
+    float hitTimer_ = 0.0f;
 };

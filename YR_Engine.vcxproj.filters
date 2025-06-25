@@ -124,6 +124,9 @@
     <Filter Include="YR_Engine\Shader\SkyMap">
       <UniqueIdentifier>{7b4d4faf-0de9-4db9-ab86-c600ac13f926}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\Resource\DebugRenderer">
+      <UniqueIdentifier>{071c5567-aa31-45d5-9127-2885d699f70b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -276,6 +279,7 @@
     <ClCompile Include="Source\Resource\SkyMap\SkyMap.cpp">
       <Filter>YR_Engine\Resource\SkyMap</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Resource\DebugRenderer\DebugRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -467,6 +471,7 @@
     <ClInclude Include="Source\Resource\SkyMap\SkyMap.h">
       <Filter>YR_Engine\Resource\SkyMap</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Resource\DebugRenderer\DebugRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">
