@@ -1,16 +1,13 @@
 #include "Audio.h"
-#include <x3daudio.h>
 #include <Windows.h>
 #include <winerror.h>
+#include "FrameWork/Misc.h"
 
-IXAudio2* AudioDevice::xaudio2_ = NULL;
-IXAudio2MasteringVoice* AudioDevice::masterVoice_ = NULL;
-
-HRESULT FindChunk(const HANDLE& hfile, const DWORD& fourcc, DWORD& chunkSize, DWORD& chunkDataPosition)
+const HRESULT FindChunk(const HANDLE& hFile, const DWORD& fourcc, DWORD& chunkSize, DWORD& chunkDataPosition)
 {
     HRESULT result = S_OK;
 
-    if (INVALID_SET_FILE_POINTER == SetFilePointer(hfile, 0, NULL, FILE_BEGIN))
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -25,12 +22,12 @@ HRESULT FindChunk(const HANDLE& hfile, const DWORD& fourcc, DWORD& chunkSize, DW
     while (result == S_OK)
     {
         DWORD numberOfBytesRead;
-        if (0 == ReadFile(hfile, &chunkType, sizeof(DWORD), &numberOfBytesRead, NULL))
+        if (0 == ReadFile(hFile, &chunkType, sizeof(DWORD), &numberOfBytesRead, NULL))
         {
             result = HRESULT_FROM_WIN32(GetLastError());
         }
 
-        if (0 == ReadFile(hfile, &chunkDataSize, sizeof(DWORD), &numberOfBytesRead, NULL))
+        if (0 == ReadFile(hFile, &chunkDataSize, sizeof(DWORD), &numberOfBytesRead, NULL))
         {
             result = HRESULT_FROM_WIN32(GetLastError());
         }
@@ -40,14 +37,14 @@ HRESULT FindChunk(const HANDLE& hfile, const DWORD& fourcc, DWORD& chunkSize, DW
         case 'FFIR':
             riffDataSize = chunkDataSize;
             chunkDataSize = 4;
-            if (0 == ReadFile(hfile, &fileType, sizeof(DWORD), &numberOfBytesRead, NULL))
+            if (0 == ReadFile(hFile, &fileType, sizeof(DWORD), &numberOfBytesRead, NULL))
             {
                 result = HRESULT_FROM_WIN32(GetLastError());
             }
             break;
 
         default:
-            if (INVALID_SET_FILE_POINTER == SetFilePointer(hfile, chunkDataSize, NULL, FILE_CURRENT))
+            if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, chunkDataSize, NULL, FILE_CURRENT))
             {
                 return HRESULT_FROM_WIN32(GetLastError());
             }
@@ -73,25 +70,22 @@ HRESULT FindChunk(const HANDLE& hfile, const DWORD& fourcc, DWORD& chunkSize, DW
     return S_OK;
 }
 
-HRESULT ReadChunkData(const HANDLE& hFile, const LPVOID& buffer, const DWORD& bufferSize, const DWORD& bufferOffset)
+const HRESULT ReadChunkData(const HANDLE& hFile, const LPVOID& buffer, const DWORD& bufferSize, const DWORD& bufferOffset)
 {
     HRESULT result = S_OK;
-
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferOffset, NULL, FILE_BEGIN))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
-
     DWORD numberOfBytesRead;
     if (0 == ReadFile(hFile, buffer, bufferSize, &numberOfBytesRead, NULL))
     {
         result = HRESULT_FROM_WIN32(GetLastError());
     }
-
     return result;
 }
 
-AudioBuffer::AudioBuffer(const wchar_t* filename)
+Audio::Audio(IXAudio2* xaudio2, const wchar_t* filename)
 {
     HRESULT result;
 
@@ -110,46 +104,103 @@ AudioBuffer::AudioBuffer(const wchar_t* filename)
 
     DWORD chunkSize;
     DWORD chunkPosition;
-    FindChunk(hFile, 'FFIR', chunkSize, chunkPosition);
 
+    FindChunk(hFile, 'FFIR', chunkSize, chunkPosition);
     DWORD fileType;
     ReadChunkData(hFile, &fileType, sizeof(DWORD), chunkPosition);
-    _ASSERT_EXPR(fileType == 'EVAW', L"Only support 'WAVE'");
+    _ASSERT_EXPR(fileType == 'EVAW', L"Onlt support 'WAVE'");
 
-    //FindChunk()
+    FindChunk(hFile, ' tmf', chunkSize, chunkPosition);
+    ReadChunkData(hFile, &wfx_, chunkSize, chunkPosition);
 
+    FindChunk(hFile, 'atad', chunkSize, chunkPosition);
+    BYTE* data = new BYTE[chunkSize];
+    ReadChunkData(hFile, data, chunkSize, chunkPosition);
 
+    buffer_.AudioBytes = chunkSize;  
+    buffer_.pAudioData = data;   
+    buffer_.Flags = XAUDIO2_END_OF_STREAM;
+
+    result = xaudio2->CreateSourceVoice(&sourceVoice_, (WAVEFORMATEX*)&wfx_);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-AudioBuffer::~AudioBuffer()
+Audio::~Audio()
 {
+    sourceVoice_->DestroyVoice();
+    delete[] buffer_.pAudioData;
 }
 
-AudioSourceVoice::AudioSourceVoice(std::shared_ptr<AudioBuffer>& audioBuffer)
+void Audio::Play(const int& loopCount)
 {
+    HRESULT result;
+
+    XAUDIO2_VOICE_STATE voiceState = {};
+    sourceVoice_->GetState(&voiceState);
+
+    if (voiceState.BuffersQueued)
+    {
+        return;
+    }
+
+    buffer_.LoopCount = loopCount;
+    result = sourceVoice_->SubmitSourceBuffer(&buffer_);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    result = sourceVoice_->Start(0);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-AudioSourceVoice::~AudioSourceVoice()
+void Audio::Play(const bool& isLoop, const bool& isIgnoreQueue)
 {
+    HRESULT result;
+
+    XAUDIO2_VOICE_STATE voiceState = {};
+    sourceVoice_->GetState(&voiceState);
+
+    if (!isIgnoreQueue && voiceState.BuffersQueued) return;
+
+    const int loopCount = isLoop ? XAUDIO2_LOOP_INFINITE : 0;
+
+    buffer_.LoopCount = loopCount;
+    result = sourceVoice_->SubmitSourceBuffer(&buffer_);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    result = sourceVoice_->Start(0);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-void AudioSourceVoice::Play(const int& loopCount)
+void Audio::Stop(const bool& playTails, const size_t afterSamplesPlayed)
 {
+    XAUDIO2_VOICE_STATE voiceState = {};
+    sourceVoice_->GetState(&voiceState);
+    if (!voiceState.BuffersQueued)
+    {
+        return;
+    }
+
+    if (voiceState.SamplesPlayed < afterSamplesPlayed)
+    {
+        return;
+    }
+
+    HRESULT result;
+    result = sourceVoice_->Stop(playTails ? XAUDIO2_PLAY_TAILS : 0);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
+
+    result = sourceVoice_->FlushSourceBuffers();
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-void AudioSourceVoice::Stop(const bool& playTails)
+void Audio::Volume(const float& volume)
 {
+    HRESULT result = sourceVoice_->SetVolume(volume);
+    _ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 }
 
-void AudioSourceVoice::Volume(const float& volume)
+const bool Audio::Queuing()
 {
-}
-
-void AudioSourceVoice::Pan(const float panValue)
-{
-}
-
-bool AudioSourceVoice::Queuing()
-{
-    return false;
+    XAUDIO2_VOICE_STATE voiceState = {};
+    sourceVoice_->GetState(&voiceState);
+    return voiceState.BuffersQueued;
 }

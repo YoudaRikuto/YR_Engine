@@ -4,6 +4,7 @@
 #include "Graphics/Camera/Camera.h"
 #include "Resource/EffectManager.h"
 #include "Graphics/PostProcess/PostProcess.h"
+#include "Resource/Audio/AudioManager.h"
 
 Framework::Framework(HWND hwnd)
     : hwnd_(hwnd), graphics_(hwnd), input_(hwnd),
@@ -17,6 +18,10 @@ const bool Framework::Initialize()
     // Input èâä˙ê›íË
     input_.GetMouse().SetScreenWidth(SCREEN_WIDTH);
     input_.GetMouse().SetScreenHeight(SCREEN_HEIGHT);
+
+    // Audio ì«Ç›çûÇ›
+    AudioManager::Instance().LoadAudio();
+    AudioManager::Instance().StopAllAudio();
 
     SceneManager::Instance().Initialize();
 

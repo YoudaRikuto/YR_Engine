@@ -7,6 +7,7 @@
 #include "Object/Character/Enemy/EnemyManager.h"
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 #include "Resource/ComputeParticle/ComputeParticleSystem.h"
+#include "Resource/Audio/AudioManager.h"
 
 // リソース生成 
 void GameScene::CreateResource()
@@ -38,6 +39,9 @@ void GameScene::Initialize()
 {
     // プレイヤー初期化
     PlayerManager::Instance().Initialize();
+
+    // BGM再生
+    AudioManager::Instance().PlayBGM(BGM::Game);
 }
 
 // 終了化 
@@ -49,6 +53,9 @@ void GameScene::Finalize()
     EnemyManager::Instance().Finalize();
 
     ComputeParticleSystem::Instance().ClearResource();
+
+    // BGM停止
+    AudioManager::Instance().StopBGM(BGM::Game);
 }
 
 // 更新 
