@@ -279,7 +279,9 @@
     <ClCompile Include="Source\Resource\SkyMap\SkyMap.cpp">
       <Filter>YR_Engine\Resource\SkyMap</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resource\DebugRenderer\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Resource\DebugRenderer\DebugRenderer.cpp">
+      <Filter>YR_Engine\Resource\DebugRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -471,7 +473,9 @@
     <ClInclude Include="Source\Resource\SkyMap\SkyMap.h">
       <Filter>YR_Engine\Resource\SkyMap</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Resource\DebugRenderer\DebugRenderer.h" />
+    <ClInclude Include="Source\Resource\DebugRenderer\DebugRenderer.h">
+      <Filter>YR_Engine\Resource\DebugRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">

@@ -1,16 +1,20 @@
 #pragma once
 #include "Resource/GltfModel/GltfModel.h"
+#include "Collision/CollisionData.h"
+#include "Resource/DebugRenderer/DebugRenderer.h"
+#include <vector>
 
 class Object
 {
 public:
-    Object(const std::string& filename, const float& scaleFactor);
+    Object(const std::string& filename, const float& scaleFactor, const std::string& objectName);
     ~Object() {}
 
     void Update(const float& elapsedTime);              // çXêV
     void Render(ID3D11PixelShader* psShader = nullptr);
     void Render(const DirectX::XMFLOAT4X4& world, ID3D11PixelShader* psShader = nullptr);
     void DrawDebug();                                   // ImGui
+    void DebugRender(DebugRenderer* debugRenderer);
 
 public:
     // ---------- Transform ----------
@@ -42,7 +46,26 @@ public:
     const int GetNodeIndex(const std::string& nodeName) { return gltfModel_.GetNodeIndex(nodeName); }
     std::vector<GltfModel::Node>* GetNodes() { return gltfModel_.GetNodes(); }
 
+    // ---------- Collision ----------
+    void UpdateCollisions(const float& elapsedTime);
+
 private:
     GltfModel   gltfModel_;
     const float scaleFactor_;
+    const std::string objectName_;
+
+    // ---------- Collision ----------
+    std::vector<PushCollider>   pushColliders_;
+    std::vector<HitBox>         hitBoxes_;
+    std::vector<HurtBox>        hurtBoxes_;
+    PushCollider                pushCollider_;
+    HitBox                      hitBox_;
+    HurtBox                     hurtBox_;
+    bool                        isDebugDrawPushCollider_    = true;
+    bool                        isDebugDrawHitBox_          = true;
+    bool                        isDebugDrawHurtBox_         = true;
+    bool                        isPushColliderListActive_   = false;
+    bool                        isHitBoxListActive_         = false;
+    bool                        isHurtBoxListActive_        = false;
+
 };

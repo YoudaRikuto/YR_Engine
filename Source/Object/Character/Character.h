@@ -5,7 +5,7 @@
 class Character : public Object
 {
 public:
-    Character(const std::string& filename, const float& scaleFactor);
+    Character(const std::string& filename, const float& scaleFactor, const std::string& objectName);
     virtual ~Character() {}
 
     virtual void Update(const float& elapsedTime);

@@ -78,26 +78,27 @@ void KawaseBloom::Execute(ID3D11ShaderResourceView* colorMap)
 // ImGui—p
 void KawaseBloom::DrawDebug()
 {
-    ImGui::Begin("KawaseBloom");
-    
-    if (ImGui::TreeNodeEx("Constants", ImGuiTreeNodeFlags_Framed))
+    if (ImGui::TreeNodeEx("Kawase Bloom", ImGuiTreeNodeFlags_Framed))
     {
-        ImGui::DragFloat("ExtractionThreshold", &bloomConstants_->GetData()->bloomExtractionThreshold_, 0.01f, 0.0f, 3.0f);
-        ImGui::DragFloat("Intencity", &bloomConstants_->GetData()->bloomIntensity_, 0.01f, 0.0f, 1.0f);
+        if (ImGui::TreeNodeEx("Constants", ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("ExtractionThreshold", &bloomConstants_->GetData()->bloomExtractionThreshold_, 0.01f, 0.0f, 3.0f);
+            ImGui::DragFloat("Intencity", &bloomConstants_->GetData()->bloomIntensity_, 0.01f, 0.0f, 1.0f);
+
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNodeEx("Textures", ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::Image(reinterpret_cast<ImTextureID>(luminanceExtraction_->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+            ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[1]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+            ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[3]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+            ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[5]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+            ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[7]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+            ImGui::Image(reinterpret_cast<ImTextureID>(kawaseBloom_->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
+
+            ImGui::TreePop();
+        }
 
         ImGui::TreePop();
     }
-    if (ImGui::TreeNodeEx("Textures", ImGuiTreeNodeFlags_Framed))
-    {
-        ImGui::Image(reinterpret_cast<ImTextureID>(luminanceExtraction_->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-        ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[1]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-        ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[3]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-        ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[5]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-        ImGui::Image(reinterpret_cast<ImTextureID>(gaussianBlur_[7]->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-        ImGui::Image(reinterpret_cast<ImTextureID>(kawaseBloom_->GetColorMap().Get()), ImVec2(512.0f, 512.0f));
-
-        ImGui::TreePop();
-    }
-    
-    ImGui::End();
 }

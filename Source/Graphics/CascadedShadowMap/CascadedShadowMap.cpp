@@ -84,14 +84,15 @@ CascadedShadowMap::CascadedShadowMap(const UINT& width, const UINT& height, cons
 // ImGui—p
 void CascadedShadowMap::DrawDebug()
 {
-    ImGui::Begin("CascadedShadowMap");
+    if (ImGui::TreeNodeEx("Cascaded ShadowMap", ImGuiTreeNodeFlags_Framed))
+    {
+        ImGui::DragFloat("SplitSchemeWeight", &splitSchemeWeight_, 0.01f);
+        ImGui::DragFloat("ZMult", &zMult_, 0.01f);
+        ImGui::DragFloat("criticalDepthValue", &criticalDepthValue_, 0.01f);
+        ImGui::Checkbox("fit_to_cascade", &fitToCascade_);
 
-    ImGui::DragFloat("SplitSchemeWeight", &splitSchemeWeight_, 0.01f);
-    ImGui::DragFloat("ZMult", &zMult_, 0.01f);
-    ImGui::DragFloat("criticalDepthValue", &criticalDepthValue_, 0.01f);
-    ImGui::Checkbox("fit_to_cascade", &fitToCascade_);
-
-    ImGui::End();
+        ImGui::TreePop();
+    }
 }
 
 void CascadedShadowMap::Activate(const DirectX::XMFLOAT4& lightDirection, const UINT& cbSlot)

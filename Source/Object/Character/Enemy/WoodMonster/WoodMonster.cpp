@@ -3,7 +3,7 @@
 #include "WoodMonsterState.h"
 
 WoodMonster::WoodMonster()
-    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f)
+    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f, "WoodMonster")
 {
     PlayAnimation(Animation::Idle, true);
 

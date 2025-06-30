@@ -31,7 +31,7 @@ void PlayerManager::DrawDebug()
 }
 
 // デバッグ描画 
-void PlayerManager::DebugRender()
+void PlayerManager::DebugRender(DebugRenderer* debugRenderer)
 {
-    player_->DebugRender();
+    player_->DebugRender(debugRenderer);
 }

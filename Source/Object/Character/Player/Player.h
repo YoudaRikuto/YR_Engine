@@ -1,6 +1,7 @@
 #pragma once
 #include "Object/Character/Character.h"
 #include "Ai/StateMachine.h"
+#include "Collision/CollisionData.h"
 
 class Player : public Character
 {
@@ -77,14 +78,13 @@ public:
         Target_2,
         Target_3,
     };
+
     enum class WeaponDataType
     {
         Default,
         AttackAirToFloor,
         Max
-    };
-
-    
+    };    
 
 public:
     Player();
@@ -95,7 +95,7 @@ public:
     void Update(const float& elapsedTime)       override;
     void Render(ID3D11PixelShader* psShader)    override;
     void DrawDebug()                            override;
-    void DebugRender();
+    void DebugRender(DebugRenderer* debugRenderer);
 
 public:
     void ResetFlags(); // FlagƒŠƒZƒbƒg‚·‚é

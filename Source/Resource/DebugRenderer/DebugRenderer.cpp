@@ -13,7 +13,16 @@ DebugRenderer::DebugRenderer()
 	Graphics::Instance().CreateVsFromCso("./Resources/Shader/DebugVS.cso", vertexShader_.GetAddressOf(), inputLayout_.GetAddressOf(), inputElementDesc, _countof(inputElementDesc));
 	Graphics::Instance().CreatePsFromCso("./Resources/Shader/DebugPS.cso", pixelShader_.GetAddressOf());
 
-	constantBuffer_ = std::make_unique<ConstantBuffer<Constants>>();
+	D3D11_BUFFER_DESC desc = {};
+	::memset(&desc, 0, sizeof(desc));
+	desc.Usage					= D3D11_USAGE_DEFAULT;
+	desc.BindFlags				= D3D11_BIND_CONSTANT_BUFFER;
+	desc.CPUAccessFlags			= 0;
+	desc.MiscFlags				= 0;
+	desc.ByteWidth				= sizeof(Constants);
+	desc.StructureByteStride	= 0;
+	HRESULT result = Graphics::Instance().GetDevice()->CreateBuffer(&desc, 0, constantBuffer_.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(result), HRTrace(result));
 
 	// ‹…ƒƒbƒVƒ…ì¬
 	CreateSphereMesh(1.0f, 16, 16);
@@ -34,7 +43,7 @@ void DebugRenderer::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLO
 	deviceContext->PSSetShader(pixelShader_.Get(), nullptr, 0);
 	deviceContext->IASetInputLayout(inputLayout_.Get());
 
-	constantBuffer_->Activate(0);
+	deviceContext->VSSetConstantBuffers(0, 1, constantBuffer_.GetAddressOf());
 
 	Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
 	Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
@@ -61,9 +70,10 @@ void DebugRenderer::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLO
 		DirectX::XMMATRIX W = S * T;
 		DirectX::XMMATRIX WVP = W * VP;
 
-		constantBuffer_->GetData()->color = sphere.color_;
-		DirectX::XMStoreFloat4x4(&constantBuffer_->GetData()->wvp, WVP);
-		constantBuffer_->Activate(0);
+		Constants constants;
+		constants.color = sphere.color_;
+		DirectX::XMStoreFloat4x4(&constants.wvp, WVP);
+		deviceContext->UpdateSubresource(constantBuffer_.Get(), 0, 0, &constants, 0, 0);
 
 		deviceContext->Draw(sphereVertexCount, 0);
 	}
@@ -79,10 +89,10 @@ void DebugRenderer::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLO
 		DirectX::XMMATRIX W = S * T;
 		DirectX::XMMATRIX WVP = W * VP;
 
-
-		constantBuffer_->GetData()->color = cylinder.color_;
-		DirectX::XMStoreFloat4x4(&constantBuffer_->GetData()->wvp, WVP);
-		constantBuffer_->Activate(0);
+		Constants constants;
+		constants.color = cylinder.color_;
+		DirectX::XMStoreFloat4x4(&constants.wvp, WVP);
+		deviceContext->UpdateSubresource(constantBuffer_.Get(), 0, 0, &constants, 0, 0);
 
 		deviceContext->Draw(cylinderVertexCount, 0);
 	}
@@ -108,9 +118,10 @@ void DebugRenderer::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLO
 		const DirectX::XMMATRIX W = S * R * T;
 		const DirectX::XMMATRIX WVP = W * VP;
 
-		constantBuffer_->GetData()->color = box.color_;
-		DirectX::XMStoreFloat4x4(&constantBuffer_->GetData()->wvp, WVP);
-		constantBuffer_->Activate(0);
+		Constants constants;
+		constants.color = box.color_;
+		DirectX::XMStoreFloat4x4(&constants.wvp, WVP);
+		deviceContext->UpdateSubresource(constantBuffer_.Get(), 0, 0, &constants, 0, 0);
 
 		deviceContext->Draw(boxVertexCount, 0);
 	}

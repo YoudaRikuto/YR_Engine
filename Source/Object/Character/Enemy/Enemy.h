@@ -9,8 +9,8 @@ enum class EnemyType
 class Enemy : public Character
 {
 public:
-    Enemy(const std::string& filename, const float& scaleFactor)
-        : Character(filename, scaleFactor) {}
+    Enemy(const std::string& filename, const float& scaleFactor, const std::string& objectName)
+        : Character(filename, scaleFactor, objectName) {}
     ~Enemy() override {}
 
     virtual const EnemyType GetEnemyType() const = 0;

@@ -3,7 +3,6 @@
 #include <d3d11.h>
 #include <vector>
 #include <wrl.h>
-#include "Graphics/ConstantBuffer.h"
 
 class DebugRenderer
 {
@@ -56,9 +55,8 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			sphereVertexBuffer_;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			cylinderVertexBuffer_;
-	Microsoft::WRL::ComPtr<ID3D11Buffer>			boxVertexBuffer_;
-	
-	std::unique_ptr<ConstantBuffer<Constants>> constantBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>			boxVertexBuffer_;	
+	Microsoft::WRL::ComPtr<ID3D11Buffer>			constantBuffer_;
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>		vertexShader_;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>		pixelShader_;

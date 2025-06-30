@@ -1,8 +1,8 @@
 #include "Character.h"
 #include "ImGui/ImGuiCtrl.h"
 
-Character::Character(const std::string& filename, const float& scaleFactor)
-    : Object(filename, scaleFactor)
+Character::Character(const std::string& filename, const float& scaleFactor, const std::string& objectName)
+    : Object(filename, scaleFactor, objectName)
 {
 }
 

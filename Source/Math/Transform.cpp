@@ -29,7 +29,7 @@ void Transform2D::DrawDebug()
 void Transform3D::DrawDebug()
 {
 #ifdef USE_IMGUI
-    if (ImGui::TreeNodeEx("Transform3D", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
+    if (ImGui::TreeNodeEx("Transform3D", ImGuiTreeNodeFlags_Framed))
     {
         ImGui::DragFloat3("Position", &position_.x, 0.1f);
         ImGui::DragFloat3("Scale", &scale_.x, 0.1f);

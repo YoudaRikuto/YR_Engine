@@ -6,7 +6,7 @@ AnimationEditer::AnimationEditer()
 {
     frameBuffer_ = std::make_unique<FrameBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    stage_ = std::make_unique<Object>("./Resources/Model/Stage/Stage.gltf", 1.0f);
+    stage_ = std::make_unique<Object>("./Resources/Model/Stage/Stage.gltf", 1.0f, "AnimationEditer Stage");
     stage_->GetTransform()->SetScaleFactor(70.0f);
 }
 

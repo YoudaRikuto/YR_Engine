@@ -100,6 +100,14 @@ void GameScene::Render()
     Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
     Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_OFF);
     ComputeParticleSystem::Instance().Render();
+
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+    PlayerManager::Instance().DebugRender(debugRenderer);
+
 }
 
 // âeèëÇ´çûÇ›

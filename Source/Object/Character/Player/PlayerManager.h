@@ -20,7 +20,7 @@ public:
     void Update(const float& elapsedTime);
     void Render(ID3D11PixelShader* psShader = nullptr);
     void DrawDebug();
-    void DebugRender();
+    void DebugRender(DebugRenderer* debugRenderer);
 
     Transform3D* GetTransform() { return player_->GetTransform(); }
     std::unique_ptr<Player>& GetPlayer() { return player_; }
