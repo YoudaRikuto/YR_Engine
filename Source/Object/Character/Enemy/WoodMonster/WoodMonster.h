@@ -60,6 +60,7 @@ public:
     void Update(const float& elapsedTime)               override;
     void Render(ID3D11PixelShader* psShader = nullptr)  override;
     void DrawDebug()                                    override;
+    void DebugRender(DebugRenderer* debugRenderer)    override;
 
 public:
     // ---------- Animation ----------

@@ -153,7 +153,7 @@ void Object::DrawDebug()
             ImGui::DragFloat("OffsetPosition", &offsetPosition.x, 0.1f);
             pushCollider_.SetOffsetPosition(offsetPosition);
 
-            if (ImGui::Button("Register", ImVec2(250, 100)))
+            if (ImGui::Button("Register", ImVec2(300, 100)))
             {
                 ImGui::OpenPopup("PushCollider Register Check");
             }
@@ -197,7 +197,7 @@ void Object::DrawDebug()
             ImGui::DragFloat3("OffsetPosition", &offsetPosition.x, 0.1f);
             hitBox_.SetOffsetPosition(offsetPosition);
 
-            if (ImGui::Button("Register", ImVec2(250, 100)))
+            if (ImGui::Button("Register", ImVec2(300, 100)))
             {
                 ImGui::OpenPopup("HitBox Register Check");
             }
@@ -206,7 +206,7 @@ void Object::DrawDebug()
             {
                 ImGui::Text("Would you like to register??");
 
-                if (ImGui::Button("Yes", ImVec2(150, 150)))
+                if (ImGui::Button("Yes!", ImVec2(150, 150)))
                 {
                     hitBox_.SetColor({ 0.7f, 0.0f, 0.0f, 1.0f });
                     hitBoxes_.emplace_back(hitBox_);
@@ -224,6 +224,50 @@ void Object::DrawDebug()
             }
 
             ImGui::TreePop(); // HitBox
+        }
+
+        if (ImGui::TreeNodeEx("HurtBox", ImGuiTreeNodeFlags_Framed))
+        {
+            static char name[128] = "";
+            ImGui::InputText("HurtBox Name", name, ARRAYSIZE(name));
+            hurtBox_.SetName(name);
+            static char jointName[128] = "";
+            ImGui::InputText("JointName", jointName, ARRAYSIZE(jointName));
+            hurtBox_.SetJointName(jointName);
+            float radius = hurtBox_.GetRadius();
+            ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f);
+            hurtBox_.SetRadius(radius);
+            DirectX::XMFLOAT3 offsetPosition = hurtBox_.GetOffsetPosition();
+            ImGui::DragFloat3("OffsetPosition", &offsetPosition.x, 0.1f);
+            hurtBox_.SetOffsetPosition(offsetPosition);
+
+            if (ImGui::Button("Register", ImVec2(300, 100)))
+            {
+                ImGui::OpenPopup("HurtBox Register Check");
+            }
+
+            if (ImGui::BeginPopupModal("HurtBox Register Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            {
+                ImGui::Text("Would you like to register??");
+
+                if (ImGui::Button("Yes!", ImVec2(150, 150)))
+                {
+                    hurtBox_.SetColor({ 0.0f, 0.0f, 0.7f, 1.0f });
+                    hurtBoxes_.emplace_back(hurtBox_);
+                    hurtBox_.SetColor({ 0.3f, 0.3f, 1.0f, 1.0f });
+
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("No", ImVec2(150, 150)))
+                {
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
+            }
+
+            ImGui::TreePop(); // HurtBox
         }
 
         ImGui::TreePop(); // Collision

@@ -32,6 +32,9 @@ void WoodMonster::Update(const float& elapsedTime)
     stateMachine_->Update(elapsedTime);
 
     Character::Update(elapsedTime);
+
+    // Collision更新
+    UpdateCollisions(elapsedTime);
 }
 
 // 描画
@@ -50,6 +53,12 @@ void WoodMonster::DrawDebug()
     Object::DrawDebug();
 
     ImGui::End();
+}
+
+// デバッグ描画 
+void WoodMonster::DebugRender(DebugRenderer* debugRenderer)
+{
+    Object::DebugRender(debugRenderer);
 }
 
 // ステートマシン登録

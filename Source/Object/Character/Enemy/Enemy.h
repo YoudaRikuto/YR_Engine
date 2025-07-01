@@ -20,5 +20,6 @@ public:
     virtual void Update(const float& elapsedTime) = 0;
     virtual void Render(ID3D11PixelShader* psShader = nullptr) = 0;
     virtual void DrawDebug() = 0;
+    virtual void DebugRender(DebugRenderer* debugRenderer) = 0;
 };
 

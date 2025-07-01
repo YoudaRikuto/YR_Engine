@@ -21,6 +21,7 @@ public:
     void Update(const float& elapsedTime);
     void Render(ID3D11PixelShader* psShader = nullptr);
     void DrawDebug();
+    void DebugRender(DebugRenderer* debugRenderer);
 
     void Register(Enemy* enemy) { generates_.insert(enemy); }
     void Remove(Enemy* enemy) { removes_.insert(enemy); }

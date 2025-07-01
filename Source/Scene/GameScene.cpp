@@ -107,6 +107,7 @@ void GameScene::Render()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     PlayerManager::Instance().DebugRender(debugRenderer);
+    EnemyManager::Instance().DebugRender(debugRenderer);
 
 }
 

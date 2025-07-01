@@ -75,6 +75,7 @@ class HurtBox
 public:
     HurtBox(const std::string& name, const std::string& jointName, const float& radius,
         const DirectX::XMFLOAT3& offsetPosition = {}, const DirectX::XMFLOAT4& color = { 0.0f, 0.0f, 0.7f, 1.0f})
+        : name_(name), jointName_(jointName), radius_(radius), offsetPosition_(offsetPosition), color_(color)
     {}
     ~HurtBox() = default;
 
@@ -85,11 +86,16 @@ public:
     const DirectX::XMFLOAT3 GetOffsetPosition() const { return offsetPosition_; }
     const DirectX::XMFLOAT4 GetColor() const { return color_; }
 
+    void SetName(const std::string& name) { name_ = name; }
+    void SetJointName(const std::string& jointName) { jointName_ = jointName; }
+    void SetRadius(const float& radius) { radius_ = radius; }
     void SetPosition(const DirectX::XMFLOAT3& position) { position_ = position; }
+    void SetOffsetPosition(const DirectX::XMFLOAT3& offsetPosition) { offsetPosition_ = offsetPosition; }
+    void SetColor(const DirectX::XMFLOAT4& color) { color_ = color; }
 
 private:
-    const std::string   name_;
-    const std::string   jointName_;
+    std::string         name_;
+    std::string         jointName_;
     float               radius_         = 0.0f;
     DirectX::XMFLOAT3   position_       = {};
     DirectX::XMFLOAT3   offsetPosition_ = {};
