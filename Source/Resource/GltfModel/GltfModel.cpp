@@ -596,7 +596,7 @@ void GltfModel::LoadGltfModelFromFilename()
     cerealFilename.replace_extension("cereal");
     std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
     cereal::BinaryOutputArchive serialization(ofs);
-    serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_);
+    serialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_, jointNames_);
 }
 
 // CerealÉfÅ[É^Ç©ÇÁModelèÓïÒì«Ç›çûÇ› 
@@ -607,7 +607,7 @@ void GltfModel::LoadGltfModelFromCereal()
 
     std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
     cereal::BinaryInputArchive deserialization(ifs);
-    deserialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_);
+    deserialization(scenes_, nodes_, meshes_, materials_, textures_, images_, skins_, animations_, rootJointIndex_, jointNames_);
 
     // Load Texture
     for (size_t imageIndex = 0; imageIndex < images_.size(); ++imageIndex)
@@ -687,6 +687,9 @@ void GltfModel::FetchNodes(const tinygltf::Model& gltfModel)
     for (std::vector<tinygltf::Node>::const_reference gltfNode : gltfModel.nodes)
     {
         Node& node = nodes_.emplace_back();
+
+        jointNames_.emplace_back(gltfNode.name);
+
         node.name_ = gltfNode.name;
         node.skin_ = gltfNode.skin;
         node.mesh_ = gltfNode.mesh;

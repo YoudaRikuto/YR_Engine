@@ -300,6 +300,8 @@ public:
 
     const int GetNodeIndex(const std::string& nodeName);
     std::vector<Node>* GetNodes() { return &nodes_; }
+    
+    const std::vector<std::string> GetJointNames() const { return jointNames_; }
 
 private:
     // ---------- Animation ----------
@@ -383,4 +385,5 @@ private:
     DirectX::XMFLOAT3   rootMotionValue_        = { 1.0f, 1.0f, 1.0f };
     bool                isRootMotionActive_     = false;
 
+    std::vector<std::string> jointNames_;
 };

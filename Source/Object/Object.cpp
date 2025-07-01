@@ -5,7 +5,7 @@
 Object::Object(const std::string& filename, const float& scaleFactor, const std::string& objectName)
     : gltfModel_(filename), scaleFactor_(scaleFactor), objectName_(objectName),
     pushCollider_("PushCollider", "head", 1.0f, {}, { 1.0f, 1.0f, 1.0f, 1.0f }),
-    hitBox_("HitBox", "head", 1.0f, {}, { 1.0f, 0.3f, 0.3f, 1.0f }),
+    hitBox_("HitBox", "head", "Test", 1.0f, {}, { 1.0f, 0.3f, 0.3f, 1.0f }),
     hurtBox_("HurtBox", "head", 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
 {
     pushColliders_.emplace_back(PushCollider("Pelvis", "pelvis", 0.5f));
@@ -144,9 +144,18 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("PushCollider Name", name, ARRAYSIZE(name));
             pushCollider_.SetName(name);
-            static char jointName[128] = "";
-            ImGui::InputText("Joint Name", jointName, ARRAYSIZE(jointName));
-            pushCollider_.SetJointName(jointName);
+            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            static int currentJointIndex = 0;
+            if (ImGui::ListBox("Joint Name", &currentJointIndex,
+                [](void* data, int index, const char** outText) {
+                    auto* vec = static_cast<std::vector<std::string>*>(data);
+                    if (index < 0 || index >= static_cast<int>(vec->size())) return false;
+                    *outText = (*vec)[index].c_str();
+                    return true;
+                }, static_cast<void*>(&jointNames), static_cast<int>(jointNames.size())))
+            {
+                pushCollider_.SetJointName(jointNames.at(currentJointIndex));
+            }
             float radius = pushCollider_.GetRadius();
             ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f);
             pushCollider_.SetRadius(radius);
@@ -188,9 +197,21 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("HitBox Name", name, ARRAYSIZE(name));
             hitBox_.SetName(name);
-            static char jointName[128] = "";
-            ImGui::InputText("JointName", jointName, ARRAYSIZE(jointName));
-            hitBox_.SetJointName(jointName);
+            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            static int currentJointIndex = 0;
+            if (ImGui::ListBox("Joint Name", &currentJointIndex,
+                [](void* data, int index, const char** outText) {
+                    auto* vec = static_cast<std::vector<std::string>*>(data);
+                    if (index < 0 || index >= static_cast<int>(vec->size())) return false;
+                    *outText = (*vec)[index].c_str();
+                    return true;
+                }, static_cast<void*>(&jointNames), static_cast<int>(jointNames.size())))
+            {
+                hitBox_.SetJointName(jointNames.at(currentJointIndex));
+            }
+            static char attackName[128] = "";
+            ImGui::InputText("AttackName", attackName, ARRAYSIZE(attackName));
+            hitBox_.SetAttackName(attackName);
             float radius = hitBox_.GetRadius();
             ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f);
             hitBox_.SetRadius(radius);
@@ -232,9 +253,18 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("HurtBox Name", name, ARRAYSIZE(name));
             hurtBox_.SetName(name);
-            static char jointName[128] = "";
-            ImGui::InputText("JointName", jointName, ARRAYSIZE(jointName));
-            hurtBox_.SetJointName(jointName);
+            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            static int currentJointIndex = 0;
+            if (ImGui::ListBox("Joint Name", &currentJointIndex,
+                [](void* data, int index, const char** outText) {
+                    auto* vec = static_cast<std::vector<std::string>*>(data);
+                    if (index < 0 || index >= static_cast<int>(vec->size())) return false;
+                    *outText = (*vec)[index].c_str();
+                    return true;
+                }, static_cast<void*>(&jointNames), static_cast<int>(jointNames.size())))
+            {
+                hurtBox_.SetJointName(jointNames.at(currentJointIndex));
+            }
             float radius = hurtBox_.GetRadius();
             ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f);
             hurtBox_.SetRadius(radius);
