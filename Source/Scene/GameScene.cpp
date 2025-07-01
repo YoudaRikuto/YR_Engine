@@ -8,6 +8,7 @@
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 #include "Resource/ComputeParticle/ComputeParticleSystem.h"
 #include "Resource/Audio/AudioManager.h"
+#include "Collision/CollisionManager.h"
 
 // リソース生成 
 void GameScene::CreateResource()
@@ -65,6 +66,8 @@ void GameScene::Update(const float& elapsedTime)
     PlayerManager::Instance().Update(elapsedTime);
 
     EnemyManager::Instance().Update(elapsedTime);
+
+    CollisionManager::Instance().Update(elapsedTime);
 
     // エフェクト更新
     ComputeParticleSystem::Instance().Update(elapsedTime);

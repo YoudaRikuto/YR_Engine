@@ -48,6 +48,10 @@ public:
 
     // ---------- Collision ----------
     void UpdateCollisions(const float& elapsedTime);
+    void UpdatePushColliders();
+    const std::vector<PushCollider> GetPushColliders() const { return pushColliders_; }
+    const std::vector<HitBox> GetHitBoxes() const { return hitBoxes_; }
+    const std::vector<HurtBox> GetHurtBoxes() const { return hurtBoxes_; }
 
 private:
     GltfModel   gltfModel_;

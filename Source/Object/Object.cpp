@@ -8,6 +8,7 @@ Object::Object(const std::string& filename, const float& scaleFactor, const std:
     hitBox_("HitBox", "head", 1.0f, {}, { 1.0f, 0.3f, 0.3f, 1.0f }),
     hurtBox_("HurtBox", "head", 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
 {
+    pushColliders_.emplace_back(PushCollider("Pelvis", "pelvis", 0.5f));
 }
 
 // ----- çXêV -----
@@ -150,7 +151,7 @@ void Object::DrawDebug()
             ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f);
             pushCollider_.SetRadius(radius);
             DirectX::XMFLOAT3 offsetPosition = pushCollider_.GetOffsetPosition();
-            ImGui::DragFloat("OffsetPosition", &offsetPosition.x, 0.1f);
+            ImGui::DragFloat3("OffsetPosition", &offsetPosition.x, 0.1f);
             pushCollider_.SetOffsetPosition(offsetPosition);
 
             if (ImGui::Button("Register", ImVec2(300, 100)))
@@ -310,12 +311,7 @@ void Object::DebugRender(DebugRenderer* debugRenderer)
 void Object::UpdateCollisions(const float& elapsedTime)
 {
     // âüÇµèoÇµîªíË
-    for (auto& pushCollider : pushColliders_)
-    {
-        DirectX::XMFLOAT3 pos = GetJointPosition(pushCollider.GetJointName(), pushCollider.GetOffsetPosition());
-
-        pushCollider.SetPosition(pos);
-    }
+    UpdatePushColliders();
 
     // çUåÇîªíË
     for (auto& hitBox : hitBoxes_)
@@ -337,4 +333,14 @@ void Object::UpdateCollisions(const float& elapsedTime)
     pushCollider_.SetPosition(GetJointPosition(pushCollider_.GetJointName(), pushCollider_.GetOffsetPosition()));
     hitBox_.SetPosition(GetJointPosition(hitBox_.GetJointName(), hitBox_.GetOffsetPosition()));
     hurtBox_.SetPosition(GetJointPosition(hurtBox_.GetJointName(), hurtBox_.GetOffsetPosition()));
+}
+
+void Object::UpdatePushColliders()
+{
+    for (auto& pushCollider : pushColliders_)
+    {
+        DirectX::XMFLOAT3 pos = GetJointPosition(pushCollider.GetJointName(), pushCollider.GetOffsetPosition());
+
+        pushCollider.SetPosition(pos);
+    }
 }
