@@ -133,6 +133,12 @@ void Object::DrawDebug()
         }
 
         ImGui::Text("----- DebugDraw -----");
+        ImGui::Checkbox("PushColliders ", &isDebugDrawPushColliders_);
+        ImGui::SameLine();
+        ImGui::Checkbox("HitBoxes ", &isDebugDrawHitBoxes_);
+        ImGui::SameLine();
+        ImGui::Checkbox("HurtBoxes ", &isDebugDrawHurtBoxes_);
+
         ImGui::Checkbox("PushCollider ", &isDebugDrawPushCollider_);
         ImGui::SameLine();
         ImGui::Checkbox("HitBox ", &isDebugDrawHitBox_);
@@ -309,11 +315,11 @@ void Object::DrawDebug()
 
 void Object::DebugRender(DebugRenderer* debugRenderer)
 {
-    debugRenderer->DrawSphere(pushCollider_.GetPosition(), pushCollider_.GetRadius(), pushCollider_.GetColor());
-    debugRenderer->DrawSphere(hitBox_.GetPosition(), hitBox_.GetRadius(), hitBox_.GetColor());
-    debugRenderer->DrawSphere(hurtBox_.GetPosition(), hurtBox_.GetRadius(), hurtBox_.GetColor());
+    if (isDebugDrawPushCollider_) debugRenderer->DrawSphere(pushCollider_.GetPosition(), pushCollider_.GetRadius(), pushCollider_.GetColor());
+    if (isDebugDrawHitBox_) debugRenderer->DrawSphere(hitBox_.GetPosition(), hitBox_.GetRadius(), hitBox_.GetColor());
+    if (isDebugDrawHurtBox_) debugRenderer->DrawSphere(hurtBox_.GetPosition(), hurtBox_.GetRadius(), hurtBox_.GetColor());
 
-    if (isDebugDrawPushCollider_)
+    if (isDebugDrawPushColliders_)
     {
         for (auto& pushCollider : pushColliders_)
         {
@@ -321,7 +327,7 @@ void Object::DebugRender(DebugRenderer* debugRenderer)
         }
     }
 
-    if (isDebugDrawHitBox_)
+    if (isDebugDrawHitBoxes_)
     {
         for (auto& hitBox : hitBoxes_)
         {
@@ -329,7 +335,7 @@ void Object::DebugRender(DebugRenderer* debugRenderer)
         }
     }
 
-    if (isDebugDrawHurtBox_)
+    if (isDebugDrawHurtBoxes_)
     {
         for (auto& hurtBox : hurtBoxes_)
         {

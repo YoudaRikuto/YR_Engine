@@ -65,11 +65,13 @@ private:
     PushCollider                pushCollider_;
     HitBox                      hitBox_;
     HurtBox                     hurtBox_;
-    bool                        isDebugDrawPushCollider_    = true;
-    bool                        isDebugDrawHitBox_          = true;
-    bool                        isDebugDrawHurtBox_         = true;
+    bool                        isDebugDrawPushColliders_   = true;
+    bool                        isDebugDrawHitBoxes_        = true;
+    bool                        isDebugDrawHurtBoxes_       = true;
+    bool                        isDebugDrawPushCollider_    = false;
+    bool                        isDebugDrawHitBox_          = false;
+    bool                        isDebugDrawHurtBox_         = false;
     bool                        isPushColliderListActive_   = false;
     bool                        isHitBoxListActive_         = false;
     bool                        isHurtBoxListActive_        = false;
-
 };
