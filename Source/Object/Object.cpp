@@ -1,9 +1,11 @@
 #include "Object.h"
 #include "ImGui/ImGuiCtrl.h"
+#include "Resource/ResourceManager.h"
 
 // ----- コンストラクタ -----
 Object::Object(const std::string& filename, const float& scaleFactor, const std::string& objectName)
-    : gltfModel_(filename), scaleFactor_(scaleFactor), objectName_(objectName),
+    : gltfModel_(ResourceManager::Instance().LoadGltfModel(filename)),
+    scaleFactor_(scaleFactor), objectName_(objectName),
     pushCollider_("PushCollider", "head", 1.0f, {}, { 1.0f, 1.0f, 1.0f, 1.0f }),
     hitBox_("HitBox", "head", "Test", 1.0f, {}, { 1.0f, 0.3f, 0.3f, 1.0f }),
     hurtBox_("HurtBox", "head", 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
@@ -20,21 +22,21 @@ void Object::Update(const float& elapsedTime)
     if (rotation.y < 0.0f)              rotation.y += DirectX::XM_2PI;
 
     // アニメーション更新
-    gltfModel_.UpdateAnimation(elapsedTime);
+    gltfModel_->UpdateAnimation(elapsedTime);
 
     // ルートモーション更新
-    gltfModel_.UpdateRootMotion(scaleFactor_);
+    gltfModel_->UpdateRootMotion(scaleFactor_);
 }
 
 // ----- 描画 -----
 void Object::Render(ID3D11PixelShader* psShader)
 {
-    gltfModel_.Render(scaleFactor_, psShader);
+    gltfModel_->Render(scaleFactor_, psShader);
 }
 
 void Object::Render(const DirectX::XMFLOAT4X4& world, ID3D11PixelShader* psShader)
 {
-    gltfModel_.Render(world, psShader);
+    gltfModel_->Render(world, psShader);
 }
 
 // ----- ImGui -----
@@ -150,7 +152,7 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("PushCollider Name", name, ARRAYSIZE(name));
             pushCollider_.SetName(name);
-            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            std::vector<std::string> jointNames = gltfModel_->GetJointNames();
             static int currentJointIndex = 0;
             if (ImGui::ListBox("Joint Name", &currentJointIndex,
                 [](void* data, int index, const char** outText) {
@@ -203,7 +205,7 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("HitBox Name", name, ARRAYSIZE(name));
             hitBox_.SetName(name);
-            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            std::vector<std::string> jointNames = gltfModel_->GetJointNames();
             static int currentJointIndex = 0;
             if (ImGui::ListBox("Joint Name", &currentJointIndex,
                 [](void* data, int index, const char** outText) {
@@ -259,7 +261,7 @@ void Object::DrawDebug()
             static char name[128] = "";
             ImGui::InputText("HurtBox Name", name, ARRAYSIZE(name));
             hurtBox_.SetName(name);
-            std::vector<std::string> jointNames = gltfModel_.GetJointNames();
+            std::vector<std::string> jointNames = gltfModel_->GetJointNames();
             static int currentJointIndex = 0;
             if (ImGui::ListBox("Joint Name", &currentJointIndex,
                 [](void* data, int index, const char** outText) {
@@ -310,7 +312,7 @@ void Object::DrawDebug()
         ImGui::TreePop(); // Collision
     }
 
-    gltfModel_.DrawDebug();
+    gltfModel_->DrawDebug();
 }
 
 void Object::DebugRender(DebugRenderer* debugRenderer)

@@ -1,6 +1,7 @@
 #include "AnimationEditer.h"
 #include "Graphics/Graphics.h"
 #include "ImGui/ImGuiCtrl.h"
+#include "Resource/ResourceManager.h"
 
 AnimationEditer::AnimationEditer()
 {
@@ -38,6 +39,12 @@ void AnimationEditer::Render()
 
     stage_->Render();
 
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+    const std::string modelName = ResourceManager::Instance().GetGltfModelFilenames().at(gltfModelIndex_);
+    ResourceManager::Instance().LoadGltfModel(modelName)->Render(1.0f);
+
     frameBuffer_->Deactivate();
 }
 
@@ -45,6 +52,10 @@ void AnimationEditer::Render()
 void AnimationEditer::DrawDebug()
 {
     ImGui::Begin("Animation Editer");
+
+    const int gltfModelCount = ResourceManager::Instance().GetGltfModelCount() - 1;
+    ImGui::SliderInt("GltfModelIndex", &gltfModelIndex_, 0, gltfModelCount);
+    
 
     skyMap_.DrawDebug();
 

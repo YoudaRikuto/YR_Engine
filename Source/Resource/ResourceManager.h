@@ -1,9 +1,8 @@
 #pragma once
+#include <unordered_map>
 #include <string>
-#include <map>
 #include <memory>
 
-#include "Resource/Audio/Audio.h"
 #include "Resource/GltfModel/GltfModel.h"
 
 class ResourceManager
@@ -19,15 +18,12 @@ public:
         return instance;
     }
 
-private:
+    std::shared_ptr<GltfModel> LoadGltfModel(const std::string& filename, const std::string& rootNodeName = "root");
 
-
-
-
-    const std::shared_ptr<GltfModel> LoadModelResource(const char* const filename);
+    const std::vector<std::string> GetGltfModelFilenames() const { return gltfModelFilenames_; }
+    const int GetGltfModelCount() const { return gltfModels_.size(); }
 
 private:
-    using ModelMap = std::map<const char*, std::weak_ptr<GltfModel>>;
-
-    ModelMap models_ = {};
+    std::unordered_map<std::string, std::shared_ptr<GltfModel>> gltfModels_;
+    std::vector<std::string> gltfModelFilenames_;
 };
