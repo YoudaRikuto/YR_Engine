@@ -3,7 +3,7 @@
 #include "WoodMonsterState.h"
 
 WoodMonster::WoodMonster()
-    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f)
+    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f, "WoodMonster")
 {
     PlayAnimation(Animation::Idle, true);
 
@@ -32,6 +32,9 @@ void WoodMonster::Update(const float& elapsedTime)
     stateMachine_->Update(elapsedTime);
 
     Character::Update(elapsedTime);
+
+    // Collision更新
+    UpdateCollisions(elapsedTime);
 }
 
 // 描画
@@ -50,6 +53,12 @@ void WoodMonster::DrawDebug()
     Object::DrawDebug();
 
     ImGui::End();
+}
+
+// デバッグ描画 
+void WoodMonster::DebugRender(DebugRenderer* debugRenderer)
+{
+    Object::DebugRender(debugRenderer);
 }
 
 // ステートマシン登録

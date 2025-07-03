@@ -1,6 +1,7 @@
 #pragma once
 #include "Shader/Shader.h"
 #include <memory>
+#include "Resource/DebugRenderer/DebugRenderer.h"
 
 CONST LONG      SCREEN_WIDTH = 1920;
 CONST LONG      SCREEN_HEIGHT = 1080;
@@ -43,6 +44,8 @@ public:
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetDepthMap() { return shader_->GetDepthMap(); }
 
+    DebugRenderer* GetDebugRenderer() const { return debugRenderer_.get(); }
+
 private:
     void CreateRenderTargetView(); // レンダーターゲットビュー作成
     void CreateDepthStencilView(); // デプスステンシルビュー作成
@@ -50,6 +53,7 @@ private:
 private:
     static Graphics* instance_;
     std::unique_ptr<Shader> shader_;
+    std::unique_ptr<DebugRenderer> debugRenderer_;
 
     Microsoft::WRL::ComPtr<ID3D11Device>                device_;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext>         deviceContext_;

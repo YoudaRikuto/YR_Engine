@@ -22,6 +22,8 @@ private:
 private:
     SkyMap skyMap_;
 
+    int gltfModelIndex_ = 0;
+
     std::unique_ptr<FrameBuffer> frameBuffer_;
 
     std::unique_ptr<Object> stage_;

@@ -4,8 +4,8 @@
 #include "Graphics/Camera/Camera.h"
 
 Player::Player()
-    : Character("./Resources/Model/Player/Player.gltf", 1.0f),
-    sword_("./Resources/Model/Sword/NodachiSword.gltf", 1.0f)
+    : Character("./Resources/Model/Player/Player.gltf", 1.0f, "Player"),
+    sword_("./Resources/Model/Sword/NodachiSword.gltf", 1.0f, "Sword")
 {
     PlayAnimation(Animation::Idle, true);
 
@@ -54,6 +54,9 @@ void Player::Update(const float& elapsedTime)
 
     Character::Update(elapsedTime);
 
+    // Collision 更新
+    UpdateCollisions(elapsedTime);
+
     // 武器の座標更新
     UpdateWeaponTransform(elapsedTime);
 }
@@ -98,8 +101,9 @@ void Player::DrawDebug()
 }
 
 // デバッグ描画 
-void Player::DebugRender()
+void Player::DebugRender(DebugRenderer* debugRenderer)
 {
+    Object::DebugRender(debugRenderer);
 }
 
 // フラグをリセットする

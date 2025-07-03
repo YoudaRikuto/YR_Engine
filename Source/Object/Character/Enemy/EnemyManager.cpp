@@ -56,6 +56,15 @@ void EnemyManager::DrawDebug()
     }
 }
 
+// デバッグ描画 
+void EnemyManager::DebugRender(DebugRenderer* debugRenderer)
+{
+    for (Enemy*& enemy : enemies_)
+    {
+        enemy->DebugRender(debugRenderer);
+    }
+}
+
 // 全削除
 void EnemyManager::Clear()
 {

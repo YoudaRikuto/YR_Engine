@@ -2,7 +2,7 @@
 
 // ----- コンストラクタ -----
 Stage::Stage()
-    : Object("./Resources/Model/Stage/Stage.gltf", 1.0f)
+    : Object("./Resources/Model/Stage/Stage.gltf", 1.0f, "Stage")
 {
     GetTransform()->SetScaleFactor(70.0f);
 }

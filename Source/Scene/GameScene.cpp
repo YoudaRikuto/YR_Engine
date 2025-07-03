@@ -7,6 +7,8 @@
 #include "Object/Character/Enemy/EnemyManager.h"
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 #include "Resource/ComputeParticle/ComputeParticleSystem.h"
+#include "Resource/Audio/AudioManager.h"
+#include "Collision/CollisionManager.h"
 
 // リソース生成 
 void GameScene::CreateResource()
@@ -38,6 +40,9 @@ void GameScene::Initialize()
 {
     // プレイヤー初期化
     PlayerManager::Instance().Initialize();
+
+    // BGM再生
+    AudioManager::Instance().PlayBGM(BGM::Game);
 }
 
 // 終了化 
@@ -49,6 +54,9 @@ void GameScene::Finalize()
     EnemyManager::Instance().Finalize();
 
     ComputeParticleSystem::Instance().ClearResource();
+
+    // BGM停止
+    AudioManager::Instance().StopBGM(BGM::Game);
 }
 
 // 更新 
@@ -58,6 +66,8 @@ void GameScene::Update(const float& elapsedTime)
     PlayerManager::Instance().Update(elapsedTime);
 
     EnemyManager::Instance().Update(elapsedTime);
+
+    CollisionManager::Instance().Update(elapsedTime);
 
     // エフェクト更新
     ComputeParticleSystem::Instance().Update(elapsedTime);
@@ -93,6 +103,15 @@ void GameScene::Render()
     Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
     Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_OFF);
     ComputeParticleSystem::Instance().Render();
+
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+    PlayerManager::Instance().DebugRender(debugRenderer);
+    EnemyManager::Instance().DebugRender(debugRenderer);
+
 }
 
 // 影書き込み

@@ -4,6 +4,7 @@
 #include "Graphics/Camera/Camera.h"
 #include "Resource/EffectManager.h"
 #include "Graphics/PostProcess/PostProcess.h"
+#include "Resource/Audio/AudioManager.h"
 
 Framework::Framework(HWND hwnd)
     : hwnd_(hwnd), graphics_(hwnd), input_(hwnd),
@@ -17,6 +18,10 @@ const bool Framework::Initialize()
     // Input ‰ŠúÝ’è
     input_.GetMouse().SetScreenWidth(SCREEN_WIDTH);
     input_.GetMouse().SetScreenHeight(SCREEN_HEIGHT);
+
+    // Audio “Ç‚Ýž‚Ý
+    AudioManager::Instance().LoadAudio();
+    AudioManager::Instance().StopAllAudio();
 
     SceneManager::Instance().Initialize();
 
@@ -60,8 +65,6 @@ void Framework::Update(const float& elapsedTime)
     DrawDebug();
 }
 
-#define USE_GBUFFER 1
-
 // •`‰æ 
 void Framework::Render()
 {
@@ -83,7 +86,6 @@ void Framework::Render()
 
     sceneConstants_.Activate(0, true, true, true, true);
 
-#if USE_GBUFFER
     // G-BufferÝ’è
     Graphics::Instance().SetGBuffer();
     Graphics::Instance().SetBlendState(Shader::BlendState::MRT);
@@ -92,21 +94,17 @@ void Framework::Render()
     
     // Scene•`‰æ
     SceneManager::Instance().DeferredRender();
-#endif
 
     PostProcess::Instance().Activate();
         
     skyMap_.Draw();
-
-    // Scene•`‰æ
-    //SceneManager::Instance().Render();
-
-#if USE_GBUFFER
     deferredRendering_.Draw();
-#endif
 
     SceneManager::Instance().Render();
     EffectManager::Instance().Render();
+
+    // DebugRenderer
+    Graphics::Instance().GetDebugRenderer()->Render(view, projection);
 
     PostProcess::Instance().Deactivate();
 

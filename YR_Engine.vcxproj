@@ -192,6 +192,7 @@
     <ClInclude Include="Source\Resource\Audio\Audio.h" />
     <ClInclude Include="Source\Resource\Audio\AudioManager.h" />
     <ClInclude Include="Source\Resource\ComputeParticle\ComputeParticleSystem.h" />
+    <ClInclude Include="Source\Resource\DebugRenderer\DebugRenderer.h" />
     <ClInclude Include="Source\Resource\Effect.h" />
     <ClInclude Include="Source\Resource\EffectManager.h" />
     <ClInclude Include="Source\Resource\GltfModel\AnimationEditer.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Source\Resource\Audio\Audio.cpp" />
     <ClCompile Include="Source\Resource\Audio\AudioManager.cpp" />
     <ClCompile Include="Source\Resource\ComputeParticle\ComputeParticleSystem.cpp" />
+    <ClCompile Include="Source\Resource\DebugRenderer\DebugRenderer.cpp" />
     <ClCompile Include="Source\Resource\Effect.cpp" />
     <ClCompile Include="Source\Resource\EffectManager.cpp" />
     <ClCompile Include="Source\Resource\GltfModel\AnimationEditer.cpp" />

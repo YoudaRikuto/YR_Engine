@@ -52,6 +52,8 @@ Graphics::Graphics(HWND hwnd)
     deviceContext_->RSSetViewports(1, &viewport);
 
     shader_ = std::make_unique<Shader>();
+
+    debugRenderer_ = std::make_unique<DebugRenderer>();
 }
 
 // •`‰æ‰Šú‰» 

@@ -48,6 +48,18 @@ public:
         Target_1,
         Target_2,
         Target_3,
+
+        HitFront,
+        HitBack,
+        HitRight,
+        HitLeft,
+        HitAir1,
+        HitAir2,
+        HitAir3,
+        KnockDownStart,
+        KnockDownLoop,
+        KnockDownGetUp,
+        KnockDownDeath,
     };
 
 public:
@@ -60,6 +72,7 @@ public:
     void Update(const float& elapsedTime)               override;
     void Render(ID3D11PixelShader* psShader = nullptr)  override;
     void DrawDebug()                                    override;
+    void DebugRender(DebugRenderer* debugRenderer)    override;
 
 public:
     // ---------- Animation ----------

@@ -65,11 +65,15 @@ void PostProcess::DrawDebug()
     ImGui::DragFloat("Saturation", &postProcessConstants_->GetData()->saturation_, 0.01f, -1.0f, 1.0f);
 #endif
 
+    ImGui::Begin("PostProcess");
+
     // カスケードシャドウマップ
     cascadedShadowMap_.DrawDebug();
 
     // 川瀬式ブルーム
     kawaseBloom_.DrawDebug();
+
+    ImGui::End();
 
     // ---------- Scene 描画表示 ----------
     ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
