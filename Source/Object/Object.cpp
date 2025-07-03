@@ -63,7 +63,11 @@ void Object::DrawDebug()
                 const std::string name = pushColliders_.at(i).GetName();
                 if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_Framed))
                 {
-                    const std::string jointName = "JointName :" + pushColliders_.at(i).GetJointName();
+                    if (ImGui::Button("Delete PushCollider"))
+                    {
+
+                    }
+                    const std::string jointName = "JointName : " + pushColliders_.at(i).GetJointName();
                     float radius = pushColliders_.at(i).GetRadius();
                     DirectX::XMFLOAT3 offsetPosition = pushColliders_.at(i).GetOffsetPosition();
 

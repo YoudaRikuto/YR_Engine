@@ -48,6 +48,18 @@ public:
         Target_1,
         Target_2,
         Target_3,
+
+        HitFront,
+        HitBack,
+        HitRight,
+        HitLeft,
+        HitAir1,
+        HitAir2,
+        HitAir3,
+        KnockDownStart,
+        KnockDownLoop,
+        KnockDownGetUp,
+        KnockDownDeath,
     };
 
 public:
