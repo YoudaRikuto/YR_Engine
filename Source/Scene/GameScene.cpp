@@ -30,7 +30,7 @@ void GameScene::CreateResource()
 
     Effect* effect = new Effect("./Resources/Effect/kemuri.efk", "kemuri");
 
-    ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("BBB");
+    ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("HitParticle");
 }
 
 // èâä˙âª 

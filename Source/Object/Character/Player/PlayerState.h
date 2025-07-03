@@ -242,7 +242,7 @@ namespace PlayerState
 
     private:
         float animationSpeed_ = 1.0f;
-        float animationStartFrame_ = 0.4f;
+        float animationStartFrame_ = 0.08f;
         float transitionTime_ = 0.1f;
         float runTransitionFrame_ = 0.4f;
         float attack4TransitionFrame_ = 0.3f;
