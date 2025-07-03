@@ -23,6 +23,8 @@ void WoodMonster::Initialize()
 void WoodMonster::Finalize()
 {
     stateMachine_->GetCurrentState()->Finalize();
+
+    Object::Finalize();
 }
 
 // XV

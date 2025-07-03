@@ -1,6 +1,9 @@
 #include "Object.h"
 #include "ImGui/ImGuiCtrl.h"
 #include "Resource/ResourceManager.h"
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 // ----- コンストラクタ -----
 Object::Object(const std::string& filename, const float& scaleFactor, const std::string& objectName)
@@ -11,6 +14,99 @@ Object::Object(const std::string& filename, const float& scaleFactor, const std:
     hurtBox_("HurtBox", "head", 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
 {
     pushColliders_.emplace_back(PushCollider("Pelvis", "pelvis", 0.5f));
+}
+
+void Object::Finalize()
+{
+    nlohmann::json pushColliders;
+    for (const auto& dataList : pushColliders_)
+    {
+        nlohmann::json data;
+        data["Name"] = dataList.GetName();
+        data["JointName"] = dataList.GetJointName();
+        data["Radius"] = dataList.GetRadius();
+        data["OffsetPosition"] =
+        {
+            { "x", dataList.GetOffsetPosition().x },
+            { "y", dataList.GetOffsetPosition().y },
+            { "z", dataList.GetOffsetPosition().z },
+        };
+        data["Color"] =
+        {
+            { "x", dataList.GetColor().x },
+            { "y", dataList.GetColor().y },
+            { "z", dataList.GetColor().z },
+            { "w", dataList.GetColor().w },
+        };
+
+        pushColliders["PushCollider"].push_back(data);
+    }
+    
+    nlohmann::json hitBoxes;
+    for (const auto& dataList : hitBoxes_)
+    {
+        nlohmann::json data;
+        data["Name"] = dataList.GetName();
+        data["JointName"] = dataList.GetJointName();
+        data["AttackName"] = dataList.GetAttackName();
+        data["Radius"] = dataList.GetRadius();
+        data["OffsetPosition"] =
+        {
+            { "x", dataList.GetOffsetPosition().x },
+            { "y", dataList.GetOffsetPosition().y },
+            { "z", dataList.GetOffsetPosition().z },
+        };
+        data["Color"] =
+        {
+            { "x", dataList.GetColor().x },
+            { "y", dataList.GetColor().y },
+            { "z", dataList.GetColor().z },
+            { "w", dataList.GetColor().w },
+        };
+
+        hitBoxes["HitBox"].push_back(data);
+    }
+
+    nlohmann::json hurtBoxes;
+    for (const auto& dataList : hurtBoxes_)
+    {
+        nlohmann::json data;
+        data["Name"] = dataList.GetName();
+        data["JointName"] = dataList.GetJointName();
+        data["Radius"] = dataList.GetRadius();
+        data["OffsetPosition"] =
+        {
+            { "x", dataList.GetOffsetPosition().x },
+            { "y", dataList.GetOffsetPosition().y },
+            { "z", dataList.GetOffsetPosition().z },
+        };
+        data["Color"] =
+        {
+            { "x", dataList.GetColor().x },
+            { "y", dataList.GetColor().y },
+            { "z", dataList.GetColor().z },
+            { "w", dataList.GetColor().w },
+        };
+        data["Damage"] = dataList.GetDamage();
+
+        hurtBoxes["HurtBox"].push_back(data);
+    }
+
+    std::ofstream writingFile;
+    std::string filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "PushColliders";
+    writingFile.open(filepath, std::ios::out);
+    writingFile << pushColliders.dump() << std::endl;
+    writingFile.close();
+
+    filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "HitBox";
+    writingFile.open(filepath, std::ios::out);
+    writingFile << hitBoxes.dump() << std::endl;
+    writingFile.close();
+
+    filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "HurtBox";
+    writingFile.open(filepath, std::ios::out);
+    writingFile << hurtBoxes.dump() << std::endl;
+    writingFile.close();
 }
 
 // ----- 更新 -----
@@ -65,7 +161,11 @@ void Object::DrawDebug()
                 {
                     if (ImGui::Button("Delete PushCollider"))
                     {
+                        pushColliders_.erase(pushColliders_.begin() + i);
 
+                        --i;
+                        ImGui::TreePop();
+                        continue;
                     }
                     const std::string jointName = "JointName : " + pushColliders_.at(i).GetJointName();
                     float radius = pushColliders_.at(i).GetRadius();

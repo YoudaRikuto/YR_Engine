@@ -88,6 +88,7 @@ public:
     const DirectX::XMFLOAT3 GetPosition() const { return position_; }
     const DirectX::XMFLOAT3 GetOffsetPosition() const { return offsetPosition_; }
     const DirectX::XMFLOAT4 GetColor() const { return color_; }
+    const float GetDamage() const { return damage_; }
 
     void SetName(const std::string& name) { name_ = name; }
     void SetJointName(const std::string& jointName) { jointName_ = jointName; }
@@ -104,7 +105,7 @@ private:
     DirectX::XMFLOAT3   offsetPosition_ = {};
     DirectX::XMFLOAT4   color_          = {};
     
-    float damage_ = 0.0f;
-    bool isHit_ = false;
-    float hitTimer_ = 0.0f;
+    float   damage_     = 0.0f;
+    bool    isHit_      = false;
+    float   hitTimer_   = 0.0f;
 };

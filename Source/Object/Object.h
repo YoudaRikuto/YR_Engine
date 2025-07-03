@@ -10,6 +10,8 @@ public:
     Object(const std::string& filename, const float& scaleFactor, const std::string& objectName);
     ~Object() {}
 
+    void Finalize();
+
     void Update(const float& elapsedTime);              // çXêV
     void Render(ID3D11PixelShader* psShader = nullptr);
     void Render(const DirectX::XMFLOAT4X4& world, ID3D11PixelShader* psShader = nullptr);

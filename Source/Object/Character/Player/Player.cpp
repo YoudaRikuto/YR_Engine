@@ -41,6 +41,8 @@ void Player::Finalize()
 {
     // ステートマシン終了化
     stateMachine_->GetCurrentState()->Finalize();
+
+    Object::Finalize();
 }
 
 // 更新 
