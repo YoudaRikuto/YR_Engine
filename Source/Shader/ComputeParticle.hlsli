@@ -29,6 +29,8 @@ struct EmitParticleData
     
     float4 startColor_;
     float4 endColor_;
+    
+    row_major float4x4 world_;
 };
 
 struct ParticleData

@@ -5,6 +5,7 @@
 #include <vector>
 #include "Graphics/ConstantBuffer.h"
 #include <string>
+#include "Math/Transform.h"
 
 class ComputeParticleSystem
 {
@@ -67,6 +68,10 @@ public:
         bool    randomBetweenTwoScaleVelocities_ = false;
         bool    randomBetweenTwoScaleAccelerations_ = false;
         bool    randomBetweenTwoColors_ = false;
+
+        DirectX::XMFLOAT3 position_;
+        DirectX::XMFLOAT3 scale_;
+        DirectX::XMFLOAT3 rotation_;
     };
 
     struct EmitParticleData
@@ -92,6 +97,7 @@ public:
         DirectX::XMFLOAT4 scaleAcceleration_    = {};
         DirectX::XMFLOAT4 startColor_           = {};
         DirectX::XMFLOAT4 endColor_             = {};
+        DirectX::XMFLOAT4X4 world_;
     };
 
     // ï€éùÉfÅ[É^
@@ -169,7 +175,7 @@ private:
     void SetEmitData(const std::string& filename);
     void EmitParticle(const EmitParticleData& emitParticleData);
     void EmitParticle();
-    void AssetCreation(const ComputeParticleEmitData& data, const std::string& filename);
+    void AssetCreation();
 
 private:
     UINT numParticles_;
@@ -184,7 +190,7 @@ private:
     
 
     std::vector<EmitParticleData> emitParticles_;    
-    std::unique_ptr<ConstantBuffer<Constants>> constants_;
+    std::unique_ptr<ConstantBuffer<Constants>>          constants_;
 
     Microsoft::WRL::ComPtr<ID3D11Buffer>                particleDataBuffer_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    particleDataSRV_;
@@ -207,5 +213,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>   indirectDataUAV_;
     Microsoft::WRL::ComPtr<ID3D11ComputeShader>         beginFrameShader_;
     Microsoft::WRL::ComPtr<ID3D11ComputeShader>         endFrameShader_;
+
+    Transform3D transform_;
 };
 

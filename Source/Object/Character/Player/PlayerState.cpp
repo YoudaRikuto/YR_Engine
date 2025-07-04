@@ -254,6 +254,13 @@ namespace PlayerState
     // 更新 
     void JumpStartState::Update(const float& elapsedTime)
     {
+        // ---------- 斬り上げ ----------
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
+        {
+            owner_->ChangeState(Player::STATE::AttackUpAir);
+            return;
+        }
+
         // ---------- 空中攻撃 ----------
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
@@ -262,11 +269,11 @@ namespace PlayerState
         }
 
         // ---------- 強攻撃 ----------
-        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
-        {
-            owner_->ChangeState(Player::STATE::AttackAirToFloor);
-            return;
-        }
+        //if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
+        //{
+        //    owner_->ChangeState(Player::STATE::AttackAirToFloor);
+        //    return;
+        //}
 
         // ---------- ダブルジャンプ ----------
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
@@ -625,6 +632,83 @@ namespace PlayerState
     {
         owner_->PlayAnimationBlend(Player::Animation::DoubleJump, false, animationSpeed_, animationStartFrame_);
         owner_->SetTransitionTime(0.1f);
+    }
+}
+
+// ---------- AttackUpAirState ----------
+namespace PlayerState
+{
+    // 初期化
+    void AttackUpAirState::Initialize()
+    {
+        // フラグリセット
+        owner_->ResetFlags();
+
+        // アニメーション再生
+        PlayAnimation();
+
+        owner_->SetVelocity({});
+        owner_->SetMoveDirection({});
+    }
+
+    // 更新
+    void AttackUpAirState::Update(const float& elapsedTime)
+    {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+            owner_->SetRootMotionValue(rootMotionValue_);
+        }
+
+        // TODO:空中攻撃
+        // 先行入力を取る
+        // 0.8 ~ 0.9 くらいで入力があれば遷移する
+        // AttackAri_01
+
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->SetNextState(Player::STATE::AttackAir1_1);
+        }
+
+        if (owner_->GetNextState() == Player::STATE::AttackAir1_1 &&
+            owner_->GetAnimationSeconds() >= attackAir1_1TransitionFrame_)
+        {
+            owner_->ChangeState(Player::STATE::AttackAir1_1);
+            return;
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void AttackUpAirState::Finalize()
+    {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
+        owner_->SetRootMotionValue({ 1.0f, 1.0f, 1.0f });
+    }
+
+    // ImGui
+    void AttackUpAirState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
+            ImGui::DragFloat3("RootMotionValue", &rootMotionValue_.x, 0.1f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void AttackUpAirState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(Player::Animation::AttackUpAir, false, 1.0f, animationStartFrame_);
     }
 }
 

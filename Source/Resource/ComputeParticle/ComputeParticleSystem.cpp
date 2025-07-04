@@ -186,6 +186,10 @@ void ComputeParticleSystem::LoadEmitDataFromJsonFile(const std::string& filename
     data.randomBetweenTwoScaleAccelerations_    = jsonData["RandomBetweenTwoScaleAccelerations"];
     data.randomBetweenTwoColors_                = jsonData["RandomBetweenTwoColors"];
 
+    data.position_ = { jsonData["Position"][0], jsonData["Position"][1], jsonData["Position"][2] };
+    data.scale_ = { jsonData["Scale"][0], jsonData["Scale"][1], jsonData["Scale"][2] };
+    data.rotation_ = { jsonData["Rotation"][0], jsonData["Rotation"][1], jsonData["Rotation"][2] };
+
     computeParticleData_.emplace_back(data);
 }
 
@@ -199,7 +203,6 @@ void ComputeParticleSystem::Update(const float& elapsedTime)
     constants_->GetData()->systemNumParticles_ = numParticles_;
     constants_->GetData()->totalEmitCount_ = static_cast<UINT>(emitParticles_.size());;
     constants_->Activate(10, false, true, true);
-
 
     deviceContext->CSSetShaderResources(0, 1, particleEmitSRV_.GetAddressOf());
     deviceContext->CSSetShaderResources(1, 1, perlinNoiseTexture_.GetAddressOf());
@@ -319,7 +322,7 @@ void ComputeParticleSystem::DrawDebug()
 
         if (ImGui::Button("Export Particle Asset"))
         {
-            AssetCreation(computeParticleEmitData_, computeParticleEmitData_.name_);
+            AssetCreation();
         }
 
         ImGui::TreePop();
@@ -352,6 +355,8 @@ void ComputeParticleSystem::DrawDebug()
     {
         EmitParticle();
     }
+
+    transform_.DrawDebug();
 
     ImGui::DragInt("Emit Particle Num", &computeParticleEmitData_.emitParticleNum_, 1, 0, 10000);
     ImGui::SliderInt("Texture Type", &computeParticleEmitData_.textureType_, 0, 16);
@@ -594,6 +599,11 @@ void ComputeParticleSystem::EmitParticle(const std::string& effectName)
         if (effectName == computeParticleData_.at(i).name_)
         {
             computeParticleEmitData_ = computeParticleData_.at(i);
+            
+            transform_.SetPosition(computeParticleEmitData_.position_);
+            transform_.SetScale(computeParticleEmitData_.scale_);
+            transform_.SetRotation(computeParticleEmitData_.rotation_);
+            
             EmitParticle();
 
             return;
@@ -613,16 +623,16 @@ void ComputeParticleSystem::SetEmitData(const std::string& filename)
     else _ASSERT_EXPR(false, L"Asset not found");
 
     ComputeParticleEmitData data;
-    data.name_ = jsonData["EffectName"];
-    data.emitParticleNum_ = jsonData["EmitParticleNum"];
-    data.textureType_ = jsonData["TextureType"];
-    data.duration_ = jsonData["Duration"];
-    data.lifeTimeMin_ = jsonData["LifeTimeMin"];
-    data.lifeTimeMax_ = jsonData["LifeTimeMax"];
-    data.startDelayMin_ = jsonData["StartDelayMin"];
-    data.startDelayMax_ = jsonData["StartDelayMax"];
-    data.gravityMin_ = jsonData["GravityMin"];
-    data.gravityMax_ = jsonData["GravityMax"];
+    data.name_              = jsonData["EffectName"];
+    data.emitParticleNum_   = jsonData["EmitParticleNum"];
+    data.textureType_       = jsonData["TextureType"];
+    data.duration_          = jsonData["Duration"];
+    data.lifeTimeMin_       = jsonData["LifeTimeMin"];
+    data.lifeTimeMax_       = jsonData["LifeTimeMax"];
+    data.startDelayMin_     = jsonData["StartDelayMin"];
+    data.startDelayMax_     = jsonData["StartDelayMax"];
+    data.gravityMin_        = jsonData["GravityMin"];
+    data.gravityMax_        = jsonData["GravityMax"];
 
     data.positionMin_ = { jsonData["PositionMin"][0], jsonData["PositionMin"][1], jsonData["PositionMin"][2], jsonData["PositionMin"][3] };
     data.positionMax_ = { jsonData["PositionMax"][0], jsonData["PositionMax"][1], jsonData["PositionMax"][2], jsonData["PositionMax"][3] };
@@ -661,6 +671,10 @@ void ComputeParticleSystem::SetEmitData(const std::string& filename)
     data.randomBetweenTwoColors_ = jsonData["RandomBetweenTwoColors"];
 
     computeParticleEmitData_ = data;
+
+    data.position_ = { jsonData["Position"][0], jsonData["Position"][1], jsonData["Position"][2] };
+    data.scale_ = { jsonData["Scale"][0], jsonData["Scale"][1], jsonData["Scale"][2] };
+    data.rotation_ = { jsonData["Rotation"][0], jsonData["Rotation"][1], jsonData["Rotation"][2] };
 }
 
 void ComputeParticleSystem::EmitParticle(const EmitParticleData& emitParticleData)
@@ -800,63 +814,209 @@ void ComputeParticleSystem::EmitParticle()
 
         emitParticleData.endColor_ = computeParticleEmitData_.endColor_;
 
+        DirectX::XMStoreFloat4x4(&emitParticleData.world_, transform_.CalcWorldMatrix(1.0f));
+
         EmitParticle(emitParticleData);
     }
 }
 
-void ComputeParticleSystem::AssetCreation(const ComputeParticleEmitData& data, const std::string& filename)
+// Asset Export (Json Data)
+void ComputeParticleSystem::AssetCreation()
 {
     nlohmann::json jsonData;
+        
+    jsonData["EffectName"]      = computeParticleEmitData_.name_;
+    jsonData["EmitParticleNum"] = computeParticleEmitData_.emitParticleNum_;
+    jsonData["TextureType"]     = computeParticleEmitData_.textureType_;
+    jsonData["Duration"]        = computeParticleEmitData_.duration_;
+    jsonData["LifeTimeMin"]     = computeParticleEmitData_.lifeTimeMin_;
+    jsonData["LifeTimeMax"]     = computeParticleEmitData_.lifeTimeMax_;
+    jsonData["StartDelayMin"]   = computeParticleEmitData_.startDelayMin_;
+    jsonData["StartDelayMax"]   = computeParticleEmitData_.startDelayMax_;
+    jsonData["GravityMin"]      = computeParticleEmitData_.gravityMin_;
+    jsonData["GravityMax"]      = computeParticleEmitData_.gravityMax_;
+    jsonData["PositionMin"] = 
+    {
+        computeParticleEmitData_.positionMin_.x,
+        computeParticleEmitData_.positionMin_.y,
+        computeParticleEmitData_.positionMin_.z,
+        computeParticleEmitData_.positionMin_.w 
+    };
+    jsonData["PositionMax"] =
+    {
+        computeParticleEmitData_.positionMax_.x,
+        computeParticleEmitData_.positionMax_.y,
+        computeParticleEmitData_.positionMax_.z,
+        computeParticleEmitData_.positionMax_.w
+    };
+    jsonData["VelocityMin"] =
+    {
+        computeParticleEmitData_.velocityMin_.x,
+        computeParticleEmitData_.velocityMin_.y,
+        computeParticleEmitData_.velocityMin_.z,
+        computeParticleEmitData_.velocityMin_.w 
+    };
+    jsonData["VelocityMax"] =
+    {
+        computeParticleEmitData_.velocityMax_.x, 
+        computeParticleEmitData_.velocityMax_.y,
+        computeParticleEmitData_.velocityMax_.z, 
+        computeParticleEmitData_.velocityMax_.w 
+    };
+    jsonData["AccelerationMin"] = 
+    {
+        computeParticleEmitData_.accelerationMin_.x,
+        computeParticleEmitData_.accelerationMin_.y,
+        computeParticleEmitData_.accelerationMin_.z,
+        computeParticleEmitData_.accelerationMin_.w 
+    };
+    jsonData["AccelerationMax"] =
+    {
+        computeParticleEmitData_.accelerationMax_.x,
+        computeParticleEmitData_.accelerationMax_.y,
+        computeParticleEmitData_.accelerationMax_.z, 
+        computeParticleEmitData_.accelerationMax_.w
+    };
+    jsonData["RotationMin"] =
+    { 
+        computeParticleEmitData_.rotationMin_.x,
+        computeParticleEmitData_.rotationMin_.y,
+        computeParticleEmitData_.rotationMin_.z,
+        computeParticleEmitData_.rotationMin_.w 
+    };
+    jsonData["RotationMax"] =
+    {
+        computeParticleEmitData_.rotationMax_.x,
+        computeParticleEmitData_.rotationMax_.y,
+        computeParticleEmitData_.rotationMax_.z, 
+        computeParticleEmitData_.rotationMax_.w 
+    };
+    jsonData["RotationVelocityMin"] = 
+    {
+        computeParticleEmitData_.rotationVelocityMin_.x,
+        computeParticleEmitData_.rotationVelocityMin_.y,
+        computeParticleEmitData_.rotationVelocityMin_.z,
+        computeParticleEmitData_.rotationVelocityMin_.w 
+    };
+    jsonData["RotationVelocityMax"] =
+    { 
+        computeParticleEmitData_.rotationVelocityMax_.x,
+        computeParticleEmitData_.rotationVelocityMax_.y,
+        computeParticleEmitData_.rotationVelocityMax_.z,
+        computeParticleEmitData_.rotationVelocityMax_.w 
+    };
+    jsonData["RotationAccelerationMin"] = 
+    {
+        computeParticleEmitData_.rotationAccelerationMin_.x,
+        computeParticleEmitData_.rotationAccelerationMin_.y, 
+        computeParticleEmitData_.rotationAccelerationMin_.z,
+        computeParticleEmitData_.rotationAccelerationMin_.w 
+    };
+    jsonData["RotationAccelerationMax"] = 
+    { 
+        computeParticleEmitData_.rotationAccelerationMax_.x,
+        computeParticleEmitData_.rotationAccelerationMax_.y,
+        computeParticleEmitData_.rotationAccelerationMax_.z,
+        computeParticleEmitData_.rotationAccelerationMax_.w 
+    };
+    jsonData["ScaleMin"] = 
+    { 
+        computeParticleEmitData_.scaleMin_.x,
+        computeParticleEmitData_.scaleMin_.y,
+        computeParticleEmitData_.scaleMin_.z,
+        computeParticleEmitData_.scaleMin_.w 
+    };
+    jsonData["ScaleMax"] = 
+    {
+        computeParticleEmitData_.scaleMax_.x,
+        computeParticleEmitData_.scaleMax_.y,
+        computeParticleEmitData_.scaleMax_.z, 
+        computeParticleEmitData_.scaleMax_.w 
+    };
+    jsonData["ScaleVelocityMin"] = 
+    { 
+        computeParticleEmitData_.scaleVelocityMin_.x,
+        computeParticleEmitData_.scaleVelocityMin_.y, 
+        computeParticleEmitData_.scaleVelocityMin_.z,
+        computeParticleEmitData_.scaleVelocityMin_.w 
+    };
+    jsonData["ScaleVelocityMax"] = 
+    { 
+        computeParticleEmitData_.scaleVelocityMax_.x,
+        computeParticleEmitData_.scaleVelocityMax_.y, 
+        computeParticleEmitData_.scaleVelocityMax_.z, 
+        computeParticleEmitData_.scaleVelocityMax_.w 
+    };
+    jsonData["ScaleAccelerationMin"] = 
+    { 
+        computeParticleEmitData_.scaleAccelerationMin_.x,
+        computeParticleEmitData_.scaleAccelerationMin_.y, 
+        computeParticleEmitData_.scaleAccelerationMin_.z,
+        computeParticleEmitData_.scaleAccelerationMin_.w 
+    };
+    jsonData["ScaleAccelerationMax"] =
+    { 
+        computeParticleEmitData_.scaleAccelerationMax_.x,
+        computeParticleEmitData_.scaleAccelerationMax_.y,
+        computeParticleEmitData_.scaleAccelerationMax_.z, 
+        computeParticleEmitData_.scaleAccelerationMax_.w 
+    };
+    jsonData["StartColorMin"] = 
+    { 
+        computeParticleEmitData_.startColorMin_.x,
+        computeParticleEmitData_.startColorMin_.y,
+        computeParticleEmitData_.startColorMin_.z, 
+        computeParticleEmitData_.startColorMin_.w 
+    };
+    jsonData["StartColorMax"] =
+    {
+        computeParticleEmitData_.startColorMax_.x, 
+        computeParticleEmitData_.startColorMax_.y,
+        computeParticleEmitData_.startColorMax_.z,
+        computeParticleEmitData_.startColorMax_.w 
+    };
+    jsonData["EndColor"] = 
+    { 
+        computeParticleEmitData_.endColor_.x,
+        computeParticleEmitData_.endColor_.y, 
+        computeParticleEmitData_.endColor_.z, 
+        computeParticleEmitData_.endColor_.w
+    };
+    jsonData["RandomBetweenTwoLifeTimes"]               = computeParticleEmitData_.randomBetweenTwoLifeTimes_;
+    jsonData["RandomBetweenTwoStartDelays"]             = computeParticleEmitData_.randomBetweenTwoStartDelays_;    
+    jsonData["RandomBetweenTwoPositions"]               = computeParticleEmitData_.randomBetweenTwoPositions_;
+    jsonData["RandomBetweenTwoVelocities"]              = computeParticleEmitData_.randomBetweenTwoVelocities_;
+    jsonData["RandomBetweenTwoAccelerations"]           = computeParticleEmitData_.randomBetweenTwoAccelerations_;
+    jsonData["RandomBetweenTwoGravities"]               = computeParticleEmitData_.randomBetweenTwoGravities_;
+    jsonData["RandomBetweenTwoRotations"]               = computeParticleEmitData_.randomBetweenTwoRotations_;
+    jsonData["RandomBetweenTwoRotationVelocities"]      = computeParticleEmitData_.randomBetweenTwoRotationVelocities_;
+    jsonData["RandomBetweenTwoRotationAccelerations"]   = computeParticleEmitData_.randomBetweenTwoRotationAccelerations_;
+    jsonData["RandomBetweenTwoScales"]                  = computeParticleEmitData_.randomBetweenTwoScales_;
+    jsonData["RandomBetweenTwoScaleVelocities"]         = computeParticleEmitData_.randomBetweenTwoScaleVelocities_;
+    jsonData["RandomBetweenTwoScaleAccelerations"]      = computeParticleEmitData_.randomBetweenTwoScaleAccelerations_;
+    jsonData["RandomBetweenTwoColors"]                  = computeParticleEmitData_.randomBetweenTwoColors_;
 
-    jsonData["EffectName"]      = data.name_;
-    jsonData["EmitParticleNum"] = data.emitParticleNum_;
-    jsonData["TextureType"]     = data.textureType_;
-    jsonData["Duration"]        = data.duration_;
-    jsonData["LifeTimeMin"]     = data.lifeTimeMin_;
-    jsonData["LifeTimeMax"]     = data.lifeTimeMax_;
-    jsonData["StartDelayMin"]   = data.startDelayMin_;
-    jsonData["StartDelayMax"]   = data.startDelayMax_;
-    jsonData["GravityMin"]      = data.gravityMin_;
-    jsonData["GravityMax"]      = data.gravityMax_;
-
-    jsonData["PositionMin"]             = { data.positionMin_.x, data.positionMin_.y, data.positionMin_.z, data.positionMin_.w };
-    jsonData["PositionMax"]             = { data.positionMax_.x, data.positionMax_.y, data.positionMax_.z, data.positionMax_.w };
-    jsonData["VelocityMin"]             = { data.velocityMin_.x, data.velocityMin_.y, data.velocityMin_.z, data.velocityMin_.w };
-    jsonData["VelocityMax"]             = { data.velocityMax_.x, data.velocityMax_.y, data.velocityMax_.z, data.velocityMax_.w };
-    jsonData["AccelerationMin"]         = { data.accelerationMin_.x, data.accelerationMin_.y,data.accelerationMin_.z, data.accelerationMin_.w };
-    jsonData["AccelerationMax"]         = { data.accelerationMax_.x, data.accelerationMax_.y,data.accelerationMax_.z, data.accelerationMax_.w };
-    jsonData["RotationMin"]             = { data.rotationMin_.x, data.rotationMin_.y, data.rotationMin_.z, data.rotationMin_.w };
-    jsonData["RotationMax"]             = { data.rotationMax_.x, data.rotationMax_.y, data.rotationMax_.z, data.rotationMax_.w };
-    jsonData["RotationVelocityMin"]     = { data.rotationVelocityMin_.x, data.rotationVelocityMin_.y, data.rotationVelocityMin_.z, data.rotationVelocityMin_.w };
-    jsonData["RotationVelocityMax"]     = { data.rotationVelocityMax_.x, data.rotationVelocityMax_.y, data.rotationVelocityMax_.z, data.rotationVelocityMax_.w };
-    jsonData["RotationAccelerationMin"] = { data.rotationAccelerationMin_.x, data.rotationAccelerationMin_.y, data.rotationAccelerationMin_.z, data.rotationAccelerationMin_.w };
-    jsonData["RotationAccelerationMax"] = { data.rotationAccelerationMax_.x, data.rotationAccelerationMax_.y, data.rotationAccelerationMax_.z, data.rotationAccelerationMax_.w };
-    jsonData["ScaleMin"]                = { data.scaleMin_.x, data.scaleMin_.y, data.scaleMin_.z, data.scaleMin_.w };
-    jsonData["ScaleMax"]                = { data.scaleMax_.x, data.scaleMax_.y, data.scaleMax_.z, data.scaleMax_.w };
-    jsonData["ScaleVelocityMin"]        = { data.scaleVelocityMin_.x, data.scaleVelocityMin_.y, data.scaleVelocityMin_.z, data.scaleVelocityMin_.w };
-    jsonData["ScaleVelocityMax"]        = { data.scaleVelocityMax_.x, data.scaleVelocityMax_.y, data.scaleVelocityMax_.z, data.scaleVelocityMax_.w };
-    jsonData["ScaleAccelerationMin"]    = { data.scaleAccelerationMin_.x, data.scaleAccelerationMin_.y, data.scaleAccelerationMin_.z, data.scaleAccelerationMin_.w };
-    jsonData["ScaleAccelerationMax"]    = { data.scaleAccelerationMax_.x, data.scaleAccelerationMax_.y, data.scaleAccelerationMax_.z, data.scaleAccelerationMax_.w };
-    jsonData["StartColorMin"]           = { data.startColorMin_.x, data.startColorMin_.y, data.startColorMin_.z, data.startColorMin_.w };
-    jsonData["StartColorMax"]           = { data.startColorMax_.x, data.startColorMax_.y, data.startColorMax_.z, data.startColorMax_.w };
-    jsonData["EndColor"]                = { data.endColor_.x, data.endColor_.y, data.endColor_.z, data.endColor_.w };
-
-    jsonData["RandomBetweenTwoLifeTimes"]               = data.randomBetweenTwoLifeTimes_;
-    jsonData["RandomBetweenTwoStartDelays"]             = data.randomBetweenTwoStartDelays_;    
-    jsonData["RandomBetweenTwoPositions"]               = data.randomBetweenTwoPositions_;
-    jsonData["RandomBetweenTwoVelocities"]              = data.randomBetweenTwoVelocities_;
-    jsonData["RandomBetweenTwoAccelerations"]           = data.randomBetweenTwoAccelerations_;
-    jsonData["RandomBetweenTwoGravities"]               = data.randomBetweenTwoGravities_;
-    jsonData["RandomBetweenTwoRotations"]               = data.randomBetweenTwoRotations_;
-    jsonData["RandomBetweenTwoRotationVelocities"]      = data.randomBetweenTwoRotationVelocities_;
-    jsonData["RandomBetweenTwoRotationAccelerations"]   = data.randomBetweenTwoRotationAccelerations_;
-    jsonData["RandomBetweenTwoScales"]                  = data.randomBetweenTwoScales_;
-    jsonData["RandomBetweenTwoScaleVelocities"]         = data.randomBetweenTwoScaleVelocities_;
-    jsonData["RandomBetweenTwoScaleAccelerations"]      = data.randomBetweenTwoScaleAccelerations_;
-    jsonData["RandomBetweenTwoColors"]                  = data.randomBetweenTwoColors_;
+    jsonData["Position"] =
+    {
+        transform_.GetPositionX(),
+        transform_.GetPositionY(),
+        transform_.GetPositionZ()
+    };
+    jsonData["Scale"] =
+    {
+        transform_.GetScaleX(),
+        transform_.GetScaleY(),
+        transform_.GetScaleZ()
+    };
+    jsonData["Rotation"] =
+    {
+        transform_.GetRotationX(),
+        transform_.GetRotationY(),
+        transform_.GetRotationZ()
+    };
 
     std::ofstream writingFile;
-    std::string filepath = "./Resources/JsonParameters/ComputeParticle/" + filename;
+    std::string filepath = "./Resources/JsonParameters/ComputeParticle/" + computeParticleEmitData_.name_;
     writingFile.open(filepath, std::ios::out);
     writingFile << jsonData.dump() << std::endl;
     writingFile.close();

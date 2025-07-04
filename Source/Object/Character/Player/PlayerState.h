@@ -181,6 +181,28 @@ namespace PlayerState
         float jumpPower_ = 13.0f;
     };
 
+    class AttackUpAirState : public State<Player>
+    {
+    public:
+        AttackUpAirState(Player* player) : State(player, "AttackUpAirState") {}
+        ~AttackUpAirState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+    private:
+        float               animationStartFrame_    = 0.2f;
+        DirectX::XMFLOAT3   rootMotionValue_        = { 0.5f, 2.0f, 0.5f };
+
+        // 遷移フレーム
+        float attackAir1_1TransitionFrame_ = 0.8f;
+    };
+
     class Attack1_1State : public State<Player>
     {
     public:

@@ -129,6 +129,7 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::JumpEndState(this));
     stateMachine_->RegisterState(new PlayerState::JumpEndToRunState(this));
     stateMachine_->RegisterState(new PlayerState::DoubleJumpState(this));
+    stateMachine_->RegisterState(new PlayerState::AttackUpAirState(this));
     stateMachine_->RegisterState(new PlayerState::Attack1_1State(this));
     stateMachine_->RegisterState(new PlayerState::Attack1_2State(this));
     stateMachine_->RegisterState(new PlayerState::Attack1_3State(this));
