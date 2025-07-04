@@ -8,12 +8,20 @@ namespace WoodMonsterState
     {
         // アニメーション再生
         PlayAnimation();
+
+        transitionTimer_ = attackTransitionTime_;
     }
 
     // 更新
     void IdleState::Update(const float& elapsedTime)
     {
+        transitionTimer_ -= elapsedTime;
 
+        if (transitionTimer_ < 0.0f)
+        {
+            owner_->ChangeState(WoodMonster::STATE::Attack);
+            return;
+        }
     }
 
     // 終了化
@@ -32,6 +40,47 @@ namespace WoodMonsterState
     void IdleState::PlayAnimation()
     {
         owner_->PlayAnimationBlend(WoodMonster::Animation::Idle, true);
+    }
+}
+
+// ---------- AttackState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void AttackState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void AttackState::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+            return;
+        }
+
+        // 攻撃の後隙を作る
+        // 攻撃終了後のアニメーション速度をおそくする
+        // アニメーションブレンドの速度を遅くする
+    }
+
+    // 終了化
+    void AttackState::Finalize()
+    {
+    }
+
+    // ImGui
+    void AttackState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void AttackState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Attack1_4, false);
     }
 }
 
