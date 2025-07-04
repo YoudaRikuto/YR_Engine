@@ -297,6 +297,7 @@ namespace PlayerState
     // èIóπâª 
     void JumpStartState::Finalize()
     {
+
     }
 
     // ImGui 
