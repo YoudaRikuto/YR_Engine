@@ -170,6 +170,7 @@ public:
 
     
     void EmitParticle(const std::string& effectName);
+    void EmitParticle(const std::string& effectName, const Transform3D& transform);
 
 private:
     void SetEmitData(const std::string& filename);

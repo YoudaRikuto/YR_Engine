@@ -67,9 +67,9 @@ private:
     PushCollider                pushCollider_;
     HitBox                      hitBox_;
     HurtBox                     hurtBox_;
-    bool                        isDebugDrawPushColliders_   = true;
-    bool                        isDebugDrawHitBoxes_        = true;
-    bool                        isDebugDrawHurtBoxes_       = true;
+    bool                        isDebugDrawPushColliders_   = false;
+    bool                        isDebugDrawHitBoxes_        = false;
+    bool                        isDebugDrawHurtBoxes_       = false;
     bool                        isDebugDrawPushCollider_    = false;
     bool                        isDebugDrawHitBox_          = false;
     bool                        isDebugDrawHurtBox_         = false;

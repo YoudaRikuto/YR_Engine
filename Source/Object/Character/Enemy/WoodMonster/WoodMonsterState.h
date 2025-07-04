@@ -18,6 +18,9 @@ namespace WoodMonsterState
         void PlayAnimation();
 
     private:
+        float animationSpeed_ = 0.6f;
+        float transitionAttack_ = 0.1f;
+
         float attackTransitionTime_ = 2.0f;
         float transitionTimer_ = 0.0f;
     };
@@ -36,7 +39,19 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation();
+        void UpdateAnimationSpeed();
 
+    private:
+        float animationStartFrame_  = 0.12f;
+        float animationEndFrame_    = 1.6f;
+
+        float transitionIdle_ = 0.2f;
+
+        float attackRecoveryStartFrame_ = 0.8f;
+        float attackRecoveryEndFrame_   = 1.5f;
+        float attackRecoverySpeed_      = 0.6f;
+
+        DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
     };
 
     class FinisherTarget0State : public State<WoodMonster>

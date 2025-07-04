@@ -61,6 +61,8 @@ public:
         KnockDownLoop,
         KnockDownGetUp,
         KnockDownDeath,
+
+        IdleCombat,
     };
 
 public:

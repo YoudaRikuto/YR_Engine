@@ -80,6 +80,13 @@ public:
         Target_3,
 
         AttackUpAir,
+
+        BlockStart,
+        BlockLoop,
+        BlockEnd,
+        BlockBreak,
+        ParryLeft,
+        ParryRight,
     };
 
     enum class WeaponDataType
