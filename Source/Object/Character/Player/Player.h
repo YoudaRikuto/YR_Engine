@@ -16,6 +16,7 @@ public:
         JumpEnd,
         JumpEndToRun,
         DoubleJump,
+        AttackUpAir,
         Attack1_1,
         Attack1_2,
         Attack1_3,
@@ -77,6 +78,8 @@ public:
         Target_1,
         Target_2,
         Target_3,
+
+        AttackUpAir,
     };
 
     enum class WeaponDataType
@@ -111,7 +114,7 @@ public:
     const STATE GetCurrentState()   const { return currentState_; }
     const STATE GetOldState()       const { return oldState_; }
     const STATE GetNextState()       const { return nextState_; }
-    void SetNextState(const STATE next) { this->nextState_ = next; }
+    void SetNextState(const STATE nextState) { nextState_ = nextState; }
 
     // ---------- Move ----------
     void SetMoveDirection(const DirectX::XMFLOAT3& direction) { moveDirection_ = direction; }
@@ -138,7 +141,7 @@ private:
     std::unique_ptr<StateMachine<State<Player>>> stateMachine_;
     STATE currentState_ = STATE::Idle;
     STATE oldState_     = STATE::Idle;
-    STATE nextState_ = STATE::Attack1_1;   //先行入力ステートを保持する変数
+    STATE nextState_    = STATE::Attack1_1; //先行入力ステートを保持する変数
 
     // ---------- Move ----------
     DirectX::XMFLOAT3   moveDirection_  = {};

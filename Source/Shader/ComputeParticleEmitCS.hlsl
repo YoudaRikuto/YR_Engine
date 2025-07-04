@@ -26,7 +26,10 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
     particleDataBuffer[particleIndex].gravity_ = emitParticleBuffer[emitIndex].gravity_;
     
     particleDataBuffer[particleIndex].position_ = emitParticleBuffer[emitIndex].position_;
+    
     particleDataBuffer[particleIndex].velocity_ = emitParticleBuffer[emitIndex].velocity_;
+    particleDataBuffer[particleIndex].velocity_ = mul(emitParticleBuffer[emitIndex].world_, particleDataBuffer[particleIndex].velocity_);
+    
     particleDataBuffer[particleIndex].acceleration_ = emitParticleBuffer[emitIndex].acceleration_;
     particleDataBuffer[particleIndex].rotation_ = emitParticleBuffer[emitIndex].rotation_;
     particleDataBuffer[particleIndex].rotationVelocity_ = emitParticleBuffer[emitIndex].rotationVelocity_;
