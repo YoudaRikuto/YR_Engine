@@ -47,7 +47,7 @@ namespace WoodMonsterState
     void IdleState::PlayAnimation()
     {
         float transitionTime = 0.1f;
-        WoodMonster::Animation animationIndex = static_cast<WoodMonster::Animation>(owner_->GetAnimationIndex());
+        WoodMonster::Animation animationIndex = owner_->GetAnimationIndex();
 
         if (animationIndex == WoodMonster::Animation::Attack1_4) transitionTime = transitionAttack_;
 
@@ -130,7 +130,7 @@ namespace WoodMonsterState
     void AttackState::PlayAnimation()
     {
         float transitionTime = 0.1f;
-        WoodMonster::Animation animationIndex = static_cast<WoodMonster::Animation>(owner_->GetAnimationIndex());
+        WoodMonster::Animation animationIndex = owner_->GetAnimationIndex();
 
         if (animationIndex == WoodMonster::Animation::IdleCombat) transitionTime = transitionIdle_;
 

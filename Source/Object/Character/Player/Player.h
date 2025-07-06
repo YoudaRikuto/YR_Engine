@@ -29,6 +29,9 @@ public:
         FinisherAttack0,
         FinisherAttack1,
         FinisherAttack2,
+        Block,
+        BlockEnd,
+        Parry,
     };
 
     enum class Animation
@@ -128,6 +131,7 @@ public:
 
     // ---------- Turn ----------
     void Turn(const float& elapsedTime); // ù‰ñˆ—
+    void AttackTurn();
 
     // ---------- Weapon ----------
     void ChangeWeaponDataType(const WeaponDataType& type);

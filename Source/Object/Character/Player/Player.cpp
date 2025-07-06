@@ -142,6 +142,9 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::FinisherAttack0State(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack1State(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack2State(this));
+    stateMachine_->RegisterState(new PlayerState::BlockState(this));
+    stateMachine_->RegisterState(new PlayerState::BlockEndState(this));
+    stateMachine_->RegisterState(new PlayerState::ParryState(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));
@@ -313,6 +316,36 @@ void Player::Turn(const float& elapsedTime)
 
         const float rotationSpeed = GetRotationSpeed() * elapsedTime;
         angle *= rotationSpeed;
+
+        if (cross > 0)
+        {
+            GetTransform()->AddRotationY(-angle);
+        }
+        else
+        {
+            GetTransform()->AddRotationY(angle);
+        }
+    }
+}
+
+void Player::AttackTurn()
+{
+    const float aLx = Input::Instance().GetGamePad().GetAxisLx();
+    const float aLy = Input::Instance().GetGamePad().GetAxisLy();
+
+    if (fabsf(aLx) > 0.0f || fabsf(aLy) > 0.0f)
+    {
+        DirectX::XMFLOAT2 cameraForward = XMFloat2Normalize(Camera::Instance().ConvertTo2DVectorFromCamera({ aLx, aLy }));
+        DirectX::XMFLOAT2 playerForward = XMFloat2Normalize({ GetTransform()->CalcForward().x, GetTransform()->CalcForward().z });
+
+        // 外積で回転方向を判定
+        const float cross = XMFloat2Cross(cameraForward, playerForward);
+
+        // 内積で回転幅を算出
+        const float dot = std::clamp(XMFloat2Dot(cameraForward, playerForward), -1.0f, 1.0f);
+        float angle = acosf(dot);
+
+        if (angle < DirectX::XMConvertToRadians(1)) return;
 
         if (cross > 0)
         {
