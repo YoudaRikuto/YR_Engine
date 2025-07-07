@@ -30,7 +30,7 @@ void GameScene::CreateResource()
     iblTextures_[2] = textureData2.shaderResourceView_;
     iblTextures_[3] = textureData3.shaderResourceView_;
 
-    Effect* effect = new Effect("./Resources/Effect/kemuri.efk", "kemuri");
+    Effect* effect = new Effect("./Resources/Effect/landing.efk", "landing");
 
     ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("HitParticle");
 }
@@ -135,7 +135,7 @@ void GameScene::DrawDebug()
 
     if (ImGui::Button("Effect"))
     {
-        EffectManager::Instance().GetEffect("kemuri")->Play({}, 1.0f);
+        EffectManager::Instance().GetEffect("landing")->Play({}, 1.0f);
     }
 
     ComputeParticleSystem::Instance().DrawDebug();

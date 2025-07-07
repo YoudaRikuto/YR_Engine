@@ -26,6 +26,7 @@ public:
         AttackAir1_3,
         AttackAir1_4,
         AttackAirToFloor,
+        AttackAirToFloorEnd,
         FinisherAttack0,
         FinisherAttack1,
         FinisherAttack2,
@@ -81,7 +82,6 @@ public:
         Target_1,
         Target_2,
         Target_3,
-
         AttackUpAir,
 
         BlockStart,

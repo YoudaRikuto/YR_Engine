@@ -414,11 +414,34 @@ namespace PlayerState
         // ---------- Animation ----------
         float startAnimationSpeed_ = 0.9f;
 
+        float landingTriggerPositionY_ = 0.05f;
+
+        float fallingSpeed_ = -40.0f;
+    };
+
+    class AttackAirToFloorEndState : public State<Player>
+    {
+    public:
+        AttackAirToFloorEndState(Player* player) : State(player, "AttackAirToFloorEndState") {}
+        ~AttackAirToFloorEndState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+        void UpdateFallingSpeed(); // 落下速度更新
+
+    private:
+        // ---------- Animation ----------
+        float startAnimationSpeed_ = 0.9f;
+
         float runTransitionFrame_ = 0.6f;
 
         float fallingSpeed_ = -40.0f;
-
-        float landingTriggerPositionY_ = 0.05f;
     };
 
     class FinisherAttack0State : public State<Player>

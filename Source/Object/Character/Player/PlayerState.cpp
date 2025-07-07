@@ -2,6 +2,7 @@
 #include "Input/Input.h"
 #include "Object/Character/Enemy/EnemyManager.h"
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
+#include <Resource/EffectManager.h>
 
 // ---------- IdleState ----------
 namespace PlayerState
@@ -80,6 +81,7 @@ namespace PlayerState
     {
         owner_->PlayAnimationBlend(Player::Animation::Idle, true);
     }
+
 }
 
 // ---------- RunState ----------
@@ -194,7 +196,7 @@ namespace PlayerState
         owner_->Turn(elapsedTime);
 
         // ---------- 先行入力 ----------
-        
+
         // 移動入力があれば硬直キャンセル
         if (owner_->GetAnimationSeconds() >= runTransitionFrame_)
         {
@@ -348,7 +350,7 @@ namespace PlayerState
 
                 ImGui::Text("Transition End Frame");
                 ImGui::DragFloat("AttackUpAir", &attackUpAirTransitionEndFrame_, 0.01f);
-                
+
 
                 ImGui::TreePop();
             }
@@ -473,11 +475,15 @@ namespace PlayerState
         const DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
         owner_->SetVelocity({ 0.0f, velocity.y, 0.0f });
         owner_->SetMoveDirection({});
+
+        EffectManager::Instance().GetEffect("landing")->Play(owner_->GetTransform()->GetPosition(), 1.0f);
     }
 
     // 更新 
     void JumpEndState::Update(const float& elapsedTime)
     {
+
+
         // アニメーション後隙キャンセル
         if (owner_->GetAnimationSeconds() >= runTransitionFrame_)
         {
@@ -616,6 +622,7 @@ namespace PlayerState
     // 更新 
     void DoubleJumpState::Update(const float& elapsedTime)
     {
+
         // ---------- 強攻撃 ----------
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
         {
@@ -844,7 +851,7 @@ namespace PlayerState
     // アニメーション再生
     void Attack1_1State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false, animationSpeed_,animationStartFrame_, transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_1, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -942,7 +949,7 @@ namespace PlayerState
     }
     void Attack1_2State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false, animationSpeed_,animationStartFrame_, transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::Attack1_2, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -1230,7 +1237,7 @@ namespace PlayerState
     // アニメーション再生
     void AttackAir1_1State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_1, false, animationSpeed_, animationStartFrame_,transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_1, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -1405,7 +1412,7 @@ namespace PlayerState
     // アニメーション再生
     void AttackAir1_3State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_3, false, animationSpeed_, animationStartFrame_,transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_3, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -1476,7 +1483,7 @@ namespace PlayerState
     // アニメーション再生
     void AttackAir1_4State::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_4, false, animationSpeed_,animationStartFrame_,transitionTime_);
+        owner_->PlayAnimationBlend(Player::Animation::AttackAir1_4, false, animationSpeed_, animationStartFrame_, transitionTime_);
     }
 }
 
@@ -1494,6 +1501,7 @@ namespace PlayerState
         // 移動処理を無くす
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
+
     }
 
     // 更新
@@ -1508,21 +1516,6 @@ namespace PlayerState
             {
                 owner_->PlayAnimation(Player::Animation::AttackAirToFloor_Loop, true);
             }
-            // 待機ステートに遷移
-            else if (animationIndex == Player::Animation::AttackAirToFloor_End)
-            {
-                owner_->ChangeState(Player::STATE::Idle);
-                return;
-            }
-        }
-
-        if (animationIndex == Player::Animation::AttackAirToFloor_End &&
-            owner_->GetAnimationSeconds() >= 1.0f)
-        {
-            if (owner_->GetCurrentWeaponDataType() == static_cast<int>(Player::WeaponDataType::AttackAirToFloor))
-            {
-                owner_->ChangeWeaponDataType(Player::WeaponDataType::Default);
-            }
         }
 
         // <アニメーション変更> 地面に着いたら End
@@ -1530,24 +1523,10 @@ namespace PlayerState
         {
             if (animationIndex == Player::Animation::AttackAirToFloor_Loop)
             {
-                owner_->PlayAnimationBlend(Player::Animation::AttackAirToFloor_End, false, 1.0f, 0.1f);
-            }
-        }
-
-        // 移動入力により、攻撃の後隙キャンセル
-        if (animationIndex == Player::Animation::AttackAirToFloor_End &&
-            owner_->GetAnimationSeconds() >= runTransitionFrame_)
-        {
-            const float aLx = Input::Instance().GetGamePad().GetAxisLx();
-            const float aLy = Input::Instance().GetGamePad().GetAxisLy();
-            if (fabsf(aLx) > 0.0f || fabsf(aLy) > 0.0f)
-            {
-                owner_->ChangeWeaponDataType(Player::WeaponDataType::Default);
-                owner_->ChangeState(Player::STATE::Run);
+                owner_->ChangeState(Player::STATE::AttackAirToFloorEnd);
                 return;
             }
         }
-
 
         // 落下速度更新
         UpdateFallingSpeed();
@@ -1567,12 +1546,8 @@ namespace PlayerState
             {
                 ImGui::DragFloat("StartAnimation Speed", &startAnimationSpeed_, 0.01f);
 
-                ImGui::DragFloat("Run TransitionFrame", &runTransitionFrame_, 0.01f);
-
                 ImGui::TreePop();
             }
-
-            ImGui::DragFloat("FallingSpeed", &fallingSpeed_);
 
             ImGui::DragFloat("LandingTriggerPositionY", &landingTriggerPositionY_);
 
@@ -1602,6 +1577,86 @@ namespace PlayerState
         {
             velocity.y = fallingSpeed_;
         }
+
+        owner_->SetVelocity(velocity);
+    }
+}
+
+namespace PlayerState
+{
+    void AttackAirToFloorEndState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+
+
+    }
+    void AttackAirToFloorEndState::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationEnd())
+        {
+            // 待機ステートに遷移
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
+
+        if (owner_->GetAnimationSeconds() >= 1.0f)
+        {
+            if (owner_->GetCurrentWeaponDataType() == static_cast<int>(Player::WeaponDataType::AttackAirToFloor))
+            {
+                owner_->ChangeWeaponDataType(Player::WeaponDataType::Default);
+            }
+        }
+
+        // 移動入力により、攻撃の後隙キャンセル
+        if (owner_->GetAnimationSeconds() >= runTransitionFrame_)
+        {
+            const float aLx = Input::Instance().GetGamePad().GetAxisLx();
+            const float aLy = Input::Instance().GetGamePad().GetAxisLy();
+            if (fabsf(aLx) > 0.0f || fabsf(aLy) > 0.0f)
+            {
+                owner_->ChangeWeaponDataType(Player::WeaponDataType::Default);
+                owner_->ChangeState(Player::STATE::Run);
+                return;
+            }
+        }
+
+        // 落下速度更新
+        UpdateFallingSpeed();
+    }
+    void AttackAirToFloorEndState::Finalize()
+    {
+
+    }
+    void AttackAirToFloorEndState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::DragFloat("StartAnimation Speed", &startAnimationSpeed_, 0.01f);
+
+                ImGui::DragFloat("Run TransitionFrame", &runTransitionFrame_, 0.01f);
+
+                ImGui::TreePop();
+            }
+
+            ImGui::DragFloat("FallingSpeed", &fallingSpeed_);
+
+            ImGui::TreePop();
+        }
+    }
+    void AttackAirToFloorEndState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(Player::Animation::AttackAirToFloor_End, false, startAnimationSpeed_, 0.1f);
+    }
+    void AttackAirToFloorEndState::UpdateFallingSpeed()
+    {
+        const Player::Animation animationIndex = owner_->GetAnimationIndex();
+        DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
+
+        velocity.y = fallingSpeed_;
 
         owner_->SetVelocity(velocity);
     }

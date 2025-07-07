@@ -147,6 +147,7 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::AttackAir1_3State(this));
     stateMachine_->RegisterState(new PlayerState::AttackAir1_4State(this));
     stateMachine_->RegisterState(new PlayerState::AttackAirToFloorState(this));
+    stateMachine_->RegisterState(new PlayerState::AttackAirToFloorEndState(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack0State(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack1State(this));
     stateMachine_->RegisterState(new PlayerState::FinisherAttack2State(this));
