@@ -26,6 +26,7 @@ public:
         AttackAir1_3,
         AttackAir1_4,
         AttackAirToFloor,
+        AttackAirToFloorEnd,
         FinisherAttack0,
         FinisherAttack1,
         FinisherAttack2,
