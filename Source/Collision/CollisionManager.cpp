@@ -2,9 +2,25 @@
 #include "Math/MathHelper.h"
 #include "Object/Character/Player/PlayerManager.h"
 #include "Object/Character/Enemy/EnemyManager.h"
+#include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
 
 // 更新
 void CollisionManager::Update(const float& elapsedTime)
+{
+    // Player(PushCOllider) VS Enemy(PushCollider)
+    PlayerPushColliderVsEnemyPushCollider();
+
+    // Player(HitBox) VS Enemy(HurtBox)
+    PlayerHitBoxVsEnemyHurtBox();
+    
+}
+
+void CollisionManager::DrawDebug()
+{
+}
+
+// Player(PushCOllider) VS Enemy(PushCollider)
+void CollisionManager::PlayerPushColliderVsEnemyPushCollider()
 {
     const int enemyCount = EnemyManager::Instance().GetEnemyCount();
     for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
@@ -36,13 +52,57 @@ void CollisionManager::Update(const float& elapsedTime)
             }
         }
     }
-
-
-    
 }
 
-void CollisionManager::DrawDebug()
+// Player(HitBox) VS Enemy(HurtBox)
+void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
 {
+    // Enemyが存在しない
+    if (EnemyManager::Instance().GetEnemyCount() <= 0) return;
+
+    const std::vector<HitBox> playerHitBoxes = PlayerManager::Instance().GetHitBoxes();
+    
+    for (int playerHitBoxIndex = 0; playerHitBoxIndex < playerHitBoxes.size(); ++playerHitBoxIndex)
+    {
+        const HitBox playerHitBox = playerHitBoxes.at(playerHitBoxIndex);
+        const int enemyCount = EnemyManager::Instance().GetEnemyCount();
+        for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
+        {
+            // Enemy情報抽出
+            const std::vector<HurtBox> enemyHurtBoxes = EnemyManager::Instance().GetEnemy(enemyIndex)->GetHurtBoxes();
+            const EnemyType enemyType = EnemyManager::Instance().GetEnemy(enemyIndex)->GetEnemyType();
+
+            for (int enemyHurtBoxIndex = 0; enemyHurtBoxIndex < enemyHurtBoxes.size(); ++enemyHurtBoxIndex)
+            {
+                const HurtBox enemyHurtBox = enemyHurtBoxes.at(enemyHurtBoxIndex);
+
+                // 攻撃が当たったかの判定
+                if (IntersectSphereVsSphere(
+                    playerHitBox.GetPosition(), playerHitBox.GetRadius(),
+                    enemyHurtBox.GetPosition(), enemyHurtBox.GetRadius()))
+                {
+                    const Player::STATE playerState = PlayerManager::Instance().GetPlayer()->GetCurrentState();
+
+                    // 斬り上げ攻撃 敵のステートを切り替える
+                    if (playerState == Player::STATE::AttackUpAir)
+                    {
+                        // 敵のステートを切り替える
+                        if (enemyType == EnemyType::WoodMonster)
+                        {
+                            WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(enemyIndex));
+                            woodMonster->ChangeState(WoodMonster::STATE::Attack);
+                        }
+
+
+                    }
+
+
+                    // 同じフレームで攻撃は連続して当たらないので終了する
+                    return;
+                }
+            }
+        }
+    }
 }
 
 // Sphere VS Sphere

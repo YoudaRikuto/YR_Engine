@@ -49,11 +49,17 @@ public:
     std::vector<GltfModel::Node>* GetNodes() { return gltfModel_->GetNodes(); }
 
     // ---------- Collision ----------
+    void RegisterCollisionData();
     void UpdateCollisions(const float& elapsedTime);
     void UpdatePushColliders();
     const std::vector<PushCollider> GetPushColliders() const { return pushColliders_; }
     const std::vector<HitBox> GetHitBoxes() const { return hitBoxes_; }
     const std::vector<HurtBox> GetHurtBoxes() const { return hurtBoxes_; }
+
+private:
+    void RegisterPushColliders();   // ‰Ÿ‚µo‚µ”»’è“o˜^
+    void RegisterHitBoxes();        // UŒ‚”»’è“o˜^
+    void RegisterHurtBoxes();       // ‚­‚ç‚¢”»’è“o˜^
 
 private:
     std::shared_ptr<GltfModel> gltfModel_;

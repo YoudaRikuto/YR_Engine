@@ -9,6 +9,9 @@ WoodMonster::WoodMonster()
 
     // ステートマシン登録
     RegisterStateMachine();
+
+    // Collision登録
+    RegisterCollisionData();
 }
 
 // 初期化

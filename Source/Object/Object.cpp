@@ -11,9 +11,8 @@ Object::Object(const std::string& filename, const float& scaleFactor, const std:
     scaleFactor_(scaleFactor), objectName_(objectName),
     pushCollider_("PushCollider", "head", 1.0f, {}, { 1.0f, 1.0f, 1.0f, 1.0f }),
     hitBox_("HitBox", "head", "Test", 1.0f, {}, { 1.0f, 0.3f, 0.3f, 1.0f }),
-    hurtBox_("HurtBox", "head", 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
+    hurtBox_("HurtBox", "head", 1.0f, 1.0f, {}, { 0.3f, 0.3f, 1.0f, 1.0f })
 {
-    pushColliders_.emplace_back(PushCollider("Pelvis", "pelvis", 0.5f));
 }
 
 void Object::Finalize()
@@ -450,6 +449,14 @@ void Object::DebugRender(DebugRenderer* debugRenderer)
     }
 }
 
+// Collision“o˜^
+void Object::RegisterCollisionData()
+{
+    RegisterPushColliders();
+    RegisterHitBoxes();
+    RegisterHurtBoxes();
+}
+
 void Object::UpdateCollisions(const float& elapsedTime)
 {
     // ‰Ÿ‚µo‚µ”»’è
@@ -484,5 +491,103 @@ void Object::UpdatePushColliders()
         DirectX::XMFLOAT3 pos = GetJointPosition(pushCollider.GetJointName(), pushCollider.GetOffsetPosition());
 
         pushCollider.SetPosition(pos);
+    }
+}
+
+void Object::RegisterPushColliders()
+{
+    std::string filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "PushColliders";
+    std::ifstream ifs(filepath);
+    nlohmann::json dataList;
+    if (ifs.good()) ifs >> dataList;
+    else _ASSERT_EXPR(false, L"Json Asset ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+
+    for (const auto& data : dataList["PushCollider"])
+    {
+        PushCollider pushCollider =
+        {
+            data["Name"].get<std::string>(),
+            data["JointName"].get<std::string>(),
+            data["Radius"].get<float>(),
+            {
+                data["OffsetPosition"]["x"].get<float>(),
+                data["OffsetPosition"]["y"].get<float>(),
+                data["OffsetPosition"]["z"].get<float>()
+            },
+            {
+                data["Color"]["x"].get<float>(),
+                data["Color"]["y"].get<float>(),
+                data["Color"]["z"].get<float>(),
+                data["Color"]["w"].get<float>(),
+            }
+        };
+
+        pushColliders_.emplace_back(pushCollider);
+    }
+}
+
+void Object::RegisterHitBoxes()
+{
+    std::string filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "HitBox";
+    std::ifstream ifs(filepath);
+    nlohmann::json dataList;
+    if (ifs.good()) ifs >> dataList;
+    else _ASSERT_EXPR(false, L"Json Asset ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+
+    for (const auto& data : dataList["HitBox"])
+    {
+        HitBox hitBox =
+        {
+            data["Name"].get<std::string>(),
+            data["JointName"].get<std::string>(),
+            data["AttackName"].get<std::string>(),
+            data["Radius"].get<float>(),
+            {
+                data["OffsetPosition"]["x"].get<float>(),
+                data["OffsetPosition"]["y"].get<float>(),
+                data["OffsetPosition"]["z"].get<float>()
+            },
+            {
+                data["Color"]["x"].get<float>(),
+                data["Color"]["y"].get<float>(),
+                data["Color"]["z"].get<float>(),
+                data["Color"]["w"].get<float>(),
+            }
+        };
+
+        hitBoxes_.emplace_back(hitBox);
+    }
+}
+
+void Object::RegisterHurtBoxes()
+{
+    std::string filepath = "./Resources/JsonParameters/Collision/" + objectName_ + "HurtBox";
+    std::ifstream ifs(filepath);
+    nlohmann::json dataList;
+    if (ifs.good()) ifs >> dataList;
+    else _ASSERT_EXPR(false, L"Json Asset ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+
+    for (const auto& data : dataList["HurtBox"])
+    {
+        HurtBox hurtBox =
+        {
+            data["Name"].get<std::string>(),
+            data["JointName"].get<std::string>(),
+            data["Radius"].get<float>(),
+            data["Damage"].get<float>(),
+            {
+                data["OffsetPosition"]["x"].get<float>(),
+                data["OffsetPosition"]["y"].get<float>(),
+                data["OffsetPosition"]["z"].get<float>()
+            },
+            {
+                data["Color"]["x"].get<float>(),
+                data["Color"]["y"].get<float>(),
+                data["Color"]["z"].get<float>(),
+                data["Color"]["w"].get<float>(),
+            },
+        };
+
+        hurtBoxes_.emplace_back(hurtBox);
     }
 }

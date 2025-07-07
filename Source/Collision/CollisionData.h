@@ -76,9 +76,9 @@ private:
 class HurtBox
 {
 public:
-    HurtBox(const std::string& name, const std::string& jointName, const float& radius,
+    HurtBox(const std::string& name, const std::string& jointName, const float& radius, const float& damage,
         const DirectX::XMFLOAT3& offsetPosition = {}, const DirectX::XMFLOAT4& color = { 0.0f, 0.0f, 0.7f, 1.0f})
-        : name_(name), jointName_(jointName), radius_(radius), offsetPosition_(offsetPosition), color_(color)
+        : name_(name), jointName_(jointName), radius_(radius), damage_(damage), offsetPosition_(offsetPosition), color_(color)
     {}
     ~HurtBox() = default;
 

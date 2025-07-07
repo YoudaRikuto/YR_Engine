@@ -19,7 +19,7 @@ namespace WoodMonsterState
 
         if (transitionTimer_ < 0.0f)
         {
-            owner_->ChangeState(WoodMonster::STATE::Attack);
+            //owner_->ChangeState(WoodMonster::STATE::Attack);
             return;
         }
     }
