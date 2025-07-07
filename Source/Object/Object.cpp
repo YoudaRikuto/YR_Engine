@@ -484,6 +484,38 @@ void Object::UpdateCollisions(const float& elapsedTime)
     hurtBox_.SetPosition(GetJointPosition(hurtBox_.GetJointName(), hurtBox_.GetOffsetPosition()));
 }
 
+void Object::UpdateCollisions(const float& elapsedTime, const DirectX::XMMATRIX& world)
+{    
+    // 押し出し判定
+    for (auto& pushCollider : pushColliders_)
+    {
+        DirectX::XMFLOAT3 pos = GetJointPosition(pushCollider.GetJointName(), world, pushCollider.GetOffsetPosition());
+
+        pushCollider.SetPosition(pos);
+    }
+
+    // 攻撃判定
+    for (auto& hitBox : hitBoxes_)
+    {
+        DirectX::XMFLOAT3 pos = GetJointPosition(hitBox.GetJointName(), world, hitBox.GetOffsetPosition());
+
+        hitBox.SetPosition(pos);
+    }
+
+    // くらい判定
+    for (auto& hurtBox : hurtBoxes_)
+    {
+        DirectX::XMFLOAT3 pos = GetJointPosition(hurtBox.GetJointName(), world, hurtBox.GetOffsetPosition());
+
+        hurtBox.SetPosition(pos);
+    }
+
+    // デバッグ用
+    pushCollider_.SetPosition(GetJointPosition(pushCollider_.GetJointName(), world, pushCollider_.GetOffsetPosition()));
+    hitBox_.SetPosition(GetJointPosition(hitBox_.GetJointName(), world, hitBox_.GetOffsetPosition()));
+    hurtBox_.SetPosition(GetJointPosition(hurtBox_.GetJointName(), world, hurtBox_.GetOffsetPosition()));
+}
+
 void Object::UpdatePushColliders()
 {
     for (auto& pushCollider : pushColliders_)

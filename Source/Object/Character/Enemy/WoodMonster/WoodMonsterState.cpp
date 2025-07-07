@@ -1,4 +1,5 @@
 #include "WoodMonsterState.h"
+#include "Object/Character/Player/PlayerManager.h"
 
 // ---------- IdleState ----------
 namespace WoodMonsterState
@@ -151,6 +152,83 @@ namespace WoodMonsterState
         }
 
         owner_->SetAnimationSpeed(animationSpeed);
+    }
+}
+
+// ---------- HitToAirState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitToAirState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void HitToAirState::Update(const float& elapsedTime)
+    {
+        const DirectX::XMFLOAT3 playerPosition = PlayerManager::Instance().GetTransform()->GetPosition();
+
+        owner_->GetTransform()->SetPositionY(playerPosition.y);
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::HitAirIdle);
+        }
+    }
+
+    // 終了化
+    void HitToAirState::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitToAirState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void HitToAirState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::HitAir1, false);
+    }
+}
+
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitAirIdleState::Initialize()
+    {
+        fallTimer_ = fallTime_;
+    }
+
+    // 更新
+    void HitAirIdleState::Update(const float& elapsedTime)
+    {
+        fallTimer_ -= elapsedTime;
+
+        if (fallTimer_ > 0.0f)
+        {
+
+        }
+        else
+        {
+            const float gravity = 9.8f;
+            DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
+            velocity.y += gravity;
+            owner_->SetVelocity(velocity);
+        }
+    }
+
+    // 終了化
+    void HitAirIdleState::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitAirIdleState::DrawDebug()
+    {
     }
 }
 

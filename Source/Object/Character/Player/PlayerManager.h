@@ -29,6 +29,7 @@ public:
     void UpdatePushColliders() { player_->UpdatePushColliders(); }
     const std::vector<PushCollider> GetPushColliders() const { return player_->GetPushColliders(); }
     const std::vector<HitBox> GetHitBoxes() const { return player_->GetHitBoxes(); }
+    const std::vector<HitBox> GetSwordHitBoxes() const { return player_->GetSwordHitBoxes(); }
     const std::vector<HurtBox> GetHurtBoxes() const { return player_->GetHurtBoxes(); }
 
 private:

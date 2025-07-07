@@ -74,6 +74,8 @@ void WoodMonster::RegisterStateMachine()
     // ステート登録
     stateMachine_->RegisterState(new WoodMonsterState::IdleState(this));
     stateMachine_->RegisterState(new WoodMonsterState::AttackState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitToAirState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitAirIdleState(this));
     stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget0State(this));
 
     // 1番最初のステート設定

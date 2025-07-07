@@ -54,6 +54,38 @@ namespace WoodMonsterState
         DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
     };
 
+    class HitToAirState : public State<WoodMonster>
+    {
+    public:
+        HitToAirState(WoodMonster* woodMonster) : State(woodMonster, "HitToAirState") {}
+        ~HitToAirState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
+    class HitAirIdleState : public State<WoodMonster>
+    {
+    public:
+        HitAirIdleState(WoodMonster* woodMonster) : State(woodMonster, "HitAirIdleState") {}
+        ~HitAirIdleState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+        
+    private:
+        float fallTimer_ = 0.0f;
+        float fallTime_ = 1.0f;
+    };
+
+
     class FinisherTarget0State : public State<WoodMonster>
     {
     public:

@@ -413,6 +413,26 @@ const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName,
     return DirectX::XMFLOAT3(0, 0, 0);
 }
 
+const DirectX::XMFLOAT3 GltfModel::GetJointPosition(const std::string& nodeName, const DirectX::XMMATRIX& world, const DirectX::XMFLOAT3& offsetPosition)
+{
+    DirectX::XMFLOAT3 position = offsetPosition;
+
+    // ノードを名前検索する
+    for (Node& node : nodes_)
+    {
+        // 名前が一致しなかったら continue
+        if (node.name_ != nodeName) continue;
+
+        DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&node.globalTransform_) * world;
+        DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
+
+        return position;
+    }
+
+    // 見つからなかった。
+    return DirectX::XMFLOAT3(0, 0, 0);
+}
+
 // 指定されたノードのインデックスを取得 
 const int GltfModel::GetNodeIndex(const std::string& nodeName)
 {

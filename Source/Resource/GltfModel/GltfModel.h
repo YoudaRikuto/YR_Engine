@@ -297,6 +297,7 @@ public:
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
     const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
+    const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const DirectX::XMMATRIX& world, const DirectX::XMFLOAT3& offsetPosition = {});
 
     const int GetNodeIndex(const std::string& nodeName);
     std::vector<Node>* GetNodes() { return &nodes_; }

@@ -44,6 +44,7 @@ public:
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const DirectX::XMFLOAT3& offsetPosition = {}) { return gltfModel_->GetJointPosition(nodeIndex, scaleFactor_, offsetPosition); }
     const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const DirectX::XMFLOAT3& offsetPosition = {}) { return gltfModel_->GetJointPosition(nodeName, scaleFactor_, offsetPosition); }
+    const DirectX::XMFLOAT3 GetJointPosition(const std::string& nodeName, const DirectX::XMMATRIX& world, const DirectX::XMFLOAT3& offsetPosition = {}) { return gltfModel_->GetJointPosition(nodeName, world, offsetPosition); }
 
     const int GetNodeIndex(const std::string& nodeName) { return gltfModel_->GetNodeIndex(nodeName); }
     std::vector<GltfModel::Node>* GetNodes() { return gltfModel_->GetNodes(); }
@@ -51,6 +52,7 @@ public:
     // ---------- Collision ----------
     void RegisterCollisionData();
     void UpdateCollisions(const float& elapsedTime);
+    void UpdateCollisions(const float& elapsedTime, const DirectX::XMMATRIX& world);
     void UpdatePushColliders();
     const std::vector<PushCollider> GetPushColliders() const { return pushColliders_; }
     const std::vector<HitBox> GetHitBoxes() const { return hitBoxes_; }

@@ -14,6 +14,7 @@ Player::Player()
 
     // Collision登録
     RegisterCollisionData();
+    sword_.RegisterCollisionData();
 }
 
 // 初期化 
@@ -46,6 +47,7 @@ void Player::Finalize()
     stateMachine_->GetCurrentState()->Finalize();
 
     Object::Finalize();
+    sword_.Finalize();
 }
 
 // 更新 
@@ -61,6 +63,7 @@ void Player::Update(const float& elapsedTime)
 
     // Collision 更新
     UpdateCollisions(elapsedTime);
+    sword_.UpdateCollisions(elapsedTime, DirectX::XMLoadFloat4x4(&swordTransform_.world_));
 
     // 武器の座標更新
     UpdateWeaponTransform(elapsedTime);
@@ -109,6 +112,8 @@ void Player::DrawDebug()
 void Player::DebugRender(DebugRenderer* debugRenderer)
 {
     Object::DebugRender(debugRenderer);
+
+    sword_.DebugRender(debugRenderer);
 }
 
 // フラグをリセットする

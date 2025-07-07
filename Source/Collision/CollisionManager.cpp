@@ -60,11 +60,11 @@ void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
     // EnemyÇ™ë∂ç›ÇµÇ»Ç¢
     if (EnemyManager::Instance().GetEnemyCount() <= 0) return;
 
-    const std::vector<HitBox> playerHitBoxes = PlayerManager::Instance().GetHitBoxes();
+    const std::vector<HitBox> playerSwordHitBoxes = PlayerManager::Instance().GetSwordHitBoxes();
     
-    for (int playerHitBoxIndex = 0; playerHitBoxIndex < playerHitBoxes.size(); ++playerHitBoxIndex)
+    for (int playerHitBoxIndex = 0; playerHitBoxIndex < playerSwordHitBoxes.size(); ++playerHitBoxIndex)
     {
-        const HitBox playerHitBox = playerHitBoxes.at(playerHitBoxIndex);
+        const HitBox playerSwordHitBox = playerSwordHitBoxes.at(playerHitBoxIndex);
         const int enemyCount = EnemyManager::Instance().GetEnemyCount();
         for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
         {
@@ -78,7 +78,7 @@ void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
 
                 // çUåÇÇ™ìñÇΩÇ¡ÇΩÇ©ÇÃîªíË
                 if (IntersectSphereVsSphere(
-                    playerHitBox.GetPosition(), playerHitBox.GetRadius(),
+                    playerSwordHitBox.GetPosition(), playerSwordHitBox.GetRadius(),
                     enemyHurtBox.GetPosition(), enemyHurtBox.GetRadius()))
                 {
                     const Player::STATE playerState = PlayerManager::Instance().GetPlayer()->GetCurrentState();
@@ -90,7 +90,7 @@ void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
                         if (enemyType == EnemyType::WoodMonster)
                         {
                             WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(enemyIndex));
-                            woodMonster->ChangeState(WoodMonster::STATE::Attack);
+                            woodMonster->ChangeState(WoodMonster::STATE::HitToAir);
                         }
 
 

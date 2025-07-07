@@ -9,6 +9,12 @@ public:
     {
         Idle,
         Attack,
+
+        HitToAir,
+        HitAirIdle,
+        //HitAir1,
+        //HitAir2,
+        //HitAir3,
         
         FinisherTarget0,
     };
