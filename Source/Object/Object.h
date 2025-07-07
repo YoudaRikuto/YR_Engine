@@ -49,11 +49,17 @@ public:
     std::vector<GltfModel::Node>* GetNodes() { return gltfModel_->GetNodes(); }
 
     // ---------- Collision ----------
+    void RegisterCollisionData();
     void UpdateCollisions(const float& elapsedTime);
     void UpdatePushColliders();
     const std::vector<PushCollider> GetPushColliders() const { return pushColliders_; }
     const std::vector<HitBox> GetHitBoxes() const { return hitBoxes_; }
     const std::vector<HurtBox> GetHurtBoxes() const { return hurtBoxes_; }
+
+private:
+    void RegisterPushColliders();   // âüÇµèoÇµîªíËìoò^
+    void RegisterHitBoxes();        // çUåÇîªíËìoò^
+    void RegisterHurtBoxes();       // Ç≠ÇÁÇ¢îªíËìoò^
 
 private:
     std::shared_ptr<GltfModel> gltfModel_;
@@ -67,9 +73,9 @@ private:
     PushCollider                pushCollider_;
     HitBox                      hitBox_;
     HurtBox                     hurtBox_;
-    bool                        isDebugDrawPushColliders_   = true;
-    bool                        isDebugDrawHitBoxes_        = true;
-    bool                        isDebugDrawHurtBoxes_       = true;
+    bool                        isDebugDrawPushColliders_   = false;
+    bool                        isDebugDrawHitBoxes_        = false;
+    bool                        isDebugDrawHurtBoxes_       = false;
     bool                        isDebugDrawPushCollider_    = false;
     bool                        isDebugDrawHitBox_          = false;
     bool                        isDebugDrawHurtBox_         = false;

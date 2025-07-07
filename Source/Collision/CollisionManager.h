@@ -19,6 +19,10 @@ public:
     void DrawDebug();
 
 private:
+    void PlayerPushColliderVsEnemyPushCollider();
+    void PlayerHitBoxVsEnemyHurtBox();
+
+private:
     // Sphere VS Sphere
     const bool IntersectSphereVsSphere(
         const DirectX::XMFLOAT3& positionA, const float& radiusA,

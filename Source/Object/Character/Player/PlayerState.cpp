@@ -16,6 +16,13 @@ namespace PlayerState
     // 更新 
     void IdleState::Update(const float& elapsedTime)
     {
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT)
         {
             owner_->ChangeState(Player::STATE::FinisherAttack0);
@@ -61,13 +68,17 @@ namespace PlayerState
     // ImGui 
     void IdleState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生 
     void IdleState::PlayAnimation()
     {
         owner_->PlayAnimationBlend(Player::Animation::Idle, true);
-        owner_->SetTransitionTime(0.1f);
     }
 }
 
@@ -84,6 +95,12 @@ namespace PlayerState
     // 更新 
     void RunState::Update(const float& elapsedTime)
     {
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
         // 回避
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER)
         {
@@ -255,25 +272,28 @@ namespace PlayerState
     void JumpStartState::Update(const float& elapsedTime)
     {
         // ---------- 斬り上げ ----------
-        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y &&
+            owner_->GetAnimationSeconds() < attackUpAirTransitionEndFrame_)
         {
             owner_->ChangeState(Player::STATE::AttackUpAir);
             return;
         }
 
         // ---------- 空中攻撃 ----------
-        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X &&
+            owner_->GetAnimationSeconds() >= attackAir1_1TransitionFrame_)
         {
             owner_->ChangeState(Player::STATE::AttackAir1_1);
             return;
         }
 
         // ---------- 強攻撃 ----------
-        //if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y)
-        //{
-        //    owner_->ChangeState(Player::STATE::AttackAirToFloor);
-        //    return;
-        //}
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y &&
+            owner_->GetAnimationSeconds() >= attackAirToFloorTransitionFrame_)
+        {
+            owner_->ChangeState(Player::STATE::AttackAirToFloor);
+            return;
+        }
 
         // ---------- ダブルジャンプ ----------
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
@@ -317,6 +337,18 @@ namespace PlayerState
                 ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
                 ImGui::DragFloat("TransitionIdle", &transitionIdle_, 0.01f);
                 ImGui::DragFloat("TransitionRun", &transitionRun_, 0.01f);
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNodeEx("TransitionFrame", ImGuiTreeNodeFlags_Framed))
+            {
+                ImGui::DragFloat("AttackAir1_1", &attackAir1_1TransitionFrame_, 0.01f);
+                ImGui::DragFloat("AttackAirToFloor", &attackAirToFloorTransitionFrame_, 0.01f);
+
+                ImGui::Text("Transition End Frame");
+                ImGui::DragFloat("AttackUpAir", &attackUpAirTransitionEndFrame_, 0.01f);
+                
 
                 ImGui::TreePop();
             }
@@ -724,6 +756,9 @@ namespace PlayerState
         //アニメーション再生
         PlayAnimation();
 
+        // 旋回処理
+        owner_->AttackTurn();
+
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
     }
@@ -735,6 +770,13 @@ namespace PlayerState
         if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
         {
             owner_->UseRootMotion(true);
+        }
+
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
         }
 
         // 先行入力ステート記録
@@ -817,6 +859,9 @@ namespace PlayerState
 
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -828,13 +873,20 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //先行入力ステート記録
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
+        // 先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
             owner_->SetNextState(Player::STATE::Attack1_3);
         }
 
-        //先行入力があった場合切り替える
+        // 先行入力があった場合切り替える
         if (owner_->GetNextState() == Player::STATE::Attack1_3) {
             if (owner_->GetAnimationSeconds() >= attack3TransitionFrame_)
             {
@@ -900,11 +952,14 @@ namespace PlayerState
     // 初期化
     void Attack1_3State::Initialize()
     {
-
         // フラグリセット
         owner_->ResetFlags();
 
+        // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -916,13 +971,20 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //先行入力ステート記録
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
+        // 先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
             owner_->SetNextState(Player::STATE::Attack1_4);
         }
 
-        //先行入力があった場合切り替える
+        // 先行入力があった場合切り替える
         if (owner_->GetNextState() == Player::STATE::Attack1_4) {
             if (owner_->GetAnimationSeconds() >= attack4TransitionFrame_)
             {
@@ -991,7 +1053,11 @@ namespace PlayerState
         // フラグリセット
         owner_->ResetFlags();
 
+        // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -1003,13 +1069,20 @@ namespace PlayerState
             owner_->UseRootMotion(true);
         }
 
-        //先行入力ステート記録
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
+        // 先行入力ステート記録
         if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
         {
             owner_->SetNextState(Player::STATE::Attack1_1);
         }
 
-        //先行入力があった場合切り替える
+        // 先行入力があった場合切り替える
         if (owner_->GetNextState() == Player::STATE::Attack1_1) {
             if (owner_->GetAnimationSeconds() >= attack1TransitionFrame_)
             {
@@ -1080,6 +1153,9 @@ namespace PlayerState
 
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
 
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
@@ -1169,6 +1245,9 @@ namespace PlayerState
 
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -1254,6 +1333,9 @@ namespace PlayerState
 
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -1338,6 +1420,9 @@ namespace PlayerState
 
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->AttackTurn();
     }
 
     // 更新
@@ -1660,5 +1745,161 @@ namespace PlayerState
     void FinisherAttack2State::PlayAnimation()
     {
         owner_->PlayAnimationBlend(Player::Animation::Execution_3, false, 1.0f, 0.0, 0.1f);
+    }
+}
+
+// ---------- BlockState ----------
+namespace PlayerState
+{
+    // 初期化
+    void BlockState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        isChangeState_ = false;
+    }
+
+    // 更新
+    void BlockState::Update(const float& elapsedTime)
+    {
+        // ガード終了
+        if (Input::Instance().GetGamePad().GetButtonUp() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            isChangeState_ = true;
+        }
+
+        if (owner_->IsAnimationBlend() == false && isChangeState_)
+        {
+            owner_->ChangeState(Player::STATE::BlockEnd);
+            return;
+        }
+    }
+
+    // 終了化
+    void BlockState::Finalize()
+    {
+    }
+
+    // ImGui
+    void BlockState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
+            ImGui::DragFloat("TransitionIdle", &transitionIdle_, 0.01f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void BlockState::PlayAnimation()
+    {
+        const Player::Animation animationIndex = owner_->GetAnimationIndex();
+        float transitionTime = 0.1f;
+
+        if (animationIndex == Player::Animation::Idle) transitionTime = transitionIdle_;
+
+        owner_->PlayAnimationBlend(Player::Animation::BlockLoop, true, 1.0f, 0.0f, transitionTime);
+    }
+}
+
+// ---------- BlockEndState ----------
+namespace PlayerState
+{
+    // 初期化
+    void BlockEndState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void BlockEndState::Update(const float& elapsedTime)
+    {
+        // 走り 遷移チェック
+        if (owner_->GetAnimationSeconds() >= runTransitionFrame_)
+        {
+            const float aLx = Input::Instance().GetGamePad().GetAxisLx();
+            const float aLy = Input::Instance().GetGamePad().GetAxisLy();
+
+            if (fabsf(aLx) != 0.0f || fabsf(aLy) != 0.0f)
+            {
+                owner_->ChangeState(Player::STATE::Run);
+                return;
+            }
+        }
+
+        // ガード
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
+        // 攻撃
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X)
+        {
+            owner_->ChangeState(Player::STATE::Attack1_1);
+            return;
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void BlockEndState::Finalize()
+    {
+    }
+
+    // ImGui
+    void BlockEndState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("RunTransitionFrame", &runTransitionFrame_, 0.01f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void BlockEndState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(Player::Animation::BlockEnd, false);
+    }
+}
+
+// ---------- ParryState ----------
+namespace PlayerState
+{
+    // 初期化
+    void ParryState::Initialize()
+    {
+    }
+
+    // 更新
+    void ParryState::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void ParryState::Finalize()
+    {
+    }
+
+    // ImGui
+    void ParryState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void ParryState::PlayAnimation()
+    {
     }
 }

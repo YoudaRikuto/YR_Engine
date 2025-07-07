@@ -322,7 +322,26 @@ void ComputeParticleSystem::DrawDebug()
 
         if (ImGui::Button("Export Particle Asset"))
         {
-            AssetCreation();
+            ImGui::OpenPopup("Export Check");
+        }
+
+        if (ImGui::BeginPopupModal("Export Check", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Export Particle Asset??");
+
+            if (ImGui::Button("Yes!", ImVec2(150, 150)))
+            {
+                AssetCreation();
+
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("No", ImVec2(150, 150)))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
         }
 
         ImGui::TreePop();
@@ -604,6 +623,28 @@ void ComputeParticleSystem::EmitParticle(const std::string& effectName)
             transform_.SetScale(computeParticleEmitData_.scale_);
             transform_.SetRotation(computeParticleEmitData_.rotation_);
             
+            EmitParticle();
+
+            return;
+        }
+    }
+
+    // Ž¸”s
+    return;
+}
+
+void ComputeParticleSystem::EmitParticle(const std::string& effectName, const Transform3D& transform)
+{
+    for (int i = 0; i < computeParticleData_.size(); ++i)
+    {
+        if (effectName == computeParticleData_.at(i).name_)
+        {
+            computeParticleEmitData_ = computeParticleData_.at(i);
+
+            transform_.SetPosition(transform.GetPosition());
+            transform_.SetScale(transform.GetScale());
+            transform_.SetRotation(transform.GetRotation());
+
             EmitParticle();
 
             return;

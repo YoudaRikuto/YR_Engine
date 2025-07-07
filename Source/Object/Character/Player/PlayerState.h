@@ -84,6 +84,10 @@ namespace PlayerState
         float   transitionIdle_         = 0.1f;
         float   transitionRun_          = 0.1f;
 
+        float   attackUpAirTransitionEndFrame_      = 0.3f;
+        float   attackAir1_1TransitionFrame_        = 0.3f;
+        float   attackAirToFloorTransitionFrame_    = 0.3f;
+
         float   jumpPower_  = 10.0f;
 
         float   jumpFrame_  = 0.2f;
@@ -460,5 +464,61 @@ namespace PlayerState
 
     private:
         void PlayAnimation();
+    };
+
+    class BlockState : public State<Player>
+    {
+    public:
+        BlockState(Player* player) : State(player, "BlockState") {}
+        ~BlockState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+    private:
+        float animationStartFrame_ = 0.35f;
+
+        float transitionIdle_ = 0.1f;
+
+        bool isChangeState_ = false;
+    };
+
+    class BlockEndState : public State<Player>
+    {
+    public:
+        BlockEndState(Player* player) : State(player, "BlockEndState") {}
+        ~BlockEndState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+    private:
+        float runTransitionFrame_ = 0.18f;
+
+    };
+
+    class ParryState : public State<Player>
+    {
+    public:
+        ParryState(Player* player) : State(player, "ParryState") {}
+        ~ParryState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
     };
 }
