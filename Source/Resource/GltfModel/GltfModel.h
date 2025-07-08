@@ -293,6 +293,7 @@ public:
     void UseRootMotion(const bool& flag);
     const bool IsRootMotionActive() const { return isRootMotionActive_; }
     void SetRootMotionValue(const DirectX::XMFLOAT3& value) { rootMotionValue_ = value; }
+    const DirectX::XMFLOAT3 GetRootMotionDelta() const { return rootMotionDelta_; }
 
     // ---------- JointPosition ----------
     const DirectX::XMFLOAT3 GetJointPosition(const size_t& nodeIndex, const float& scaleFactor, const DirectX::XMFLOAT3& offsetPosition = {});
@@ -384,6 +385,7 @@ private:
     std::vector<Node>   zeroAnimatedNodes_;
     DirectX::XMFLOAT3   previousPosition_       = {};
     DirectX::XMFLOAT3   rootMotionValue_        = { 1.0f, 1.0f, 1.0f };
+    DirectX::XMFLOAT3   rootMotionDelta_        = {};
     bool                isRootMotionActive_     = false;
 
     std::vector<std::string> jointNames_;

@@ -326,6 +326,8 @@ void GltfModel::UpdateRootMotion(const float& scaleFacter)
 {
     if (isRootMotionActive_ == false) return;
 
+    const DirectX::XMFLOAT3 oldPosition = transform_.GetPosition();
+
     Node& node = nodes_.at(rootJointIndex_);
     
     DirectX::XMFLOAT3 position      = { node.globalTransform_._41, node.globalTransform_._42, node.globalTransform_._43 };
@@ -340,6 +342,8 @@ void GltfModel::UpdateRootMotion(const float& scaleFacter)
     DirectX::XMFLOAT3 translation = transform_.GetPosition();
     translation = translation + displacement * rootMotionValue_;
     transform_.SetPosition(translation);
+
+    rootMotionDelta_ = transform_.GetPosition() - oldPosition;
 
     node.globalTransform_._41 = zeroAnimatedNodes_.at(rootJointIndex_).globalTransform_._41;
     node.globalTransform_._42 = zeroAnimatedNodes_.at(rootJointIndex_).globalTransform_._42;

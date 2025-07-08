@@ -12,9 +12,9 @@ public:
 
         HitToAir,
         HitAirIdle,
-        //HitAir1,
-        //HitAir2,
-        //HitAir3,
+        HitAir1,
+        HitAir2,
+        HitAir3,
         
         FinisherTarget0,
     };
@@ -83,7 +83,6 @@ public:
     void DrawDebug()                                    override;
     void DebugRender(DebugRenderer* debugRenderer)    override;
 
-public:
     // ---------- Animation ----------
     void PlayAnimation(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& startFrame = 0.0f) { Object::PlayAnimation(static_cast<int>(index), loop, speed, startFrame); }
     void PlayAnimationBlend(const Animation& index, const bool& loop, const float& speed = 1.0f, const float& blendStartFrame = 0.0f, const float& transitionTime = 0.1f) { Object::PlayAnimationBlend(static_cast<int>(index), loop, speed, blendStartFrame, transitionTime); }
@@ -93,6 +92,10 @@ public:
     void ChangeState(const STATE& state);
     const STATE GetCurrentState() const { return currentState_; }
     const STATE GetOldState() const { return oldState_; }
+
+    void OnDamage();
+
+    void TurnToPlayer();
 
 private:
     void RegisterStateMachine(); // ステートマシン登録

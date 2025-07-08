@@ -67,6 +67,14 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation();
+
+    private:
+        float oldPositionY_ = 0.0f;
+
+        float offsetPositionY_ = 1.0f;
+
+        float length_       = 2.3f;
+        float lerpWeight_   = 0.2f;
     };
 
     class HitAirIdleState : public State<WoodMonster>
@@ -81,10 +89,57 @@ namespace WoodMonsterState
         void DrawDebug()                        override;
         
     private:
-        float fallTimer_ = 0.0f;
-        float fallTime_ = 1.0f;
+        float fallStartTimer_ = 0.0f;
+        float fallStartTime_ = 0.2f;
+                
+        float gravity_      = 40.0f;
+        float fallSpeed_    = 2.0f;
     };
 
+    class HitAir1State : public State<WoodMonster>
+    {
+    public:
+        HitAir1State(WoodMonster* woodMonster) : State(woodMonster, "HitAir1State") {}
+        ~HitAir1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+    };
+
+    class HitAir2State : public State<WoodMonster>
+    {
+    public:
+        HitAir2State(WoodMonster* woodMonster) : State(woodMonster, "HitAir2State") {}
+        ~HitAir2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+    };
+
+    class HitAir3State : public State<WoodMonster>
+    {
+    public:
+        HitAir3State(WoodMonster* woodMonster) : State(woodMonster, "HitAir3State") {}
+        ~HitAir3State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+    };
 
     class FinisherTarget0State : public State<WoodMonster>
     {

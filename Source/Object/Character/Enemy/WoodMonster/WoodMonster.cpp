@@ -1,6 +1,7 @@
 #include "WoodMonster.h"
 #include "ImGui/ImGuiCtrl.h"
 #include "WoodMonsterState.h"
+#include "Object/Character/Player/PlayerManager.h"
 
 WoodMonster::WoodMonster()
     : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f, "WoodMonster")
@@ -66,6 +67,51 @@ void WoodMonster::DebugRender(DebugRenderer* debugRenderer)
     Object::DebugRender(debugRenderer);
 }
 
+// ダメージをくらった
+void WoodMonster::OnDamage()
+{
+    const Player::STATE playerState = PlayerManager::Instance().GetPlayer()->GetCurrentState();
+    const WoodMonster::Animation woodMonsterAnimation = GetAnimationIndex();
+
+    // Playerが 斬り上げ攻撃
+    if (playerState == Player::STATE::AttackUpAir)
+    {
+        ChangeState(STATE::HitToAir);
+    }
+
+    if (woodMonsterAnimation == Animation::HitAir1)
+    {
+        ChangeState(STATE::HitAir2);
+    }
+    else if (woodMonsterAnimation == Animation::HitAir2)
+    {
+        ChangeState(STATE::HitAir3);
+    }
+    else if (woodMonsterAnimation == Animation::HitAir3)
+    {
+        ChangeState(STATE::HitAir1);
+    }
+}
+
+// プレイヤーの方向に旋回する
+void WoodMonster::TurnToPlayer()
+{
+    const DirectX::XMFLOAT3 playerPosition = PlayerManager::Instance().GetTransform()->GetPosition();
+    const DirectX::XMFLOAT3 woodMonsterPosition = GetTransform()->GetPosition();
+
+    const DirectX::XMFLOAT2 vec = XMFloat2Normalize({ playerPosition.x - woodMonsterPosition.x, playerPosition.z - woodMonsterPosition.z });
+    const DirectX::XMFLOAT2 woodMonsterForward = XMFloat2Normalize({ GetTransform()->CalcForward().x, GetTransform()->CalcForward().z });
+
+    const float cross = XMFloat2Cross(vec, woodMonsterForward);
+    const float dot = std::clamp(XMFloat2Dot(vec, woodMonsterForward), -1.0f, 1.0f);
+    const float angle = acosf(dot);
+
+    if (angle < DirectX::XMConvertToRadians(1)) return;
+
+    if (cross > 0) GetTransform()->AddRotationY(-angle);
+    else GetTransform()->AddRotationY(angle);
+}
+
 // ステートマシン登録
 void WoodMonster::RegisterStateMachine()
 {
@@ -76,6 +122,9 @@ void WoodMonster::RegisterStateMachine()
     stateMachine_->RegisterState(new WoodMonsterState::AttackState(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitToAirState(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitAirIdleState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitAir1State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitAir2State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitAir3State(this));
     stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget0State(this));
 
     // 1番最初のステート設定

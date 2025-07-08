@@ -163,29 +163,63 @@ namespace WoodMonsterState
     {
         // アニメーション再生
         PlayAnimation();
+
+        // 旋回処理
+        owner_->TurnToPlayer();
+
+        // 変数初期化
+        oldPositionY_ = 0.0f;
     }
 
     // 更新
     void HitToAirState::Update(const float& elapsedTime)
     {
         const DirectX::XMFLOAT3 playerPosition = PlayerManager::Instance().GetTransform()->GetPosition();
+        const DirectX::XMFLOAT2 playerXZ = { playerPosition.x, playerPosition.z };
+        const DirectX::XMFLOAT2 woodMonsterXZ = { owner_->GetTransform()->GetPositionX(), owner_->GetTransform()->GetPositionZ() };
+        const DirectX::XMFLOAT2 targetPosition = playerXZ + XMFloat2Normalize(woodMonsterXZ - playerXZ) * length_;
+        const DirectX::XMFLOAT2 position = XMFloat2Lerp(woodMonsterXZ, targetPosition, lerpWeight_);
+        owner_->GetTransform()->SetPositionX(position.x);
+        owner_->GetTransform()->SetPositionZ(position.y);
 
-        owner_->GetTransform()->SetPositionY(playerPosition.y);
+        // 斬り上げ攻撃をくらっているので, 高さをPlayerに合わせる
+        float positionY = PlayerManager::Instance().GetTransform()->GetPositionY() - offsetPositionY_;
+        positionY = positionY < 0.0f ? 0.0f : positionY;
+        owner_->GetTransform()->SetPositionY(positionY);
 
-        if (owner_->IsAnimationEnd())
+        // アニメーションが終端まで行くか、落下し始めたらステート変更する
+        if(owner_->IsAnimationEnd() ||
+            oldPositionY_ > owner_->GetTransform()->GetPositionY())
         {
             owner_->ChangeState(WoodMonster::STATE::HitAirIdle);
+            return;
         }
+        
+        // 現在の高さを保存する
+        oldPositionY_ = owner_->GetTransform()->GetPositionY();
     }
 
     // 終了化
     void HitToAirState::Finalize()
     {
+        // 次のステートにつながりやすいように設定する
+        float playerPositionY = PlayerManager::Instance().GetTransform()->GetPositionY();
+        playerPositionY -= offsetPositionY_;
+        owner_->GetTransform()->SetPositionY(playerPositionY);
     }
 
     // ImGui
     void HitToAirState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("OffsetPositionY", &offsetPositionY_, 0.01f);
+
+            ImGui::DragFloat("Length", &length_, 0.1f);
+            ImGui::DragFloat("LerpWEight", &lerpWeight_, 0.01f);
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
@@ -195,40 +229,187 @@ namespace WoodMonsterState
     }
 }
 
+// ---------- HitAirIdleState ----------
 namespace WoodMonsterState
 {
     // 初期化
     void HitAirIdleState::Initialize()
     {
-        fallTimer_ = fallTime_;
+        fallStartTimer_ = fallStartTime_;
     }
 
     // 更新
     void HitAirIdleState::Update(const float& elapsedTime)
     {
-        fallTimer_ -= elapsedTime;
+        fallStartTimer_ -= elapsedTime;
 
-        if (fallTimer_ > 0.0f)
+        DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
+        if (fallStartTimer_ > 0.0f)
         {
-
+            velocity.y = -fallSpeed_;
         }
         else
         {
-            const float gravity = 9.8f;
-            DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
-            velocity.y += gravity;
-            owner_->SetVelocity(velocity);
+            velocity.y -= gravity_ * elapsedTime;
+        }
+        owner_->SetVelocity(velocity);
+        owner_->GetTransform()->AddPosition(velocity * elapsedTime);
+
+
+        if (owner_->GetTransform()->GetPositionY() <= 0.0f)
+        {
+            owner_->GetTransform()->SetPositionY(0.0f);
+            owner_->ChangeState(WoodMonster::STATE::Idle);
         }
     }
 
     // 終了化
     void HitAirIdleState::Finalize()
     {
+        owner_->SetVelocity({});
     }
 
     // ImGui
     void HitAirIdleState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("FallTimer", &fallStartTimer_);
+            ImGui::DragFloat("FallTime", &fallStartTime_, 0.1f);
+            ImGui::DragFloat("Gravity", &gravity_, 0.1f, 0.0f, 100.0f);
+            ImGui::DragFloat("FallSpeed", &fallSpeed_, 0.1f, 0.0f, 100.0f);
+
+            ImGui::TreePop();
+        }
+    }
+}
+
+// ---------- HitAir1State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitAir1State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        // 旋回処理
+        owner_->TurnToPlayer();
+    }
+
+    // 更新
+    void HitAir1State::Update(const float& elapsedTime)
+    {
+        const DirectX::XMFLOAT3 vec = PlayerManager::Instance().GetPlayer()->GetRootMotionDelta();
+        owner_->GetTransform()->AddPosition(vec);        
+
+        if(owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::HitAirIdle);
+            return;
+        }
+    }
+
+    // 終了化
+    void HitAir1State::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitAir1State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void HitAir1State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::HitAir1, false);
+    }
+}
+
+// ---------- HitAir2State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitAir2State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        // 旋回処理
+        owner_->TurnToPlayer();
+    }
+
+    // 更新
+    void HitAir2State::Update(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 vec = PlayerManager::Instance().GetPlayer()->GetRootMotionDelta();
+        owner_->GetTransform()->AddPosition(vec);
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::HitAirIdle);
+            return;
+        }
+    }
+
+    // 終了化
+    void HitAir2State::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitAir2State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void HitAir2State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::HitAir2, false);
+    }
+}
+
+// ---------- HitAir3State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitAir3State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        // 旋回処理
+        owner_->TurnToPlayer();
+    }
+
+    // 更新
+    void HitAir3State::Update(const float& elapsedTime)
+    {
+        const DirectX::XMFLOAT3 vec = PlayerManager::Instance().GetPlayer()->GetRootMotionDelta();
+        owner_->GetTransform()->AddPosition(vec);
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::HitAirIdle);
+            return;
+        }
+    }
+
+    // 終了化
+    void HitAir3State::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitAir3State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void HitAir3State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::HitAir3, false);
     }
 }
 

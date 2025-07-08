@@ -57,6 +57,9 @@ void CollisionManager::PlayerPushColliderVsEnemyPushCollider()
 // Player(HitBox) VS Enemy(HurtBox)
 void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
 {
+    // Playerの攻撃判定が有効でない
+    if (PlayerManager::Instance().GetPlayer()->GetAttackHitBoxActive() == false) return;
+
     // Enemyが存在しない
     if (EnemyManager::Instance().GetEnemyCount() <= 0) return;
 
@@ -81,21 +84,16 @@ void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
                     playerSwordHitBox.GetPosition(), playerSwordHitBox.GetRadius(),
                     enemyHurtBox.GetPosition(), enemyHurtBox.GetRadius()))
                 {
+                    // 攻撃判定を無効化する
+                    PlayerManager::Instance().GetPlayer()->SetAttackHitBoxActive(false);
+
                     const Player::STATE playerState = PlayerManager::Instance().GetPlayer()->GetCurrentState();
-
-                    // 斬り上げ攻撃 敵のステートを切り替える
-                    if (playerState == Player::STATE::AttackUpAir)
+                    
+                    if (enemyType == EnemyType::WoodMonster)
                     {
-                        // 敵のステートを切り替える
-                        if (enemyType == EnemyType::WoodMonster)
-                        {
-                            WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(enemyIndex));
-                            woodMonster->ChangeState(WoodMonster::STATE::HitToAir);
-                        }
-
-
+                        WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(enemyIndex));
+                        woodMonster->OnDamage();
                     }
-
 
                     // 同じフレームで攻撃は連続して当たらないので終了する
                     return;

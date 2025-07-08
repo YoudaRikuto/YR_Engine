@@ -196,4 +196,19 @@ inline const float XMFloat2Cross(
     return (v1.y * v2.x) - (v1.x * v2.y);
 }
 
+// ----- üŒ`•âŠÔ -----
+inline const DirectX::XMFLOAT2 XMFloat2Lerp(
+    const DirectX::XMFLOAT2& start,
+    const DirectX::XMFLOAT2& end,
+    const float& timer)
+{
+    DirectX::XMFLOAT2 result =
+    {
+        start.x + timer * (end.x - start.x),
+        start.y + timer * (end.y - start.y),
+    };
+
+    return result;
+}
+
 #pragma endregion ---------- ZpŠÖ” ----------

@@ -688,6 +688,9 @@ namespace PlayerState
 
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
+
+        // 攻撃判定有効化
+        owner_->SetAttackHitBoxActive(true);
     }
 
     // 更新
@@ -1166,6 +1169,9 @@ namespace PlayerState
 
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
+
+        // 攻撃判定有効化
+        owner_->SetAttackHitBoxActive(true);
     }
 
     // 更新
@@ -1255,6 +1261,9 @@ namespace PlayerState
 
         // 旋回処理
         owner_->AttackTurn();
+
+        // 攻撃判定有効化
+        owner_->SetAttackHitBoxActive(true);
     }
 
     // 更新
@@ -1343,6 +1352,9 @@ namespace PlayerState
 
         // 旋回処理
         owner_->AttackTurn();
+
+        // 攻撃判定有効化
+        owner_->SetAttackHitBoxActive(true);
     }
 
     // 更新
@@ -1430,6 +1442,9 @@ namespace PlayerState
 
         // 旋回処理
         owner_->AttackTurn();
+
+        // 攻撃判定有効化
+        owner_->SetAttackHitBoxActive(true);
     }
 
     // 更新
@@ -1501,7 +1516,6 @@ namespace PlayerState
         // 移動処理を無くす
         owner_->SetVelocity({});
         owner_->SetMoveDirection({});
-
     }
 
     // 更新

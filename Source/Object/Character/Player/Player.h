@@ -138,6 +138,9 @@ public:
     const int GetCurrentWeaponDataType() const { return currentWeaponDataType_; }
     const std::vector<HitBox> GetSwordHitBoxes() const { return sword_.GetHitBoxes(); }
 
+    const bool GetAttackHitBoxActive() const { return isAttackHitBoxActive_; }
+    void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }
+
 private:
     // ---------- StateMachine ----------
     void RegisterStateMachine(); // ステートマシン登録
@@ -181,5 +184,7 @@ private:
     float   weaponDataWeight_           = 0.0f;
     float   weaponDataTypeChangeSpeed_  = 5.0f;
     bool    isChangeWeaponData_         = false;
+
+    bool isAttackHitBoxActive_ = false;
 };
 
