@@ -1598,14 +1598,14 @@ namespace PlayerState
 
 namespace PlayerState
 {
+    // 初期化
     void AttackAirToFloorEndState::Initialize()
     {
         // アニメーション再生
         PlayAnimation();
-
-
-
     }
+
+    // 更新
     void AttackAirToFloorEndState::Update(const float& elapsedTime)
     {
         if (owner_->IsAnimationEnd())
@@ -1639,10 +1639,14 @@ namespace PlayerState
         // 落下速度更新
         UpdateFallingSpeed();
     }
+
+    // 終了化
     void AttackAirToFloorEndState::Finalize()
     {
 
     }
+
+    // ImGui
     void AttackAirToFloorEndState::DrawDebug()
     {
         if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
@@ -1661,10 +1665,13 @@ namespace PlayerState
             ImGui::TreePop();
         }
     }
+
+    // アニメーション再生
     void AttackAirToFloorEndState::PlayAnimation()
     {
         owner_->PlayAnimationBlend(Player::Animation::AttackAirToFloor_End, false, startAnimationSpeed_, 0.1f);
     }
+
     void AttackAirToFloorEndState::UpdateFallingSpeed()
     {
         const Player::Animation animationIndex = owner_->GetAnimationIndex();
