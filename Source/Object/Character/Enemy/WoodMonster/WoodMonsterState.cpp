@@ -64,6 +64,8 @@ namespace WoodMonsterState
     {
         // アニメーション再生
         PlayAnimation();
+
+        isrightHandAttackEndActive_ = false;
     }
 
     // 更新
@@ -76,8 +78,22 @@ namespace WoodMonsterState
             owner_->SetRootMotionValue(rootMotionValue_);
         }
 
-        // TODO:旋回処理 (Playerの方に向く)
+        // 旋回処理 (Playerの方に向く)
+        owner_->Turn(elapsedTime, PlayerManager::Instance().GetTransform()->GetPosition());
 
+        // 攻撃判定を有効化する
+        if (owner_->IsAttackHitBoxActive() == false &&
+            owner_->GetAnimationSeconds() >= rightHandAttackActiveFrame_)
+        {
+            owner_->SetAttackActiveFlag("RightHandAttack");
+            owner_->SetAttackHitBoxActive(true);
+        }
+        if (isrightHandAttackEndActive_ == false &&
+            owner_->GetAnimationSeconds() >= rightHandAttackEndActiveFrame_)
+        {
+            owner_->SetAttackActiveFlag("RightHandAttack_Last");
+            isrightHandAttackEndActive_ = true;
+        }
 
         // アニメーション再生速度更新
         UpdateAnimationSpeed();
@@ -96,6 +112,10 @@ namespace WoodMonsterState
         // ルートモーション使用終了
         owner_->UseRootMotion(false);
         owner_->SetRootMotionValue({ 1.0f, 1.0f, 1.0f });
+
+        // 攻撃判定を無効化
+        owner_->AttackActiveFlagAllClear();
+        owner_->SetAttackHitBoxActive(false);
     }
 
     // ImGui
@@ -111,6 +131,18 @@ namespace WoodMonsterState
 
                 ImGui::TreePop();
             }
+
+            if (ImGui::TreeNodeEx("Attack", ImGuiTreeNodeFlags_Framed))
+            {
+                ImGui::Text("RightHandAttackActiveFrame");
+                ImGui::DragFloat("##RightHandAttackActiveFrame ", &rightHandAttackActiveFrame_, 0.01f);
+                ImGui::Text("RightHandAttackEndActiveFrame");
+                ImGui::DragFloat("##RightHandAttackEndActiveFrame ", &rightHandAttackEndActiveFrame_, 0.01f);
+
+
+                ImGui::TreePop();
+            }
+
 
             if (ImGui::TreeNodeEx("AttackRecovery", ImGuiTreeNodeFlags_Framed))
             {

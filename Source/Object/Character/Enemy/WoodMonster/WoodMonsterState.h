@@ -52,6 +52,10 @@ namespace WoodMonsterState
         float attackRecoverySpeed_      = 0.6f;
 
         DirectX::XMFLOAT3 rootMotionValue_ = { 1.0f, 1.0f, 1.0f };
+
+        float   rightHandAttackActiveFrame_     = 0.67f;
+        float   rightHandAttackEndActiveFrame_  = 0.7f;
+        bool    isrightHandAttackEndActive_ = false;
     };
 
     class HitToAirState : public State<WoodMonster>

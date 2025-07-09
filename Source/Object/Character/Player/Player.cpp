@@ -123,6 +123,17 @@ void Player::ResetFlags()
     nextState_ = STATE::Idle;
 }
 
+// ダメージを受けた(true), 受けなかった(false)
+const bool Player::OnDamage()
+{
+    if (GetCurrentState() == STATE::Block)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 // ステートマシン登録 
 void Player::RegisterStateMachine()
 {

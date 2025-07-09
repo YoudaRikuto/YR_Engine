@@ -58,6 +58,8 @@ public:
     const std::vector<PushCollider> GetPushColliders() const { return pushColliders_; }
     const std::vector<HitBox> GetHitBoxes() const { return hitBoxes_; }
     const std::vector<HurtBox> GetHurtBoxes() const { return hurtBoxes_; }
+    void SetAttackActiveFlag(const std::string& attackName);
+    void AttackActiveFlagAllClear();
 
 private:
     void RegisterPushColliders();   // ‰Ÿ‚µo‚µ”»’è“o˜^

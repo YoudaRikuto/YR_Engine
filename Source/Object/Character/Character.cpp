@@ -30,6 +30,8 @@ void Character::DrawDebug()
 
         ImGui::DragFloat("MaxSpeed", &maxSpeed_);
 
+        ImGui::DragFloat("RotationSpeed", &rotationSpeed_);
+
         ImGui::TreePop();
     }
 }

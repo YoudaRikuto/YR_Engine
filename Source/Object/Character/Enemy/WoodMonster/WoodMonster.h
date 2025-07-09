@@ -93,8 +93,13 @@ public:
     const STATE GetCurrentState() const { return currentState_; }
     const STATE GetOldState() const { return oldState_; }
 
+    const bool IsAttackHitBoxActive() const { return isAttackHitBoxActive_; }
+    void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }
+
+
     void OnDamage();
 
+    void Turn(const float& elapsedTime, const DirectX::XMFLOAT3& target);
     void TurnToPlayer();
 
 private:
@@ -105,5 +110,7 @@ private:
     std::unique_ptr<StateMachine<State<WoodMonster>>> stateMachine_;
     STATE currentState_ = STATE::Idle;
     STATE oldState_     = STATE::Idle;
+
+    bool isAttackHitBoxActive_ = false;
 };
 

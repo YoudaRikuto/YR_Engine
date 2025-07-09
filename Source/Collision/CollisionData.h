@@ -52,6 +52,7 @@ public:
     const DirectX::XMFLOAT3 GetPosition() const { return position_; }
     const DirectX::XMFLOAT3 GetOffsetPosition() const { return offsetPosition_; }
     const DirectX::XMFLOAT4 GetColor() const { return color_; }
+    const bool IsActive() const { return isActive_; }
 
     void SetName(const std::string& name) { name_ = name; }
     void SetJointName(const std::string& jointName) { jointName_ = jointName; }
@@ -60,6 +61,7 @@ public:
     void SetPosition(const DirectX::XMFLOAT3& position) { position_ = position; }
     void SetOffsetPosition(const DirectX::XMFLOAT3& offsetPosition) { offsetPosition_ = offsetPosition; }
     void SetColor(const DirectX::XMFLOAT4& color) { color_ = color; }
+    void SetActive(const bool& flag) { isActive_ = flag; }
 
 private:
     std::string         name_;

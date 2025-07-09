@@ -35,7 +35,7 @@ private:
     float               maxSpeed_       = 0.0f; // Å‘å‘¬“x
 
     // ---------- Rotation ----------
-    float rotationSpeed_ = 0.0f; // ‰ñ“]‘¬“x
+    float rotationSpeed_ = 1.0f; // ‰ñ“]‘¬“x
 
 };
 

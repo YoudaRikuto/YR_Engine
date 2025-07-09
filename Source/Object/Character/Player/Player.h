@@ -138,8 +138,10 @@ public:
     const int GetCurrentWeaponDataType() const { return currentWeaponDataType_; }
     const std::vector<HitBox> GetSwordHitBoxes() const { return sword_.GetHitBoxes(); }
 
-    const bool GetAttackHitBoxActive() const { return isAttackHitBoxActive_; }
+    const bool IsAttackHitBoxActive() const { return isAttackHitBoxActive_; }
     void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }
+
+    const bool OnDamage();
 
 private:
     // ---------- StateMachine ----------

@@ -13,6 +13,8 @@ void CollisionManager::Update(const float& elapsedTime)
     // Player(HitBox) VS Enemy(HurtBox)
     PlayerHitBoxVsEnemyHurtBox();
     
+    // Player(HurtBox) VS Enemy(HitBox)
+    PlayerHurtBoxVsEnemyHitBox();
 }
 
 void CollisionManager::DrawDebug()
@@ -58,7 +60,7 @@ void CollisionManager::PlayerPushColliderVsEnemyPushCollider()
 void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
 {
     // Playerの攻撃判定が有効でない
-    if (PlayerManager::Instance().GetPlayer()->GetAttackHitBoxActive() == false) return;
+    if (PlayerManager::Instance().GetPlayer()->IsAttackHitBoxActive() == false) return;
 
     // Enemyが存在しない
     if (EnemyManager::Instance().GetEnemyCount() <= 0) return;
@@ -101,6 +103,63 @@ void CollisionManager::PlayerHitBoxVsEnemyHurtBox()
             }
         }
     }
+}
+
+// Player(HurtBox) VS Enemy(HitBox)
+void CollisionManager::PlayerHurtBoxVsEnemyHitBox()
+{
+    // 敵が存在しない
+    const int enemyCount = EnemyManager::Instance().GetEnemyCount();
+    if (enemyCount <= 0) return;
+
+    for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
+    {
+        if (EnemyManager::Instance().GetEnemy(enemyIndex)->GetEnemyType() == EnemyType::WoodMonster)
+        {
+            WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(enemyIndex));
+
+            // 攻撃判定が有効でない
+            if (woodMonster->IsAttackHitBoxActive() == false) continue;
+
+            const std::vector<HitBox> enemyHitBoxes = woodMonster->GetHitBoxes();            
+            for (int enemyHitBoxIndex = 0; enemyHitBoxIndex < enemyHitBoxes.size(); ++enemyHitBoxIndex)
+            {
+                const HitBox enemyHitBox = enemyHitBoxes.at(enemyHitBoxIndex);
+                if (enemyHitBox.IsActive() == false) continue;
+
+                const std::vector<HurtBox> playerHurtBoxes = PlayerManager::Instance().GetHurtBoxes();
+                for (int playerHurtBoxIndex = 0; playerHurtBoxIndex < playerHurtBoxes.size(); ++playerHurtBoxIndex)
+                {
+                    const HurtBox playerHurtBox = playerHurtBoxes.at(playerHurtBoxIndex);
+
+                    // 当たったか判定する
+                    if (IntersectSphereVsSphere(
+                        enemyHitBox.GetPosition(), enemyHitBox.GetRadius(),
+                        playerHurtBox.GetPosition(), playerHurtBox.GetRadius()))
+                    {
+                        // 攻撃判定を無効化
+                        woodMonster->SetAttackHitBoxActive(false);
+
+                        // プレイヤー側でダメージを受けたかを判定する
+                        if (PlayerManager::Instance().GetPlayer()->OnDamage())
+                        {
+                            // *** ダメージを受けた ***
+
+                        }
+                        else
+                        {
+                            // *** ガードされた ***
+
+                            woodMonster->ChangeState(WoodMonster::STATE::HitAir1);
+                        }
+
+                        // 終了
+                        return;
+                    }
+                }
+            }
+        }
+    }    
 }
 
 // Sphere VS Sphere

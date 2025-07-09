@@ -21,6 +21,7 @@ public:
 private:
     void PlayerPushColliderVsEnemyPushCollider();
     void PlayerHitBoxVsEnemyHurtBox();
+    void PlayerHurtBoxVsEnemyHitBox();
 
 private:
     // Sphere VS Sphere

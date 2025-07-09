@@ -54,9 +54,11 @@ void WoodMonster::DrawDebug()
 {
     ImGui::Begin("WoodMonster");
 
+    if (ImGui::Button("Attack State")) ChangeState(STATE::Attack);
+
     stateMachine_->DrawDebug();
 
-    Object::DrawDebug();
+    Character::DrawDebug();
 
     ImGui::End();
 }
@@ -91,6 +93,23 @@ void WoodMonster::OnDamage()
     {
         ChangeState(STATE::HitAir1);
     }
+}
+
+// Target‚ÉŒü‚©‚Á‚Äù‰ñ‚·‚é
+void WoodMonster::Turn(const float& elapsedTime, const DirectX::XMFLOAT3& target)
+{
+    const DirectX::XMFLOAT3 woodMonsterPosition = GetTransform()->GetPosition();
+    const DirectX::XMFLOAT2 vec = XMFloat2Normalize({ target.x - woodMonsterPosition.x, target.z - woodMonsterPosition.z });
+    const DirectX::XMFLOAT2 woodMonsterForward = XMFloat2Normalize({ GetTransform()->CalcForward().x, GetTransform()->CalcForward().z });
+
+    const float cross = XMFloat2Cross(vec, woodMonsterForward);
+    const float dot = std::clamp(XMFloat2Dot(vec, woodMonsterForward), -1.0f, 1.0f);
+    const float angle = acosf(dot) * GetRotationSpeed() * elapsedTime;
+
+    if (angle < DirectX::XMConvertToRadians(1)) return;
+
+    if (cross > 0) GetTransform()->AddRotationY(-angle);
+    else GetTransform()->AddRotationY(angle);
 }
 
 // ƒvƒŒƒCƒ„[‚Ì•ûŒü‚Éù‰ñ‚·‚é

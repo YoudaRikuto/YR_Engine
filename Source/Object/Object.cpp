@@ -148,6 +148,7 @@ void Object::DrawDebug()
             ImGui::TreePop(); // Collision Data List
         }
 
+        // 押し出し判定リスト
         if (isPushColliderListActive_)
         {
             const std::string text = objectName_ + "PushCollider List";
@@ -183,6 +184,7 @@ void Object::DrawDebug()
             ImGui::End();
         }
 
+        // 攻撃判定リスト
         if (isHitBoxListActive_)
         {
             const std::string text = objectName_ + "HitBox List";
@@ -193,11 +195,22 @@ void Object::DrawDebug()
                 const std::string name = hitBoxes_.at(i).GetName();
                 if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_Framed))
                 {
+                    if (ImGui::Button("Delete HitBox"))
+                    {
+                        hitBoxes_.erase(hitBoxes_.begin() + i);
+
+                        --i;
+                        ImGui::TreePop();
+                        continue;
+                    }
+
                     const std::string jointName = "JointName :" + hitBoxes_.at(i).GetJointName();
+                    const std::string attackName = "AttackName :" + hitBoxes_.at(i).GetAttackName();
                     float radius = hitBoxes_.at(i).GetRadius();
                     DirectX::XMFLOAT3 offsetPosition = hitBoxes_.at(i).GetOffsetPosition();
 
                     ImGui::Text(jointName.c_str());
+                    ImGui::Text(attackName.c_str());
                     ImGui::SetNextItemWidth(200);
                     ImGui::InputFloat("Radius", &radius);
                     ImGui::SetNextItemWidth(200);
@@ -210,6 +223,7 @@ void Object::DrawDebug()
             ImGui::End();
         }
 
+        // くらい判定リスト
         if (isHurtBoxListActive_)
         {
             const std::string text = objectName_ + "HurtBox List";
@@ -220,6 +234,14 @@ void Object::DrawDebug()
                 const std::string name = hurtBoxes_.at(i).GetName();
                 if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_Framed))
                 {
+                    if (ImGui::Button("Delete HurtBox"))
+                    {
+                        hurtBoxes_.erase(hurtBoxes_.begin() + i);
+
+                        --i;
+                        ImGui::TreePop();
+                        continue;
+                    }
                     const std::string jointName = "JointName" + hurtBoxes_.at(i).GetJointName();
                     float radius = hurtBoxes_.at(i).GetRadius();
                     DirectX::XMFLOAT3 offsetPosition = hurtBoxes_.at(i).GetOffsetPosition();
@@ -359,6 +381,7 @@ void Object::DrawDebug()
             ImGui::TreePop(); // HitBox
         }
 
+        // くらい判定設定
         if (ImGui::TreeNodeEx("HurtBox", ImGuiTreeNodeFlags_Framed))
         {
             static char name[128] = "";
@@ -468,6 +491,15 @@ void Object::UpdateCollisions(const float& elapsedTime)
         DirectX::XMFLOAT3 pos = GetJointPosition(hitBox.GetJointName(), hitBox.GetOffsetPosition());
 
         hitBox.SetPosition(pos);
+
+        if (hitBox.IsActive())
+        {
+            hitBox.SetColor({ 1.0f, 0.3f, 0.3f, 1.0f });
+        }
+        else
+        {
+            hitBox.SetColor({ 0.7f, 0.0f, 0.0f, 1.0f });
+        }        
     }
 
     // くらい判定
@@ -523,6 +555,26 @@ void Object::UpdatePushColliders()
         DirectX::XMFLOAT3 pos = GetJointPosition(pushCollider.GetJointName(), pushCollider.GetOffsetPosition());
 
         pushCollider.SetPosition(pos);
+    }
+}
+
+// 指定された攻撃判定を有効化する
+void Object::SetAttackActiveFlag(const std::string& attackName)
+{
+    for (auto& hitbox : hitBoxes_)
+    {
+        if (hitbox.GetAttackName() != attackName) continue;
+
+        hitbox.SetActive(true);
+    }
+}
+
+// 全攻撃判定を無効化
+void Object::AttackActiveFlagAllClear()
+{
+    for (auto& hitbox : hitBoxes_)
+    {
+        hitbox.SetActive(false);
     }
 }
 
