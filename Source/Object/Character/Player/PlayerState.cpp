@@ -2,7 +2,8 @@
 #include "Input/Input.h"
 #include "Object/Character/Enemy/EnemyManager.h"
 #include "Object/Character/Enemy/WoodMonster/WoodMonster.h"
-#include <Resource/EffectManager.h>
+#include "Resource/EffectManager.h"
+#include "Resource/ComputeParticle/ComputeParticleSystem.h"
 
 // ---------- IdleState ----------
 namespace PlayerState
@@ -1958,11 +1959,26 @@ namespace PlayerState
     // 初期化
     void ParryState::Initialize()
     {
+        // アニメーション再生
+        PlayAnimation();
+
+        const DirectX::XMFLOAT3 swordJointPosition = owner_->GetSwordJointPosition("joint3");
+        Transform3D transform = {};
+        transform.SetPosition(swordJointPosition);
+
+        //ComputeParticleSystem::Instance().EmitParticle("Parry", transform);
+
+        EffectManager::Instance().GetEffect("Parry")->Play(swordJointPosition, parryEffectSize_);
     }
 
     // 更新
     void ParryState::Update(const float& elapsedTime)
     {
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
@@ -1973,10 +1989,17 @@ namespace PlayerState
     // ImGui
     void ParryState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("ParryEffectSize", &parryEffectSize_, 0.1f);
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
     void ParryState::PlayAnimation()
     {
+        owner_->PlayAnimationBlend(Player::Animation::ParryLeft, false);
     }
 }

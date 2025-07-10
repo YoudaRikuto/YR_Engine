@@ -9,13 +9,17 @@ public:
     {
         Idle,
         Attack,
-
+        Attack3_1,
+        Attack3_2,
+        Attack3_3,
+        
         HitToAir,
         HitAirIdle,
         HitAir1,
         HitAir2,
         HitAir3,
-        
+        BlockHitBreak,
+
         FinisherTarget0,
     };
 
@@ -69,6 +73,8 @@ public:
         KnockDownDeath,
 
         IdleCombat,
+        HitDeath,
+        BlockHitBreak,
     };
 
 public:

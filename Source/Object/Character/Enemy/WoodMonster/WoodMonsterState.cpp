@@ -20,7 +20,7 @@ namespace WoodMonsterState
 
         if (transitionTimer_ < 0.0f)
         {
-            //owner_->ChangeState(WoodMonster::STATE::Attack);
+            owner_->ChangeState(WoodMonster::STATE::Attack3_1);
             return;
         }
     }
@@ -56,6 +56,150 @@ namespace WoodMonsterState
     }
 }
 
+// ---------- Attack3_1State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void Attack3_1State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();   
+
+        isAttackHitBoxActive_ = false;
+    }
+
+    // 更新
+    void Attack3_1State::Update(const float& elapsedTime)
+    {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        // アニメーション再生速度更新
+        UpdateAnimationSpeed();
+
+        // 攻撃判定有効化
+        if (isAttackHitBoxActive_ == false)
+        {
+            owner_->SetAttackActiveFlag("Attack3_1");
+            owner_->SetAttackHitBoxActive(true);
+            isAttackHitBoxActive_ = true;
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void Attack3_1State::Finalize()
+    {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
+    }
+
+    // ImGui
+    void Attack3_1State::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.1f);
+            ImGui::DragFloat("PreAttackAnimationSpeed", &preAttackAnimationSpeed_, 0.1f);
+            ImGui::DragFloat("AttackAnimationSpeed", &attackAnimationSpeed_, 0.1f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void Attack3_1State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Attack3_1, false, animationSpeed_);
+    }
+
+    // アニメーション再生速度更新
+    void Attack3_1State::UpdateAnimationSpeed()
+    {
+        const float animationSeconds = owner_->GetAnimationSeconds();
+        const float currentAnimationSpeed = owner_->GetAnimationSpeed();
+        float targetSpeed = 0.0f;        
+
+        if (animationSeconds <= preAttackEndFrame_) targetSpeed = preAttackAnimationSpeed_;
+        else targetSpeed = attackAnimationSpeed_;
+
+        const float animationSpeed = XMFloatLerp(currentAnimationSpeed, targetSpeed, 0.5f);
+        owner_->SetAnimationSpeed(animationSpeed);
+    }
+}
+
+// ---------- Attack3_2State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void Attack3_2State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void Attack3_2State::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void Attack3_2State::Finalize()
+    {
+    }
+
+    // ImGui
+    void Attack3_2State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void Attack3_2State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Attack3_2, false);
+    }
+}
+
+// ---------- Attack3_3State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void Attack3_3State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void Attack3_3State::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void Attack3_3State::Finalize()
+    {
+    }
+
+    // ImGui
+    void Attack3_3State::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void Attack3_3State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Attack3_3, false);
+    }
+}
+
 // ---------- AttackState ----------
 namespace WoodMonsterState
 {
@@ -65,7 +209,8 @@ namespace WoodMonsterState
         // アニメーション再生
         PlayAnimation();
 
-        isrightHandAttackEndActive_ = false;
+        isAttackHitBoxActive_ = false;
+        isRightHandAttackEndActive_ = false;
     }
 
     // 更新
@@ -82,17 +227,18 @@ namespace WoodMonsterState
         owner_->Turn(elapsedTime, PlayerManager::Instance().GetTransform()->GetPosition());
 
         // 攻撃判定を有効化する
-        if (owner_->IsAttackHitBoxActive() == false &&
+        if (isAttackHitBoxActive_ == false &&
             owner_->GetAnimationSeconds() >= rightHandAttackActiveFrame_)
         {
             owner_->SetAttackActiveFlag("RightHandAttack");
             owner_->SetAttackHitBoxActive(true);
+            isAttackHitBoxActive_ = true;
         }
-        if (isrightHandAttackEndActive_ == false &&
+        if (isRightHandAttackEndActive_ == false &&
             owner_->GetAnimationSeconds() >= rightHandAttackEndActiveFrame_)
         {
             owner_->SetAttackActiveFlag("RightHandAttack_Last");
-            isrightHandAttackEndActive_ = true;
+            isRightHandAttackEndActive_ = true;
         }
 
         // アニメーション再生速度更新
@@ -442,6 +588,55 @@ namespace WoodMonsterState
     void HitAir3State::PlayAnimation()
     {
         owner_->PlayAnimationBlend(WoodMonster::Animation::HitAir3, false);
+    }
+}
+
+// ---------- BlockHitBreakState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void BlockHitBreakState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void BlockHitBreakState::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void BlockHitBreakState::Finalize()
+    {
+        owner_->UseRootMotion(false);
+    }
+
+    // ImGui
+    void BlockHitBreakState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void BlockHitBreakState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::BlockHitBreak, false, 1.0f, animationStartFrame_);
     }
 }
 

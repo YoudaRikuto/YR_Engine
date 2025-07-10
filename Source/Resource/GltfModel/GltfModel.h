@@ -285,6 +285,7 @@ public:
     
     const int GetAnimationIndex() const { return animationIndex_; }
     const float GetAnimationSeconds() const { return animationSeconds_; }
+    const float GetAnimationSpeed() const { return animationSpeed_; }
     const bool IsAnimationEnd()     const { return isAnimationEnd_; }
     const bool IsAnimationBlend()   const { return isAnimationBlend_; }
 

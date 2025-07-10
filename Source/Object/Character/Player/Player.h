@@ -137,6 +137,7 @@ public:
     void ChangeWeaponDataType(const WeaponDataType& type);
     const int GetCurrentWeaponDataType() const { return currentWeaponDataType_; }
     const std::vector<HitBox> GetSwordHitBoxes() const { return sword_.GetHitBoxes(); }
+    const DirectX::XMFLOAT3 GetSwordJointPosition(const std::string& jointName) { return sword_.GetJointPosition(jointName, DirectX::XMLoadFloat4x4(&swordTransform_.world_)); }
 
     const bool IsAttackHitBoxActive() const { return isAttackHitBoxActive_; }
     void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }

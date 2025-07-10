@@ -21,6 +21,8 @@ void WoodMonster::Initialize()
     // サイズを設定
     GetTransform()->SetScale(1.2f, 1.0f, 1.5f);
     GetTransform()->SetScaleFactor(1.5f);
+
+    SetRotationSpeed(10.0f);
 }
 
 // 終了化
@@ -139,11 +141,15 @@ void WoodMonster::RegisterStateMachine()
     // ステート登録
     stateMachine_->RegisterState(new WoodMonsterState::IdleState(this));
     stateMachine_->RegisterState(new WoodMonsterState::AttackState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::Attack3_1State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::Attack3_2State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::Attack3_3State(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitToAirState(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitAirIdleState(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitAir1State(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitAir2State(this));
     stateMachine_->RegisterState(new WoodMonsterState::HitAir3State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::BlockHitBreakState(this));
     stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget0State(this));
 
     // 1番最初のステート設定

@@ -543,5 +543,8 @@ namespace PlayerState
 
     private:
         void PlayAnimation(); // アニメーション再生
+
+    private:
+        float parryEffectSize_ = 0.3f;
     };
 }

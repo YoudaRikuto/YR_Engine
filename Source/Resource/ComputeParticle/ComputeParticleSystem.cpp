@@ -765,11 +765,31 @@ void ComputeParticleSystem::EmitParticle()
 
         if (computeParticleEmitData_.randomBetweenTwoPositions_)
         {
-            emitParticleData.position_ = XMFloat4RandomRange(computeParticleEmitData_.positionMin_, computeParticleEmitData_.positionMax_);
+            // 粒子生成位置を決定
+            const DirectX::XMFLOAT4 position = XMFloat4RandomRange(computeParticleEmitData_.positionMin_, computeParticleEmitData_.positionMax_);
+            
+            // 親子関係を付けている
+            emitParticleData.position_ =
+            {
+                position.x + transform_.GetPositionX(),
+                position.y + transform_.GetPositionY(),
+                position.z + transform_.GetPositionZ(),
+                position.w
+            };
         }
         else
         {
-            emitParticleData.position_ = computeParticleEmitData_.positionMin_;
+            // 粒子生成位置を決定
+            const DirectX::XMFLOAT4 position = computeParticleEmitData_.positionMin_;
+
+            // 親子関係を付けている
+            emitParticleData.position_ =
+            {
+                position.x + transform_.GetPositionX(),
+                position.y + transform_.GetPositionY(),
+                position.z + transform_.GetPositionZ(),
+                position.w
+            };
         }
 
         if (computeParticleEmitData_.randomBetweenTwoVelocities_)

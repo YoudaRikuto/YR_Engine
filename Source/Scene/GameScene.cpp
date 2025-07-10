@@ -31,8 +31,10 @@ void GameScene::CreateResource()
     iblTextures_[3] = textureData3.shaderResourceView_;
 
     Effect* effect = new Effect("./Resources/Effect/landing.efk", "landing");
+    Effect* parry = new Effect("./Resources/Effect/Parry.efk", "Parry");
 
     ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("HitParticle");
+    ComputeParticleSystem::Instance().LoadEmitDataFromJsonFile("Parry");
 }
 
 // èâä˙âª 

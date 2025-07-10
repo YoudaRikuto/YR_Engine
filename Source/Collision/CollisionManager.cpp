@@ -150,7 +150,7 @@ void CollisionManager::PlayerHurtBoxVsEnemyHitBox()
                         {
                             // *** ÉKÅ[ÉhÇ≥ÇÍÇΩ ***
 
-                            woodMonster->ChangeState(WoodMonster::STATE::HitAir1);
+                            woodMonster->ChangeState(WoodMonster::STATE::BlockHitBreak);
                         }
 
                         // èIóπ

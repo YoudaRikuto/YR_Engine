@@ -128,6 +128,9 @@ const bool Player::OnDamage()
 {
     if (GetCurrentState() == STATE::Block)
     {
+        // ジャストガード成功
+        ChangeState(STATE::Parry);
+
         return false;
     }
 

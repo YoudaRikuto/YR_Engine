@@ -12,6 +12,14 @@ inline const float XMFloatRandomRange(
     return min + (max - min) * value;
 }
 
+inline const float XMFloatLerp(
+    const float& start,
+    const float& end,
+    const float& timer)
+{
+    return start + timer * (end - start);
+}
+
 inline const DirectX::XMFLOAT4 XMFloat4RandomRange(
     const DirectX::XMFLOAT4& min,
     const DirectX::XMFLOAT4& max)

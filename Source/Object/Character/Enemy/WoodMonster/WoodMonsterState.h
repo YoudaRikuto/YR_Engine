@@ -25,6 +25,60 @@ namespace WoodMonsterState
         float transitionTimer_ = 0.0f;
     };
 
+    class Attack3_1State : public State<WoodMonster>
+    {
+    public:
+        Attack3_1State(WoodMonster* woodMonster) : State(woodMonster, "Attack3_1State") {}
+        ~Attack3_1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+        void UpdateAnimationSpeed();
+
+    private:
+        float animationSpeed_           = 0.3f;
+        float preAttackEndFrame_        = 0.19f; // 予備動作終了フレーム
+        float preAttackAnimationSpeed_  = 0.3f;  // 予備動作アニメーション再生速度
+        float attackAnimationSpeed_     = 1.0f;
+
+        bool isAttackHitBoxActive_ = false;
+    };
+
+    class Attack3_2State : public State<WoodMonster>
+    {
+    public:
+        Attack3_2State(WoodMonster* woodMonster) : State(woodMonster, "Attack3_2State") {}
+        ~Attack3_2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
+    class Attack3_3State : public State<WoodMonster>
+    {
+    public:
+        Attack3_3State(WoodMonster* woodMonster) : State(woodMonster, "Attack3_3State") {}
+        ~Attack3_3State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
     // TODO:後でクラス名変更する。とりあえずAttackにする
     class AttackState : public State<WoodMonster>
     {
@@ -55,7 +109,8 @@ namespace WoodMonsterState
 
         float   rightHandAttackActiveFrame_     = 0.67f;
         float   rightHandAttackEndActiveFrame_  = 0.7f;
-        bool    isrightHandAttackEndActive_ = false;
+        bool    isAttackHitBoxActive_           = false;
+        bool    isRightHandAttackEndActive_     = false;
     };
 
     class HitToAirState : public State<WoodMonster>
@@ -143,6 +198,24 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation(); // アニメーション再生
+    };
+
+    class BlockHitBreakState : public State<WoodMonster>
+    {
+    public:
+        BlockHitBreakState(WoodMonster* woodMonster) : State(woodMonster, "BlockHitBreakState") {}
+        ~BlockHitBreakState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation(); // アニメーション再生
+
+    private:
+        float animationStartFrame_ = 0.09f;
     };
 
     class FinisherTarget0State : public State<WoodMonster>

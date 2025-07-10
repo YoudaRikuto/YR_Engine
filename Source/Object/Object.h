@@ -32,6 +32,7 @@ public:
 
     const int GetAnimationIndex() const { return gltfModel_->GetAnimationIndex(); }
     const float GetAnimationSeconds() const { return gltfModel_->GetAnimationSeconds(); }
+    const float GetAnimationSpeed() const { return gltfModel_->GetAnimationSpeed(); }
     const bool IsAnimationEnd()     const { return gltfModel_->IsAnimationEnd(); }
     const bool IsAnimationBlend()   const { return gltfModel_->IsAnimationBlend(); }
 
