@@ -547,4 +547,19 @@ namespace PlayerState
     private:
         float parryEffectSize_ = 0.3f;
     };
+
+    class SkillAttackState : public State<Player>
+    {
+    public:
+        SkillAttackState(Player* player) : State(player, "SkillAttackState") {}
+        ~SkillAttackState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
 }

@@ -50,6 +50,7 @@ public:
 
     const int GetNodeIndex(const std::string& nodeName) { return gltfModel_->GetNodeIndex(nodeName); }
     std::vector<GltfModel::Node>* GetNodes() { return gltfModel_->GetNodes(); }
+    const std::vector<std::string> GetJointNames() const { return gltfModel_->GetJointNames(); }
 
     // ---------- Collision ----------
     void RegisterCollisionData();

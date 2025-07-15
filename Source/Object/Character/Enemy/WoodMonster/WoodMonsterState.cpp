@@ -20,7 +20,10 @@ namespace WoodMonsterState
 
         if (transitionTimer_ < 0.0f)
         {
-            owner_->ChangeState(WoodMonster::STATE::Attack3_1);
+            if (changeStateType_ == 0) owner_->ChangeState(WoodMonster::STATE::Attack3_1);
+            else if (changeStateType_ == 1) owner_->ChangeState(WoodMonster::STATE::Attack3_2);
+            else owner_->ChangeState(WoodMonster::STATE::Attack3_3);
+
             return;
         }
     }
@@ -36,6 +39,8 @@ namespace WoodMonsterState
     {
         if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
         {
+            ImGui::SliderInt("ChangeStateType", &changeStateType_, 0, 2);
+
             ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.01f);
 
             ImGui::DragFloat("TransitionAttack", &transitionAttack_, 0.01f);
@@ -81,16 +86,25 @@ namespace WoodMonsterState
         UpdateAnimationSpeed();
 
         // 攻撃判定有効化
-        if (isAttackHitBoxActive_ == false)
+        const float animationSeconds = owner_->GetAnimationSeconds();
+        if(animationSeconds >= attackHitBoxActiveStartFrame_&&
+            isAttackHitBoxActive_ == false)
         {
             owner_->SetAttackActiveFlag("Attack3_1");
             owner_->SetAttackHitBoxActive(true);
             isAttackHitBoxActive_ = true;
         }
+        // 攻撃判定無効化
+        if (animationSeconds > attackHitBoxActiveEndFrame_ &&
+            owner_->IsAttackHitBoxActive())
+        {
+            owner_->SetAttackHitBoxActive(false);
+        }
+
 
         if (owner_->IsAnimationEnd())
         {
-            owner_->ChangeState(WoodMonster::STATE::Idle);
+            owner_->ChangeState(WoodMonster::STATE::Attack3_2);
             return;
         }
     }
@@ -100,6 +114,10 @@ namespace WoodMonsterState
     {
         // ルートモーション使用終了
         owner_->UseRootMotion(false);
+
+        // 攻撃判定を無効化
+        owner_->AttackActiveFlagAllClear();
+        owner_->SetAttackHitBoxActive(false);
     }
 
     // ImGui
@@ -144,21 +162,67 @@ namespace WoodMonsterState
     {
         // アニメーション再生
         PlayAnimation();
+
+        isAttackHitBoxActive_ = false;
     }
 
     // 更新
     void Attack3_2State::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        // 攻撃判定有効化
+        const float animationSeconds = owner_->GetAnimationSeconds();
+        if (animationSeconds >= attackHitBoxActiveStartFrame_ &&
+            isAttackHitBoxActive_ == false)
+        {
+            owner_->SetAttackActiveFlag("Attack3_2");
+            owner_->SetAttackHitBoxActive(true);
+            isAttackHitBoxActive_ = true;
+        }
+        // 攻撃判定無効化
+        if (animationSeconds > attackHitBoxActiveEndFrame_ &&
+            owner_->IsAttackHitBoxActive())
+        {
+            owner_->SetAttackHitBoxActive(false);
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+        }
     }
 
     // 終了化
     void Attack3_2State::Finalize()
     {
+        // ルートモーション使用終了
+        owner_->UseRootMotion(false);
+
+        // 攻撃判定を無効化
+        owner_->AttackActiveFlagAllClear();
+        owner_->SetAttackHitBoxActive(false);
     }
 
     // ImGui
     void Attack3_2State::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            if (ImGui::TreeNodeEx("AttackHitBoxActive", ImGuiTreeNodeFlags_Framed))
+            {
+                ImGui::DragFloat("StartFrame",  &attackHitBoxActiveStartFrame_, 0.01f);
+                ImGui::DragFloat("EndFrame",    &attackHitBoxActiveEndFrame_,   0.01f);
+
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
@@ -597,6 +661,12 @@ namespace WoodMonsterState
     // 初期化
     void BlockHitBreakState::Initialize()
     {
+        const WoodMonster::Animation animationIndex = owner_->GetAnimationIndex();
+        if (animationIndex == WoodMonster::Animation::Attack3_1)
+        {
+            owner_->SetNextState(WoodMonster::STATE::Attack3_2);
+        }
+
         // アニメーション再生
         PlayAnimation();
     }
@@ -609,6 +679,15 @@ namespace WoodMonsterState
             owner_->UseRootMotion(true);
         }
 
+        // コンボ攻撃時は、指定のフレームで遷移する
+        if (owner_->GetNextState() == WoodMonster::STATE::Attack3_2 &&
+            owner_->GetAnimationSeconds() >= attack3_2TransitionFrame_)
+        {
+            owner_->ChangeState(WoodMonster::STATE::Attack3_2);
+            return;
+        }
+
+        // アニメーション再生終了
         if (owner_->IsAnimationEnd())
         {
             owner_->ChangeState(WoodMonster::STATE::Idle);
@@ -627,6 +706,8 @@ namespace WoodMonsterState
     {
         if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
         {
+            ImGui::DragFloat("Attack3_2TransitionFrame", &attack3_2TransitionFrame_, 0.01f);
+
             ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.01f);
 
             ImGui::TreePop();
@@ -674,5 +755,69 @@ namespace WoodMonsterState
     void FinisherTarget0State::PlayAnimation()
     {
         owner_->PlayAnimationBlend(WoodMonster::Animation::Target_1, false, 1.0f, 0.0f, 0.1f);
+    }
+}
+
+// ---------- DownState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void DownState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void DownState::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void DownState::Finalize()
+    {
+    }
+
+    // ImGui
+    void DownState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void DownState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::KnockDownStart, false);
+    }
+}
+
+// ---------- DownEndState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void DownEndState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void DownEndState::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void DownEndState::Finalize()
+    {
+    }
+
+    // ImGui
+    void DownEndState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void DownEndState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::KnockDownGetUp, false);
     }
 }

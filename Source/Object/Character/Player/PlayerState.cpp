@@ -82,7 +82,6 @@ namespace PlayerState
     {
         owner_->PlayAnimationBlend(Player::Animation::Idle, true);
     }
-
 }
 
 // ---------- RunState ----------
@@ -1974,6 +1973,12 @@ namespace PlayerState
     // 更新
     void ParryState::Update(const float& elapsedTime)
     {
+        if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            owner_->ChangeState(Player::STATE::Block);
+            return;
+        }
+
         if (owner_->IsAnimationEnd())
         {
             owner_->ChangeState(Player::STATE::Idle);
@@ -2000,6 +2005,57 @@ namespace PlayerState
     // アニメーション再生
     void ParryState::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(Player::Animation::ParryLeft, false);
+        owner_->PlayAnimationBlend(Player::Animation::ParryRight, false);
+        //owner_->PlayAnimationBlend(Player::Animation::ParryLeft, false);
+    }
+}
+
+// ---------- SkillAttackState ----------
+namespace PlayerState
+{
+    // 初期化
+    void SkillAttackState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void SkillAttackState::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
+        {
+            owner_->UseRootMotion(true);
+        }
+
+        if (owner_->GetAnimationIndex() == Player::Animation::SkillAttack1 &&
+            owner_->GetAnimationSeconds() >= 0.9f)
+        {
+            owner_->PlayAnimationBlend(Player::Animation::Execution_2, false);
+            owner_->UseRootMotion(false);
+        }
+
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(Player::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void SkillAttackState::Finalize()
+    {
+        owner_->UseRootMotion(false);
+    }
+
+    // ImGui
+    void SkillAttackState::DrawDebug()
+    {
+    }
+
+    // アニメーション再生
+    void SkillAttackState::PlayAnimation()
+    {
+        owner_->PlayAnimation(Player::Animation::SkillAttack1, false);
     }
 }

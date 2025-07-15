@@ -98,6 +98,8 @@ public:
     void ChangeState(const STATE& state);
     const STATE GetCurrentState() const { return currentState_; }
     const STATE GetOldState() const { return oldState_; }
+    const STATE GetNextState() const { return nextState_; }
+    void SetNextState(const STATE& state) { nextState_ = state; }
 
     const bool IsAttackHitBoxActive() const { return isAttackHitBoxActive_; }
     void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }
@@ -116,6 +118,7 @@ private:
     std::unique_ptr<StateMachine<State<WoodMonster>>> stateMachine_;
     STATE currentState_ = STATE::Idle;
     STATE oldState_     = STATE::Idle;
+    STATE nextState_    = STATE::Idle;
 
     bool isAttackHitBoxActive_ = false;
 };

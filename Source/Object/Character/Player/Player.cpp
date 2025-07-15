@@ -53,6 +53,12 @@ void Player::Finalize()
 // 更新 
 void Player::Update(const float& elapsedTime)
 {
+    if (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT)
+    {
+        ChangeState(STATE::SkillAttack);
+        return;
+    }
+
     // ステートマシン更新
     stateMachine_->Update(elapsedTime);
 
@@ -168,6 +174,7 @@ void Player::RegisterStateMachine()
     stateMachine_->RegisterState(new PlayerState::BlockState(this));
     stateMachine_->RegisterState(new PlayerState::BlockEndState(this));
     stateMachine_->RegisterState(new PlayerState::ParryState(this));
+    stateMachine_->RegisterState(new PlayerState::SkillAttackState(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));

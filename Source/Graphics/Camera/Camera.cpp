@@ -2,10 +2,24 @@
 #include "Graphics/Graphics.h"
 #include "Object/Character/Player/PlayerManager.h"
 #include "Input/Input.h"
+#include "CutSceneCamera.h"
 
 // 更新 
 void Camera::Update(const float& elapsedTime)
 {
+    CutSceneCamera::Instance().Update(elapsedTime);
+    // カットシーンカメラが有効
+    if (CutSceneCamera::Instance().IsCutSceneCameraActive())
+    {
+        const CutSceneCameraInfo cutSceneCameraInfo = CutSceneCamera::Instance().GetCutSceneCameraInfo();
+        transform_.SetRotation(cutSceneCameraInfo.rotation_);
+        target_ = cutSceneCameraInfo.target_;
+        offset_ = cutSceneCameraInfo.offset_;
+        length_ = cutSceneCameraInfo.length_;
+
+        return;
+    }
+
     //DirectX::XMFLOAT3 cameraTargetPosition = { PlayerManager::Instance().GetTransform()->GetPositionX(), 0.0f, PlayerManager::Instance().GetTransform()->GetPositionZ() };
     DirectX::XMFLOAT3 cameraTargetPosition = PlayerManager::Instance().GetTransform()->GetPosition();
 
@@ -26,6 +40,8 @@ void Camera::DrawDebug()
     ImGui::DragFloat("Fov", &fov_);
 
     ImGui::End();
+
+    CutSceneCamera::Instance().DrawDebug();
 }
 
 void Camera::SetPerspectiveFov()

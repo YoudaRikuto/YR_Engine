@@ -33,6 +33,7 @@ public:
         Block,
         BlockEnd,
         Parry,
+        SkillAttack,
     };
 
     enum class Animation
@@ -90,6 +91,8 @@ public:
         BlockBreak,
         ParryLeft,
         ParryRight,
+
+        SkillAttack1,
     };
 
     enum class WeaponDataType

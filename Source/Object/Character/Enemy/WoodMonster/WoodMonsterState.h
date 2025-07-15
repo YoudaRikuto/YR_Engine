@@ -23,6 +23,8 @@ namespace WoodMonsterState
 
         float attackTransitionTime_ = 2.0f;
         float transitionTimer_ = 0.0f;
+
+        int changeStateType_ = 0;
     };
 
     class Attack3_1State : public State<WoodMonster>
@@ -46,7 +48,9 @@ namespace WoodMonsterState
         float preAttackAnimationSpeed_  = 0.3f;  // 予備動作アニメーション再生速度
         float attackAnimationSpeed_     = 1.0f;
 
-        bool isAttackHitBoxActive_ = false;
+        float   attackHitBoxActiveStartFrame_   = 0.2f;
+        float   attackHitBoxActiveEndFrame_     = 0.4f;
+        bool    isAttackHitBoxActive_           = false;
     };
 
     class Attack3_2State : public State<WoodMonster>
@@ -62,6 +66,13 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation();
+
+    private:
+
+
+        float   attackHitBoxActiveStartFrame_   = 0.16f;
+        float   attackHitBoxActiveEndFrame_     = 0.37f;
+        bool    isAttackHitBoxActive_           = false;
     };
 
     class Attack3_3State : public State<WoodMonster>
@@ -130,7 +141,7 @@ namespace WoodMonsterState
     private:
         float oldPositionY_ = 0.0f;
 
-        float offsetPositionY_ = 1.0f;
+        float offsetPositionY_ = 0.7f;
 
         float length_       = 2.3f;
         float lerpWeight_   = 0.2f;
@@ -216,6 +227,8 @@ namespace WoodMonsterState
 
     private:
         float animationStartFrame_ = 0.09f;
+
+        float attack3_2TransitionFrame_ = 0.3f;
     };
 
     class FinisherTarget0State : public State<WoodMonster>
@@ -233,5 +246,34 @@ namespace WoodMonsterState
         void PlayAnimation();
     };
 
+    class DownState : public State<WoodMonster>
+    {
+    public:
+        DownState(WoodMonster* woodMonster) : State(woodMonster, "DownState") {}
+        ~DownState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
+
+    class DownEndState : public State<WoodMonster>
+    {
+    public:
+        DownEndState(WoodMonster* woodMonster) : State(woodMonster, "DownEndState") {}
+        ~DownEndState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+    };
 }
 

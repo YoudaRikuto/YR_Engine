@@ -161,6 +161,8 @@
     <ClInclude Include="Source\FrameWork\HighResolutionTimer.h" />
     <ClInclude Include="Source\FrameWork\Misc.h" />
     <ClInclude Include="Source\Graphics\Camera\Camera.h" />
+    <ClInclude Include="Source\Graphics\Camera\CutSceneCamera.h" />
+    <ClInclude Include="Source\Graphics\Camera\CutSceneCameraInfo.h" />
     <ClInclude Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.h" />
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\DeferredRendering\DeferredRendering.h" />
@@ -221,6 +223,7 @@
     <ClCompile Include="Source\FrameWork\Framework.cpp" />
     <ClCompile Include="Source\FrameWork\Main.cpp" />
     <ClCompile Include="Source\Graphics\Camera\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Camera\CutSceneCamera.cpp" />
     <ClCompile Include="Source\Graphics\CascadedShadowMap\CascadedShadowMap.cpp" />
     <ClCompile Include="Source\Graphics\DeferredRendering\DeferredRendering.cpp" />
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
