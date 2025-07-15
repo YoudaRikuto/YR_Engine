@@ -433,13 +433,11 @@ namespace PlayerState
     private:
         void PlayAnimation(); // アニメーション再生
 
-        void UpdateFallingSpeed(); // 落下速度更新
-
     private:
         // ---------- Animation ----------
         float startAnimationSpeed_ = 0.9f;
 
-        float runTransitionFrame_ = 0.6f;
+        float runTransitionFrame_ = 0.2f;
 
         float fallingSpeed_ = -40.0f;
     };

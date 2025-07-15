@@ -1604,6 +1604,8 @@ namespace PlayerState
     {
         // アニメーション再生
         PlayAnimation();
+
+        EffectManager::Instance().GetEffect("landing")->Play(owner_->GetTransform()->GetPosition(), 1.0f);
     }
 
     // 更新
@@ -1637,8 +1639,7 @@ namespace PlayerState
             }
         }
 
-        // 落下速度更新
-        UpdateFallingSpeed();
+        
     }
 
     // 終了化
@@ -1671,16 +1672,6 @@ namespace PlayerState
     void AttackAirToFloorEndState::PlayAnimation()
     {
         owner_->PlayAnimationBlend(Player::Animation::AttackAirToFloor_End, false, startAnimationSpeed_, 0.1f);
-    }
-
-    void AttackAirToFloorEndState::UpdateFallingSpeed()
-    {
-        const Player::Animation animationIndex = owner_->GetAnimationIndex();
-        DirectX::XMFLOAT3 velocity = owner_->GetVelocity();
-
-        velocity.y = fallingSpeed_;
-
-        owner_->SetVelocity(velocity);
     }
 }
 
