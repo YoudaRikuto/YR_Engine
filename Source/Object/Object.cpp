@@ -111,6 +111,8 @@ void Object::Finalize()
 // ----- XV -----
 void Object::Update(const float& elapsedTime)
 {
+    gltfModel_->Update(elapsedTime);
+
     // ‰ñ“]’l§Œä
     DirectX::XMFLOAT3 rotation = GetTransform()->GetRotation();
     if (rotation.y > DirectX::XM_2PI)   rotation.y -= DirectX::XM_2PI;

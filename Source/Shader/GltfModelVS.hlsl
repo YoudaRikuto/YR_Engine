@@ -36,7 +36,8 @@ PSIn main(VSIn vsIn)
     vsOut.worldTangent_ = normalize(mul(vsIn.tangent_, world_));
     vsOut.worldTangent_.w = sigma;
     
-    vsOut.texcoord_ = vsIn.texcoord_;
-    
+    //vsOut.texcoord_ = vsIn.texcoord_;
+    vsOut.texcoord_ = vsIn.texcoord_ + scrollDirection_ * scrollTimer_;
+
     return vsOut;
 }

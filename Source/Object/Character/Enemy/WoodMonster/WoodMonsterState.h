@@ -229,6 +229,8 @@ namespace WoodMonsterState
         float animationStartFrame_ = 0.09f;
 
         float attack3_2TransitionFrame_ = 0.3f;
+
+        float downTransitionFrame_ = 0.4f;
     };
 
     class FinisherTarget0State : public State<WoodMonster>
@@ -246,6 +248,26 @@ namespace WoodMonsterState
         void PlayAnimation();
     };
 
+    class FinisherTarget1State : public State<WoodMonster>
+    {
+    public:
+        FinisherTarget1State(WoodMonster* woodMonster) : State(woodMonster, "FinisherTarget1State") {}
+        ~FinisherTarget1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        float animationSpeed_       = 1.0f;
+        float animationStartFrame_  = 0.3f;
+        float transitionTime_       = 0.4f;
+    };
+
     class DownState : public State<WoodMonster>
     {
     public:
@@ -259,6 +281,14 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation();
+
+    private:
+        float downTimer_ = 0.0f;
+        float downTime_ = 2.5f;
+        bool isDownTimerActive_ = false;
+
+        float sphereScalingStartFrame_ = 0.39f;
+        float sphereScalingEndFrame_ = 0.6f;
     };
 
     class DownEndState : public State<WoodMonster>
@@ -274,6 +304,31 @@ namespace WoodMonsterState
 
     private:
         void PlayAnimation();
+
+    private:
+        float animationSpeed_ = 0.8f;
+        float animationStartFrame_ = 0.45f;
+        float transitionTime_ = 0.1f;
+    };
+
+    class HitFrontState : public State<WoodMonster>
+    {
+    public:
+        HitFrontState(WoodMonster* woodMonster) : State(woodMonster, "HitFrontState") {}
+        ~HitFrontState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        void DrawDebug()                        override;
+
+    private:
+        void PlayAnimation();
+
+    private:
+        DirectX::XMFLOAT3 knockBackDirection_ = {};
+        float maxMoveSpeed_ = 7.0f;
+        float moveSpeed_    = 0.0f;
     };
 }
 

@@ -687,6 +687,12 @@ namespace WoodMonsterState
             return;
         }
 
+        if (owner_->GetAnimationSeconds() >= downTransitionFrame_)
+        {
+            owner_->ChangeState(WoodMonster::STATE::Down);
+            return;
+        }
+
         // アニメーション再生終了
         if (owner_->IsAnimationEnd())
         {
@@ -699,6 +705,9 @@ namespace WoodMonsterState
     void BlockHitBreakState::Finalize()
     {
         owner_->UseRootMotion(false);
+
+        // TODO:仮
+        owner_->SetNextState(WoodMonster::STATE::Idle);
     }
 
     // ImGui
@@ -758,6 +767,51 @@ namespace WoodMonsterState
     }
 }
 
+// ---------- FinisherTarget1State ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void FinisherTarget1State::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+    }
+
+    // 更新
+    void FinisherTarget1State::Update(const float& elapsedTime)
+    {
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+            return;
+        }
+    }
+
+    // 終了化
+    void FinisherTarget1State::Finalize()
+    {
+    }
+
+    // ImGui
+    void FinisherTarget1State::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.1f);
+            ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.1f);
+            ImGui::DragFloat("TransitionTime", &transitionTime_, 0.1f);
+
+            ImGui::TreePop();
+        }
+    }
+    
+    // アニメーション再生
+    void FinisherTarget1State::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::Target_2, false, animationSpeed_, animationStartFrame_, transitionTime_);
+    }
+}
+
 // ---------- DownState ----------
 namespace WoodMonsterState
 {
@@ -766,16 +820,52 @@ namespace WoodMonsterState
     {
         // アニメーション再生
         PlayAnimation();
+
+        downTimer_          = 0.0f;
+        isDownTimerActive_  = false;
+
+        owner_->SetSphereDraw(true);
+        owner_->SetSphereScale(0.0f);
     }
 
     // 更新
     void DownState::Update(const float& elapsedTime)
     {
+        const WoodMonster::Animation animationIndex = owner_->GetAnimationIndex();
+
+        // ループアニメーションに切り替える
+        if (owner_->IsAnimationEnd() && animationIndex == WoodMonster::Animation::KnockDownStart)
+        {
+            owner_->PlayAnimation(WoodMonster::Animation::KnockDownLoop, true);
+            isDownTimerActive_ = true;
+        }
+        
+        const float animationSeconds = owner_->GetAnimationSeconds();
+        if (animationIndex == WoodMonster::Animation::KnockDownStart &&
+            animationSeconds >= sphereScalingStartFrame_ && animationSeconds <= sphereScalingEndFrame_)
+        {
+            const float maxTime = sphereScalingEndFrame_ - sphereScalingStartFrame_;
+            const float currentTime = animationSeconds - sphereScalingStartFrame_;
+            const float scale = XMFloatLerp(0.0f, 1.0f, currentTime / maxTime);
+            owner_->SetSphereScale(scale);
+        }
+
+        if (isDownTimerActive_)
+        {
+            downTimer_ += elapsedTime;
+        }
+
+        if (downTimer_ >= downTime_)
+        {
+            //owner_->ChangeState(WoodMonster::STATE::DownEnd);
+            return;
+        }
     }
 
     // 終了化
     void DownState::Finalize()
     {
+        owner_->SetSphereDraw(false);
     }
 
     // ImGui
@@ -803,6 +893,11 @@ namespace WoodMonsterState
     // 更新
     void DownEndState::Update(const float& elapsedTime)
     {
+        if (owner_->IsAnimationEnd())
+        {
+            owner_->ChangeState(WoodMonster::STATE::Idle);
+            return;
+        }
     }
 
     // 終了化
@@ -813,11 +908,64 @@ namespace WoodMonsterState
     // ImGui
     void DownEndState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("AnimationSpeed", &animationSpeed_, 0.1f);
+            ImGui::DragFloat("AnimationStartFrame", &animationStartFrame_, 0.1f);
+            ImGui::DragFloat("TransitionTime", &transitionTime_, 0.1f);
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生
     void DownEndState::PlayAnimation()
     {
-        owner_->PlayAnimationBlend(WoodMonster::Animation::KnockDownGetUp, false);
+        owner_->PlayAnimationBlend(WoodMonster::Animation::KnockDownGetUp, false, animationSpeed_, animationStartFrame_, transitionTime_);
+    }
+}
+
+// ---------- HitFrontState ----------
+namespace WoodMonsterState
+{
+    // 初期化
+    void HitFrontState::Initialize()
+    {
+        // アニメーション再生
+        PlayAnimation();
+
+        knockBackDirection_ = owner_->GetTransform()->CalcForward() * -1.0f;
+        moveSpeed_ = maxMoveSpeed_;
+    }
+
+    // 更新
+    void HitFrontState::Update(const float& elapsedTime)
+    {
+        // ノックバック処理
+        owner_->GetTransform()->AddPosition(knockBackDirection_ * moveSpeed_ * elapsedTime);
+        moveSpeed_ -= elapsedTime;
+    }
+
+    // 終了化
+    void HitFrontState::Finalize()
+    {
+    }
+
+    // ImGui
+    void HitFrontState::DrawDebug()
+    {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("MaxMoveSpeed", &maxMoveSpeed_, 0.1f);
+            ImGui::DragFloat("MoveSpeed", &moveSpeed_, 0.1f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    // アニメーション再生
+    void HitFrontState::PlayAnimation()
+    {
+        owner_->PlayAnimationBlend(WoodMonster::Animation::HitFront, false);
     }
 }

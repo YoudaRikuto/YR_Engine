@@ -5,6 +5,7 @@
 #include "Resource/EffectManager.h"
 #include "Graphics/PostProcess/PostProcess.h"
 #include "Resource/Audio/AudioManager.h"
+#include "System/SystemManager.h"
 
 Framework::Framework(HWND hwnd)
     : hwnd_(hwnd), graphics_(hwnd), input_(hwnd),
@@ -51,13 +52,16 @@ void Framework::Update(const float& elapsedTime)
     // 入力更新
     input_.Update();
 
+    const float globalTimeScale = SystemManager::Instance().GetGlobalTimeScale();
+    const float globalElapsedTime = globalTimeScale * elapsedTime;
+
     // Scene更新
-    SceneManager::Instance().Update(elapsedTime);
+    SceneManager::Instance().Update(globalElapsedTime);
 
     // カメラ更新
-    Camera::Instance().Update(elapsedTime);
+    Camera::Instance().Update(globalElapsedTime);
 
-    EffectManager::Instance().Update(elapsedTime);
+    EffectManager::Instance().Update(globalElapsedTime);
 
     animationEditer_.Update(elapsedTime);
 
@@ -162,6 +166,8 @@ void Framework::DrawDebug()
     SceneManager::Instance().DrawDebug();
 
     PostProcess::Instance().DrawDebug();
+
+    SystemManager::Instance().DrawDebug();
 
     ImGui::Begin("SkyMap");
     skyMap_.DrawDebug();

@@ -102,6 +102,11 @@ void GameScene::DeferredRender()
 void GameScene::Render()
 {
     Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
+    Graphics::Instance().SetRasterizerState(Shader::RasterState::Solid);
+    Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_ON);
+    EnemyManager::Instance().RenderUniqueModel();
+
+    Graphics::Instance().SetBlendState(Shader::BlendState::Alpha);
     Graphics::Instance().SetRasterizerState(Shader::RasterState::CullNone);
     Graphics::Instance().SetDepthStencileState(Shader::DepthState::ZT_ON_ZW_OFF);
     ComputeParticleSystem::Instance().Render();
@@ -113,7 +118,7 @@ void GameScene::Render()
 
     PlayerManager::Instance().DebugRender(debugRenderer);
     EnemyManager::Instance().DebugRender(debugRenderer);
-
+    CutSceneCamera::Instance().DebugRender(debugRenderer);
 }
 
 // âeèëÇ´çûÇ›

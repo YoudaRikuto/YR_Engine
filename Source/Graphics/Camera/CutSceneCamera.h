@@ -1,6 +1,6 @@
 #pragma once
 #include "CutSceneCameraInfo.h"
-#include <vector>
+#include "Resource/DebugRenderer/DebugRenderer.h"
 #include <unordered_map>
 
 class CutSceneCamera
@@ -18,11 +18,15 @@ public:
 
     void Update(const float& elapsedTime);
     void DrawDebug();
+    void DebugRender(DebugRenderer* debugRenderer);
 
     void PlayCutScene(const std::string& cutSceneName);
 
     const bool IsCutSceneCameraActive() const { return isCutSceneCameraActive_; }
     const CutSceneCameraInfo GetCutSceneCameraInfo() const { return cutSceneCameraInfo_; }
+
+private:
+    void AssetCreation(const std::string& filename);
 
 private:
     std::unordered_map<std::string, std::vector<CutSceneCameraInfo>> cutSceneCameras_;
@@ -41,5 +45,12 @@ private:
 
 
     bool isCutSceneCameraActive_ = false;
+
+    // ----- DebugRender -----
+    float boxScale_             = 0.1f;
+    float forwardSphereLength_  = 0.15f;
+    float sphereRadius_         = 0.05f;
+
+    const std::string fileDirectory_ = "./Resources/JsonParameters/CutSceneCamera/";
 };
 

@@ -47,6 +47,14 @@ void EnemyManager::Render(ID3D11PixelShader* psShader)
     }
 }
 
+void EnemyManager::RenderUniqueModel()
+{
+    for (Enemy*& enemy : enemies_)
+    {
+        enemy->RenderUniqueModel();
+    }
+}
+
 // ImGui—p
 void EnemyManager::DrawDebug()
 {

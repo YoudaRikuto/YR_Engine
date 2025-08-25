@@ -24,6 +24,9 @@ void CollisionManager::DrawDebug()
 // Player(PushCOllider) VS Enemy(PushCollider)
 void CollisionManager::PlayerPushColliderVsEnemyPushCollider()
 {
+    // ‰Ÿ‚µo‚µ”»’è‚ª—LŒø‚Å‚È‚¢
+    if (PlayerManager::Instance().GetPlayer()->IsPushColliderActive() == false) return;
+
     const int enemyCount = EnemyManager::Instance().GetEnemyCount();
     for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
     {

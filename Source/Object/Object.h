@@ -63,6 +63,9 @@ public:
     void SetAttackActiveFlag(const std::string& attackName);
     void AttackActiveFlagAllClear();
 
+    void SetShaderConstantsColor(const DirectX::XMFLOAT4& color) { gltfModel_->SetShaderConstantsColor(color); }
+    void SetScrollDirection(const DirectX::XMFLOAT2& direction) { gltfModel_->SetScrollDirection(direction); }
+
 private:
     void RegisterPushColliders();   // ‰Ÿ‚µo‚µ”»’è“o˜^
     void RegisterHitBoxes();        // UŒ‚”»’è“o˜^

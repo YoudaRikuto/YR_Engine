@@ -1,8 +1,8 @@
 #include "Camera.h"
 #include "Graphics/Graphics.h"
 #include "Object/Character/Player/PlayerManager.h"
+#include "Object/Character/Enemy/EnemyManager.h"
 #include "Input/Input.h"
-#include "CutSceneCamera.h"
 
 // 更新 
 void Camera::Update(const float& elapsedTime)
@@ -16,6 +16,32 @@ void Camera::Update(const float& elapsedTime)
         target_ = cutSceneCameraInfo.target_;
         offset_ = cutSceneCameraInfo.offset_;
         length_ = cutSceneCameraInfo.length_;
+
+        // =================================================
+        //  これより下の処理をCutSceneCameraに持っていきたい
+        // =================================================
+        DirectX::XMFLOAT3 targetForward = {};
+        if (cutSceneCameraInfo.targetName_ == "Player")
+        {
+            targetForward = PlayerManager::Instance().GetTransform()->CalcForward();
+        }
+        else if (cutSceneCameraInfo.targetName_ == "WoodMonster")
+        {
+            targetForward = EnemyManager::Instance().GetEnemy(0)->GetTransform()->CalcForward();
+        }
+
+        DirectX::XMVECTOR up = DirectX::XMVectorSet(0, 1, 0, 0);
+        DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(up, DirectX::XMLoadFloat3(&targetForward)));
+        up = DirectX::XMVector3Cross(DirectX::XMLoadFloat3(&targetForward), right);
+
+        DirectX::XMMATRIX basis = DirectX::XMMATRIX(right, up, DirectX::XMLoadFloat3(&targetForward), DirectX::XMVectorSet(0, 0, 0, 1));
+        DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(cutSceneCameraInfo.rotation_.x, cutSceneCameraInfo.rotation_.y, cutSceneCameraInfo.rotation_.z);
+        DirectX::XMVECTOR offset = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0, 0, -length_, 0), rotation);
+        DirectX::XMStoreFloat3(&cutSceneCameraPosition, DirectX::XMVector3TransformCoord(offset, basis));
+
+        // =================================================
+        //  これより上の処理をCutSceneCameraに持っていきたい
+        // =================================================
 
         return;
     }
@@ -50,6 +76,23 @@ void Camera::SetPerspectiveFov()
     eye_    = target_ + offset_ - forward * length_;
     focus_  = target_ + offset_;
 
+    // カットシーンカメラが有効
+    if (CutSceneCamera::Instance().IsCutSceneCameraActive())
+    {
+        if (cutSceneCameraPosition.x == 0.0f &&
+            cutSceneCameraPosition.y == 0.0f &&
+            cutSceneCameraPosition.z == 0.0f)
+        {
+
+        }
+        else
+        {
+        eye_ = target_ + offset_ + cutSceneCameraPosition;
+
+        }
+
+    }
+
     transform_.SetPosition(eye_);
 
     const float aspectRatio = SCREEN_WIDTH / (float)SCREEN_HEIGHT;
@@ -62,6 +105,18 @@ void Camera::SetPerspectiveFov()
     up = DirectX::XMVectorSet(up_.x, up_.y, up_.z, 0.0f);
 
     DirectX::XMStoreFloat4x4(&view_, DirectX::XMMatrixLookAtLH(eye, focus, up));
+}
+
+void Camera::CalcCameraVectorFromCutSceneCameraInfo(const CutSceneCameraInfo& cutSceneCameraInfo, DirectX::XMFLOAT3& position, DirectX::XMFLOAT3& forwardVec)
+{
+    Transform3D transform = {};
+    transform.SetRotation(cutSceneCameraInfo.rotation_);
+    const DirectX::XMFLOAT3 forward = transform.CalcForward();
+    const DirectX::XMFLOAT3 eye = cutSceneCameraInfo.target_ + cutSceneCameraInfo.offset_ - forward * cutSceneCameraInfo.length_;
+    const DirectX::XMFLOAT3 focus = cutSceneCameraInfo.target_ + cutSceneCameraInfo.offset_;
+
+    position = eye;
+    forwardVec = focus - eye;
 }
 
 // カメラから見たベクトルに変換する 

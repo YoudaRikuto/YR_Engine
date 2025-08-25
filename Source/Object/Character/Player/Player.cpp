@@ -358,6 +358,28 @@ void Player::Turn(const float& elapsedTime)
     }
 }
 
+// ù‰ñˆ—
+void Player::Turn(const DirectX::XMFLOAT3& targetPosition)
+{
+    const DirectX::XMFLOAT2 targetVec       = XMFloat2Normalize({ targetPosition.x - GetTransform()->GetPositionX(), targetPosition.z - GetTransform()->GetPositionZ()});
+    const DirectX::XMFLOAT2 playerForward   = XMFloat2Normalize({ GetTransform()->CalcForward().x, GetTransform()->CalcForward().z });
+
+    const float cross = XMFloat2Cross(targetVec, playerForward);
+    const float dot = std::clamp(XMFloat2Dot(targetVec, playerForward), -1.0f, 1.0f);
+    const float angle = acosf(dot);
+    
+    if (angle < DirectX::XMConvertToRadians(1)) return;
+
+    if (cross > 0)
+    {
+        GetTransform()->AddRotationY(-angle);
+    }
+    else
+    {
+        GetTransform()->AddRotationY(angle);
+    }
+}
+
 void Player::AttackTurn()
 {
     const float aLx = Input::Instance().GetGamePad().GetAxisLx();

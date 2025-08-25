@@ -7,7 +7,8 @@
 #include <filesystem>
 #include <fstream>
 #include "tinygltf/tiny_gltf.h"
-#include "Resource/Texture.h"   
+#include "Resource/Texture.h"  
+#include "ImGui/ImGuiCtrl.h"
 
 GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeName)
     : filename_(filename),
@@ -42,11 +43,18 @@ GltfModel::GltfModel(const std::string& filename, const std::string& rootNodeNam
     Graphics::Instance().CreatePsFromCso("./Resources/Shader/GltfModelPS.cso", pixelShader_.ReleaseAndGetAddressOf());
 
     primitiveConstants_ = std::make_unique<ConstantBuffer<PrimitiveConstants>>();
-    jointConstants_ = std::make_unique<ConstantBuffer<JointConstants>>();
+    jointConstants_     = std::make_unique<ConstantBuffer<JointConstants>>();
+    shaderConstants_    = std::make_unique<ConstantBuffer<ShaderConstants>>();
 
     animatedNodes_[0] = nodes_;
     animatedNodes_[1] = nodes_;
     zeroAnimatedNodes_ = nodes_;
+}
+
+// 更新
+void GltfModel::Update(const float& elapsedTime)
+{
+    shaderConstants_->GetData()->scrollTimer_ += elapsedTime;
 }
 
 // 描画 
@@ -135,6 +143,8 @@ void GltfModel::Render(const float& scaleFactor, ID3D11PixelShader* psShader)
                     }
                     jointConstants_->Activate(2);
                 }
+
+                shaderConstants_->Activate(3);
 
                 deviceContext->DrawIndexed(static_cast<UINT>(primitive.indexBufferView_.Count()), 0, 0);
             }
@@ -233,6 +243,7 @@ void GltfModel::Render(const DirectX::XMFLOAT4X4 world, ID3D11PixelShader* psSha
                     jointConstants_->Activate(2);
                 }
 
+                shaderConstants_->Activate(3);
 
                 deviceContext->DrawIndexed(static_cast<UINT>(primitive.indexBufferView_.Count()), 0, 0);
             }
@@ -252,6 +263,9 @@ void GltfModel::Render(const DirectX::XMFLOAT4X4 world, ID3D11PixelShader* psSha
 void GltfModel::DrawDebug()
 {
     transform_.DrawDebug();
+
+    ImGui::DragFloat4("Color", &shaderConstants_->GetData()->color_.x, 0.1f, 0.0f, 10.0f);
+    ImGui::SliderFloat2("ScrollDirection", &shaderConstants_->GetData()->scrollDirection_.x, -1.0f, 1.0f);
 }
 
 // アニメーション再生 
@@ -291,6 +305,9 @@ void GltfModel::PlayAnimationBlend(const int& index, const bool& loop, const flo
 // アニメーション更新 
 void GltfModel::UpdateAnimation(const float& elapsedTime)
 {
+    // アニメーション番号が設定されていない
+    if (animationIndex_ == -1) return;
+
     // アニメーションブレンド
     if (UpdateAnimationBlend(elapsedTime)) return;
 

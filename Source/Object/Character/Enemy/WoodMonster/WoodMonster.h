@@ -21,6 +21,12 @@ public:
         BlockHitBreak,
 
         FinisherTarget0,
+        FinisherTarget1,
+
+        Down,
+        DownEnd,
+
+        HitFront,
     };
 
     enum class Animation
@@ -86,6 +92,7 @@ public:
     void Finalize()                                     override;
     void Update(const float& elapsedTime)               override;
     void Render(ID3D11PixelShader* psShader = nullptr)  override;
+    void RenderUniqueModel()                            override;
     void DrawDebug()                                    override;
     void DebugRender(DebugRenderer* debugRenderer)    override;
 
@@ -110,6 +117,10 @@ public:
     void Turn(const float& elapsedTime, const DirectX::XMFLOAT3& target);
     void TurnToPlayer();
 
+    // ---------- Sphere ----------
+    void SetSphereDraw(const bool& flag) { isSphereDraw_ = flag; }
+    void SetSphereScale(const float& scale) { sphere_.GetTransform()->SetScale(scale); }
+
 private:
     void RegisterStateMachine(); // ステートマシン登録
 
@@ -121,5 +132,12 @@ private:
     STATE nextState_    = STATE::Idle;
 
     bool isAttackHitBoxActive_ = false;
+
+    // ---------- Sphere ----------
+    Object sphere_;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader>           spherePixelShader_;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    shaderResourceView_;
+    DirectX::XMFLOAT3 sphereOffsetPosition_ = { 0.1f, 0.0f, -0.2f };
+    bool isSphereDraw_ = false;
 };
 

@@ -40,6 +40,14 @@ cbuffer PrimitiveJointConstants : register(b2)
     row_major float4x4 jointMatrices_[PrimitiveMaxJoints];
 };
 
+cbuffer ShaderConstants : register(b3)
+{
+    float4  shaderConstantsColor_;
+    float2  scrollDirection_;
+    float   scrollTimer_;
+    float   shaderDummy_;
+}
+
 struct TextureInfo
 {
     int index_;

@@ -134,6 +134,7 @@ public:
 
     // ---------- Turn ----------
     void Turn(const float& elapsedTime); // ê˘âÒèàóù
+    void Turn(const DirectX::XMFLOAT3& targetPosition);
     void AttackTurn();
 
     // ---------- Weapon ----------
@@ -142,6 +143,9 @@ public:
     const std::vector<HitBox> GetSwordHitBoxes() const { return sword_.GetHitBoxes(); }
     const DirectX::XMFLOAT3 GetSwordJointPosition(const std::string& jointName) { return sword_.GetJointPosition(jointName, DirectX::XMLoadFloat4x4(&swordTransform_.world_)); }
 
+    // ---------- Collision ----------
+    const bool IsPushColliderActive() const { return isPushColliderActive_; }
+    void SetPushColliderActive(const bool& flag) { isPushColliderActive_ = flag; }
     const bool IsAttackHitBoxActive() const { return isAttackHitBoxActive_; }
     void SetAttackHitBoxActive(const bool& flag) { isAttackHitBoxActive_ = flag; }
 
@@ -191,6 +195,7 @@ private:
     float   weaponDataTypeChangeSpeed_  = 5.0f;
     bool    isChangeWeaponData_         = false;
 
+    bool isPushColliderActive_ = true;
     bool isAttackHitBoxActive_ = false;
 };
 

@@ -2009,14 +2009,39 @@ namespace PlayerState
     {
         // アニメーション再生
         PlayAnimation();
+
+        // プレイヤーの位置を敵の正面に設定
+        WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(0));
+        const DirectX::XMFLOAT3 woodMonsterForward = woodMonster->GetTransform()->CalcForward();
+        const DirectX::XMFLOAT3 woodMonsterPosition = woodMonster->GetTransform()->GetPosition();
+        owner_->GetTransform()->SetPosition(woodMonsterPosition + woodMonsterForward * length_);
+
+        // 敵のステートを切り替え
+        woodMonster->ChangeState(WoodMonster::STATE::DownEnd);
+
+        // 敵の方向に旋回する
+        owner_->Turn(EnemyManager::Instance().GetEnemy(0)->GetTransform()->GetPosition());
+
+        // 押し出し判定無効化
+        owner_->SetPushColliderActive(false);
+
+        isWoodMonsterDamaged_ = false;
     }
 
     // 更新
     void SkillAttackState::Update(const float& elapsedTime)
     {
+        // ルートモーションを使用する
         if (owner_->IsAnimationBlend() == false && owner_->IsRootMotionActive() == false)
         {
             owner_->UseRootMotion(true);
+        }
+
+        if (owner_->GetAnimationSeconds() >= 0.7f && isWoodMonsterDamaged_ == false)
+        {
+            WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(0));
+            woodMonster->ChangeState(WoodMonster::STATE::HitFront);
+            isWoodMonsterDamaged_ = true;
         }
 
         if (owner_->GetAnimationIndex() == Player::Animation::SkillAttack1 &&
@@ -2024,6 +2049,9 @@ namespace PlayerState
         {
             owner_->PlayAnimationBlend(Player::Animation::Execution_2, false);
             owner_->UseRootMotion(false);
+            
+            WoodMonster* woodMonster = dynamic_cast<WoodMonster*>(EnemyManager::Instance().GetEnemy(0));
+            woodMonster->ChangeState(WoodMonster::STATE::FinisherTarget1);
         }
 
         if (owner_->IsAnimationEnd())
@@ -2036,12 +2064,22 @@ namespace PlayerState
     // 終了化
     void SkillAttackState::Finalize()
     {
+        // ルートモーション使用終了
         owner_->UseRootMotion(false);
+
+        // 押し出し判定有効化
+        owner_->SetPushColliderActive(true);
     }
 
     // ImGui
     void SkillAttackState::DrawDebug()
     {
+        if (ImGui::TreeNodeEx(GetName(), ImGuiTreeNodeFlags_Framed))
+        {
+            ImGui::DragFloat("Length", &length_, 0.1f);
+
+            ImGui::TreePop();
+        }
     }
 
     // アニメーション再生

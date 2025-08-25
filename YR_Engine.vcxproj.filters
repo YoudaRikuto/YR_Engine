@@ -127,6 +127,9 @@
     <Filter Include="YR_Engine\Resource\DebugRenderer">
       <UniqueIdentifier>{071c5567-aa31-45d5-9127-2885d699f70b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="YR_Engine\System">
+      <UniqueIdentifier>{bff8d89a-2e83-47b6-90c4-555df3dcc8ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\ImGui\imgui.cpp">
@@ -284,6 +287,9 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\Camera\CutSceneCamera.cpp">
       <Filter>YR_Engine\Graphics\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\SystemManager.cpp">
+      <Filter>YR_Engine\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +491,9 @@
     <ClInclude Include="Source\Graphics\Camera\CutSceneCameraInfo.h">
       <Filter>YR_Engine\Graphics\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\SystemManager.h">
+      <Filter>YR_Engine\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ImageBasedLighting.hlsli">
@@ -590,6 +599,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\SkyMapVS.hlsl">
       <Filter>YR_Engine\Shader\SkyMap</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpherePS.hlsl">
+      <Filter>YR_Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

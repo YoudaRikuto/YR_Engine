@@ -1,8 +1,6 @@
 #pragma once
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <vector>
 #include "Math/Transform.h"
+#include "CutSceneCamera.h"
 
 class Camera
 {
@@ -21,6 +19,9 @@ public:
     void DrawDebug();                       // ImGui
 
     void SetPerspectiveFov();
+
+    // CutSceneCameraInfoによる [位置],[前ベクトル]を算出
+    void CalcCameraVectorFromCutSceneCameraInfo(const CutSceneCameraInfo& cutSceneCameraInfo, DirectX::XMFLOAT3& position, DirectX::XMFLOAT3& forwardVec);
 
     // カメラから見たベクトルに変換する
     const DirectX::XMFLOAT2 ConvertTo2DVectorFromCamera(const DirectX::XMFLOAT2& v);
@@ -51,6 +52,8 @@ private:
     float               farZ_       = 150.0f;
     float               fov_        = 45.0f;
     float               length_     = 6.0f;
+
+    DirectX::XMFLOAT3   cutSceneCameraPosition = {};
 
     // ---------- Rotation ----------
     float verticalRotationSpeed_    = 1.7f; // 垂直回転速度

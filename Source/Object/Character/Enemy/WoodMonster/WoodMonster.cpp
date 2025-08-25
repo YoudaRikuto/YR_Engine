@@ -2,9 +2,11 @@
 #include "ImGui/ImGuiCtrl.h"
 #include "WoodMonsterState.h"
 #include "Object/Character/Player/PlayerManager.h"
+#include "Resource/Texture.h"
 
 WoodMonster::WoodMonster()
-    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f, "WoodMonster")
+    : Enemy("./Resources/Model/Enemy/WoodMonster/WoodMonster.gltf", 1.0f, "WoodMonster"),
+    sphere_("./Resources/Model/Sphere/Sphere.gltf", 1.0f, "Sphere")
 {
     PlayAnimation(Animation::Idle, true);
 
@@ -13,6 +15,10 @@ WoodMonster::WoodMonster()
 
     // Collision登録
     RegisterCollisionData();
+
+    Graphics::Instance().CreatePsFromCso("./Resources/Shader/SpherePS.cso", spherePixelShader_.GetAddressOf());
+    Texture::TextureData textureData = Texture::Instance().LoadTexture(L"./Resources/Image/Noise/PerlinNoise.png");
+    shaderResourceView_ = textureData.shaderResourceView_;
 }
 
 // 初期化
@@ -23,6 +29,10 @@ void WoodMonster::Initialize()
     GetTransform()->SetScaleFactor(1.5f);
 
     SetRotationSpeed(10.0f);
+
+    sphere_.GetTransform()->SetScaleFactor(0.25f);
+    sphere_.SetShaderConstantsColor({ 5.0f, 3.0f, 1.0f, 1.0f });
+    sphere_.SetScrollDirection({ -0.4f, 1.0f });
 }
 
 // 終了化
@@ -43,18 +53,37 @@ void WoodMonster::Update(const float& elapsedTime)
 
     // Collision更新
     UpdateCollisions(elapsedTime);
+
+    sphere_.Update(elapsedTime);
+    sphere_.GetTransform()->SetPosition(GetJointPosition("head", sphereOffsetPosition_));
 }
 
 // 描画
 void WoodMonster::Render(ID3D11PixelShader* psShader)
 {
+    Graphics::Instance().GetDeviceContext()->PSSetShaderResources(10, 1, shaderResourceView_.GetAddressOf());
     Object::Render(psShader);
+}
+
+
+void WoodMonster::RenderUniqueModel()
+{
+    if (isSphereDraw_) sphere_.Render(spherePixelShader_.Get());
 }
 
 // ImGui用
 void WoodMonster::DrawDebug()
 {
     ImGui::Begin("WoodMonster");
+
+    if (ImGui::TreeNode("Sphere"))
+    {
+        ImGui::Checkbox("Draw Sphere", &isSphereDraw_);
+
+        sphere_.DrawDebug();
+        ImGui::DragFloat3("SphereOffsetPosition", &sphereOffsetPosition_.x);
+        ImGui::TreePop();
+    }
 
     if (ImGui::Button("Attack State")) ChangeState(STATE::Attack);
 
@@ -151,6 +180,10 @@ void WoodMonster::RegisterStateMachine()
     stateMachine_->RegisterState(new WoodMonsterState::HitAir3State(this));
     stateMachine_->RegisterState(new WoodMonsterState::BlockHitBreakState(this));
     stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget0State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::FinisherTarget1State(this));
+    stateMachine_->RegisterState(new WoodMonsterState::DownState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::DownEndState(this));
+    stateMachine_->RegisterState(new WoodMonsterState::HitFrontState(this));
 
     // 1番最初のステート設定
     stateMachine_->SetState(static_cast<int>(STATE::Idle));

@@ -559,5 +559,10 @@ namespace PlayerState
 
     private:
         void PlayAnimation();
+
+    private:
+        float length_ = 6.3f;
+
+        bool isWoodMonsterDamaged_ = false;
     };
 }

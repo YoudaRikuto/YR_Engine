@@ -268,6 +268,7 @@ public:
     GltfModel(const std::string& filename, const std::string& rootNodeName = "root");
     virtual ~GltfModel() = default;
 
+    void Update(const float& elapsedTime);
     void Render(const float& scaleFactor, ID3D11PixelShader* psShader = nullptr);
     void Render(const DirectX::XMFLOAT4X4 world, ID3D11PixelShader* psShader = nullptr);
     void DrawDebug(); // ImGui
@@ -305,6 +306,10 @@ public:
     std::vector<Node>* GetNodes() { return &nodes_; }
     
     const std::vector<std::string> GetJointNames() const { return jointNames_; }
+
+    // ---------- ShaderConstants ----------
+    void SetShaderConstantsColor(const DirectX::XMFLOAT4& color) { shaderConstants_->GetData()->color_ = color; }
+    void SetScrollDirection(const DirectX::XMFLOAT2& direction) { shaderConstants_->GetData()->scrollDirection_ = direction; }
 
 private:
     // ---------- Animation ----------
@@ -366,8 +371,16 @@ public:
     {
         DirectX::XMFLOAT4X4 matrices_[maxJoints_];
     };
+    struct ShaderConstants
+    {
+        DirectX::XMFLOAT4   color_              = { 1.0f, 1.0f, 1.0f, 1.0f };
+        DirectX::XMFLOAT2   scrollDirection_    = {};
+        float               scrollTimer_        = 0.0f;
+        float               dummy_              = 0.0f;
+    };
     std::unique_ptr<ConstantBuffer<PrimitiveConstants>> primitiveConstants_;
     std::unique_ptr<ConstantBuffer<JointConstants>>     jointConstants_;
+    std::unique_ptr<ConstantBuffer<ShaderConstants>>    shaderConstants_;
 
 private:
     Transform3D transform_;
